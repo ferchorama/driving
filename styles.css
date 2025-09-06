@@ -71,3 +71,7 @@ button:disabled {
     color: #aaaaaa;
     font-family: 'Roboto', sans-serif;
 }
+
+#question-image {
+    margin: 10px 0;
+}
