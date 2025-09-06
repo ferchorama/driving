@@ -4,17 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego de Tránsito - Preguntas y Respuestas</title>
+    <title>Práctica para escuelas de conducción</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Juego de Tránsito</h1>
+        <h1>Práctica para escuelas de conducción</h1>
         <div id="start-screen">
             <p>Selecciona un tema para jugar:</p>
             <button id="quiz1-btn">Cuestionario Teórico (70 preguntas)</button>
             <div id="quiz2-options" style="display: none;">
-                <p>Selecciona el número de preguntas para Definiciones de Tránsito:</p>
+                <p>Selecciona el número de preguntas para Código Nacional de Tránsito:</p>
                 <select id="num-questions">
                     <option value="10">10</option>
                     <option value="20">20</option>
@@ -24,7 +25,7 @@
                 </select>
                 <button id="start-quiz2">Iniciar</button>
             </div>
-            <button id="quiz2-btn">Definiciones de Tránsito (de 10 a 50 preguntas)</button>
+            <button id="quiz2-btn">Código Nacional de Tránsito (de 10 a 50 preguntas)</button>
         </div>
         <div id="quiz-screen" style="display: none;">
             <div class="progress-bar">

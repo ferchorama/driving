@@ -2,7 +2,7 @@
 body {
     background-color: #121212;
     color: #ffffff;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Roboto', 'Arial', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,6 +22,7 @@ body {
 
 h1, h2 {
     color: #bb86fc;
+    font-family: 'Montserrat', sans-serif;
 }
 
 button {
@@ -33,6 +34,7 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-family: 'Roboto', sans-serif;
 }
 
 button:hover {
@@ -67,4 +69,5 @@ button:disabled {
 #image-desc {
     font-style: italic;
     color: #aaaaaa;
+    font-family: 'Roboto', sans-serif;
 }
