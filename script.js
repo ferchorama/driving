@@ -1,4 +1,4 @@
-// script.js (fixed & improved)
+// script.js (reemplazo completo)
 let questions = {};
 let currentQuiz = [];
 let currentIndex = 0;
@@ -6,89 +6,83 @@ let score = 0;
 let quizType = '';
 let wrongAnswers = [];
 
-// Utility: Fisher–Yates shuffle (in place)
+// Utilidad: normaliza rutas locales tipo "Carpeta\archivo.png" -> "Carpeta/archivo.png"
+const normalizePath = (p) => (p || '').replace(/\\/g, '/').replace(/^\.?\//, '');
+
+// Fisher-Yates in-place
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
-  return array;
 }
 
-// Build 3 unique wrong options for a given correct answer
-function generateWrongOptions(correctAnswer, data) {
-  const pool = new Set();
-  while (pool.size < 3) {
-    const randomItem = data[Math.floor(Math.random() * data.length)];
-    if (!randomItem || !randomItem.nombre_visible) continue;
-    if (randomItem.nombre_visible !== correctAnswer) {
-      pool.add(randomItem.nombre_visible);
-    }
+// Genera 3 opciones erróneas (todas distintas y ≠ correcta)
+function generateWrongOptions(correctAnswer, pool) {
+  const set = new Set();
+  while (set.size < 3) {
+    const r = pool[Math.floor(Math.random() * pool.length)];
+    const candidate = r.nombre_visible;
+    if (candidate && candidate !== correctAnswer) set.add(candidate);
   }
-  return Array.from(pool);
+  return Array.from(set);
 }
 
+// Carga JSON + CSV de señales
 async function loadQuestions() {
-  try {
-    // 1) Questions from JSON (teórico & código)
-    const response = await fetch('questions.json');
-    questions = await response.json();
+  // Banco teórico (quiz1/quiz2)
+  const response = await fetch('questions.json');
+  questions = await response.json();
 
-    // 2) Señales from CSV -> dynamic question set
-    const csvResponse = await fetch('inventario.csv');
-    const csvText = await csvResponse.text();
+  // CSV de señales
+  const csvResponse = await fetch('inventario.csv');
+  const csvText = await csvResponse.text();
 
-    // Simple CSV parse (no quoted commas in your file)
-    const rows = csvText.trim().split('\n').map(r => r.split(','));
-    const headers = rows[0];
-    const data = rows.slice(1).map(row => {
-      const obj = {};
-      headers.forEach((h, i) => (obj[h] = row[i]));
-      return obj;
-    });
+  // Parse CSV (simple, sin comas en campos)
+  const rows = csvText.trim().split('\n').map(r => r.split(','));
+  const headers = rows[0].map(h => h.trim());
+  const data = rows.slice(1).map(row => {
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = (row[i] || '').trim());
+    return obj;
+  });
 
-    // Build Señales questions
-    // Prefer local images; normalize backslashes to forward slashes
-    questions.signals = data
-      .filter(item => item && item.nombre_visible && item.archivo) // guard
-      .map(item => {
-        const localPath = String(item.archivo).replace(/\\/g, '/'); // e.g. "Reglamentarias/Pare.png"
-        const correct = item.nombre_visible;
+  // Crea preguntas de señales; usa URL externa si está, si no, fallback local normalizado
+  questions.signals = data.map(item => {
+    const localPath = normalizePath(item.archivo); // p.ej. "Reglamentarias/Pare.png"
+    const imageSrc = item.url && item.url.startsWith('http') ? item.url : localPath;
 
-        const distractors = generateWrongOptions(correct, data);
-        const options = shuffle([correct, ...distractors]);
+    const correct = item.nombre_visible;
+    const wrongs = generateWrongOptions(correct, data);
+    const options = [correct, ...wrongs];
 
-        return {
-          question: '¿Cuál es el nombre de esta señal?',
-          image: localPath,          // local asset
-          // If you prefer remote fallback later: image: item.url || localPath,
-          options,
-          correct
-        };
-      });
-  } catch (err) {
-    console.error('Error cargando datos:', err);
-    alert('Ocurrió un problema cargando las preguntas. Revisa que questions.json e inventario.csv estén accesibles.');
-  }
+    return {
+      question: '¿Cuál es el nombre de esta señal?',
+      image: imageSrc,
+      imageDesc: `${item.categoria} · ${correct}`,
+      options,
+      correct
+    };
+  });
+
+  // Opcional: podrías validar que existan bancos
+  // console.log('quiz1:', questions.quiz1?.length, 'quiz2:', questions.quiz2?.length, 'signals:', questions.signals?.length);
 }
 
 function startQuiz(type, num = null) {
   quizType = type;
 
   if (type === 'quiz1') {
-    // Teórico (70 preguntas) – usar todas y barajar
     currentQuiz = [...(questions.quiz1 || [])];
     shuffle(currentQuiz);
   } else if (type === 'quiz2') {
-    // Código Nacional – tomar N aleatorias
-    const base = [...(questions.quiz2 || [])];
-    shuffle(base);
-    currentQuiz = base.slice(0, Number.isFinite(num) ? num : 10);
+    const pool = [...(questions.quiz2 || [])];
+    shuffle(pool);
+    currentQuiz = num ? pool.slice(0, num) : pool;
   } else if (type === 'signals') {
-    // Señales – tomar N aleatorias de las generadas
-    const base = [...(questions.signals || [])];
-    shuffle(base);
-    currentQuiz = base.slice(0, Number.isFinite(num) ? num : 10);
+    const pool = [...(questions.signals || [])];
+    shuffle(pool);
+    currentQuiz = num ? pool.slice(0, num) : pool;
   } else {
     currentQuiz = [];
   }
@@ -97,68 +91,50 @@ function startQuiz(type, num = null) {
   score = 0;
   wrongAnswers = [];
 
-  // Safety: if no questions, inform and return to start
-  if (!currentQuiz.length) {
-    alert('No se encontraron preguntas para este modo.');
-    return;
-  }
-
   document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('quiz2-options').style.display = 'none';
+  document.getElementById('quiz3-options').style.display = 'none';
   document.getElementById('quiz-screen').style.display = 'block';
+
   showQuestion();
   updateScore();
 }
 
 function showQuestion() {
   const q = currentQuiz[currentIndex];
-  if (!q) return;
+  if (!q) {
+    endQuiz();
+    return;
+  }
 
   // Enunciado
-  document.getElementById('question').textContent = q.question || '';
+  document.getElementById('question').textContent = q.question;
 
-  // Imagen (solo si aplica)
-  const imageElement = document.getElementById('question-image');
+  // Imagen (si aplica)
+  const imgEl = document.getElementById('question-image');
   if (q.image) {
-    imageElement.src = q.image;
-    imageElement.style.display = 'block';
+    imgEl.src = q.image;
+    imgEl.style.display = 'block';
   } else {
-    imageElement.style.display = 'none';
+    imgEl.style.display = 'none';
   }
 
-  // Descripción opcional
-  const imageDesc = document.getElementById('image-desc');
+  const descEl = document.getElementById('image-desc');
   if (q.imageDesc) {
-    imageDesc.textContent = q.imageDesc;
-    imageDesc.style.display = 'block';
+    descEl.textContent = q.imageDesc;
+    descEl.style.display = 'block';
   } else {
-    imageDesc.style.display = 'none';
+    descEl.style.display = 'none';
   }
 
-  // Respuestas
+  // Opciones: clonar → barajar → pintar
   const optionsDiv = document.getElementById('options');
   optionsDiv.innerHTML = '';
-
-  // Guard: asegurar 4 opciones
-  const opts = Array.isArray(q.options) ? q.options.slice(0, 4) : [];
-  if (opts.length < 4 && q.correct) {
-    // Si por alguna razón hay menos, completamos con el correct/distractores únicos
-    const fallback = new Set(opts);
-    fallback.add(q.correct);
-    while (fallback.size < 4) {
-      const rnd = currentQuiz[Math.floor(Math.random() * currentQuiz.length)];
-      if (rnd && Array.isArray(rnd.options)) {
-        const candidate = rnd.options[Math.floor(Math.random() * rnd.options.length)];
-        if (candidate && candidate !== q.correct) fallback.add(candidate);
-      } else {
-        break;
-      }
-    }
-    shuffle((q.options = Array.from(fallback).slice(0, 4)));
-  }
-
-  shuffle(q.options).forEach(opt => {
+  const opts = [...(q.options || [])];
+  shuffle(opts);
+  opts.forEach(opt => {
     const btn = document.createElement('button');
-    btn.textContent = opt;
+    btn.textContent = String(opt);
     btn.onclick = () => selectAnswer(opt, q.correct);
     optionsDiv.appendChild(btn);
   });
@@ -172,10 +148,10 @@ function selectAnswer(selected, correct) {
   buttons.forEach(btn => {
     btn.disabled = true;
     if (btn.textContent === correct) {
-      btn.style.backgroundColor = '#03dac6'; // correcto (verde-agua)
+      btn.style.backgroundColor = '#03dac6'; // correcta
     }
-    if (btn.textContent === selected && selected !== correct) {
-      btn.style.backgroundColor = '#cf6679'; // incorrecto (rojo)
+    if (btn.textContent === String(selected) && selected !== correct) {
+      btn.style.backgroundColor = '#cf6679'; // errada
     }
   });
 
@@ -183,7 +159,7 @@ function selectAnswer(selected, correct) {
     score++;
   } else {
     wrongAnswers.push({
-      question: currentQuiz[currentIndex]?.question || '',
+      question: currentQuiz[currentIndex].question,
       correct
     });
   }
@@ -202,39 +178,39 @@ function nextQuestion() {
 }
 
 function updateProgress() {
-  const progress = (currentIndex / currentQuiz.length) * 100;
+  const progress = (currentIndex / (currentQuiz.length || 1)) * 100;
   document.getElementById('progress').style.width = `${progress}%`;
 }
 
 function updateScore() {
-  document.getElementById('score').textContent = `Puntaje: ${score} / ${currentQuiz.length}`;
+  document.getElementById('score').textContent = `Puntaje: ${score} / ${currentQuiz.length || 0}`;
 }
 
 function endQuiz() {
   document.getElementById('quiz-screen').style.display = 'none';
   document.getElementById('end-screen').style.display = 'block';
-  document.getElementById('final-score').textContent = `Tu puntaje final: ${score} / ${currentQuiz.length}`;
+  document.getElementById('final-score').textContent = `Tu puntaje final: ${score} / ${currentQuiz.length || 0}`;
 
   if (wrongAnswers.length > 0) {
     let summary = "Resumen de preguntas erradas:\n";
-    wrongAnswers.forEach((item, index) => {
-      summary += `${index + 1}. Pregunta: ${item.question}\n   Respuesta correcta: ${item.correct}\n`;
+    wrongAnswers.forEach((item, i) => {
+      summary += `${i + 1}. Pregunta: ${item.question}\n   Respuesta correcta: ${item.correct}\n`;
     });
     alert(summary);
   } else {
     alert("¡Felicidades! No tuviste errores.");
   }
-  wrongAnswers = []; // limpiar para el próximo juego
+  wrongAnswers = [];
 }
 
-// Botones / wiring
+// Listeners (se mantiene estructura/estilos actuales)
 document.getElementById('quiz1-btn').onclick = () => startQuiz('quiz1');
 
 document.getElementById('quiz2-btn').onclick = () => {
   document.getElementById('quiz2-options').style.display = 'block';
 };
 document.getElementById('start-quiz2').onclick = () => {
-  const num = parseInt(document.getElementById('num-questions').value);
+  const num = parseInt(document.getElementById('num-questions').value, 10);
   startQuiz('quiz2', num);
 };
 
@@ -242,11 +218,12 @@ document.getElementById('quiz3-btn').onclick = () => {
   document.getElementById('quiz3-options').style.display = 'block';
 };
 document.getElementById('start-quiz3').onclick = () => {
-  const num = parseInt(document.getElementById('num-questions-3').value);
+  const num = parseInt(document.getElementById('num-questions-3').value, 10);
   startQuiz('signals', num);
 };
 
 document.getElementById('next-btn').onclick = nextQuestion;
+
 document.getElementById('restart-btn').onclick = () => {
   document.getElementById('end-screen').style.display = 'none';
   document.getElementById('start-screen').style.display = 'block';
@@ -254,5 +231,5 @@ document.getElementById('restart-btn').onclick = () => {
   document.getElementById('quiz3-options').style.display = 'none';
 };
 
-// Kickoff
+// Cargar bancos
 loadQuestions();
