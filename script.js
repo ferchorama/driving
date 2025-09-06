@@ -24,7 +24,8 @@ async function loadQuestions() {
     // Crear preguntas basadas en las señales
     questions.signals = data.map(item => ({
         question: `¿Cuál es el nombre de esta señal?`,
-        image: `${item.categoria}/${item.archivo}`,
+        // FIX: Correct the image path by using the 'archivo' field and replacing backslashes
+        image: item.archivo.replace(/\\/g, '/'),
         options: [item.nombre_visible, ...generateWrongOptions(item.nombre_visible, data)],
         correct: item.nombre_visible
     }));
