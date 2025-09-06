@@ -1,4 +1,4 @@
-// script.js — UI moderna + lógica estable (tema oscuro mantenido)
+// script.js — UI clásica/robusta + lógica estable
 let questions = {};
 let currentQuiz = [];
 let currentIndex = 0;
@@ -6,6 +6,29 @@ let score = 0;
 let quizType = '';
 let wrongAnswers = [];
 let maxSignals = 0;
+
+// Fallback ultra simple: si el CSS no se carga, aseguro que no quede "en crudo"
+(function cssFallback(){
+  document.addEventListener('DOMContentLoaded', () => {
+    const test = getComputedStyle(document.body).backgroundColor;
+    if (!test) {
+      const s = document.createElement('style');
+      s.textContent = `
+        body{background:#0e1117;color:#e6eaf2;font:16px/1.5 system-ui;margin:0}
+        .container{max-width:960px;margin:0 auto;padding:16px}
+        .screen{padding:16px 0}
+        .section{padding:12px;border:1px solid #2a2f3a;border-radius:8px;background:#141922;margin:12px 0}
+        .btn{padding:10px 14px;border-radius:8px;border:1px solid #2a2f3a;background:#1b2130;color:#fff}
+        .btn-primary{background:#1fbfa8;color:#08110f;border-color:#0c6b5e}
+        .progress{height:10px;background:#1b2130;border:1px solid #2a2f3a;border-radius:8px;overflow:hidden}
+        .progress-bar{height:100%;background:#1fbfa8;width:0%}
+        .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+        .options button{padding:10px;border-radius:8px;background:#1b2130;border:1px solid #2a2f3a;color:#fff}
+      `;
+      document.head.appendChild(s);
+    }
+  });
+})();
 
 // Utilidad: normaliza rutas locales tipo "Carpeta\\archivo.png" -> "Carpeta/archivo.png"
 const normalizePath = (p) => (p || '').replace(/\\/g, '/').replace(/^\.?\//, '');
@@ -40,7 +63,7 @@ async function loadQuestions() {
     const csvResponse = await fetch('inventario.csv');
     const csvText = await csvResponse.text();
 
-    // Parse CSV (simple, sin comillas con comas internas)
+    // Parse CSV (simple)
     const rows = csvText.trim().split('\n').map(r => r.split(','));
     const headers = rows[0].map(h => h.trim());
     const data = rows.slice(1).map(row => {
@@ -49,11 +72,11 @@ async function loadQuestions() {
       return obj;
     });
 
-    // Crea preguntas de señales; usa URL externa si existe, si no fallback local normalizado
+    // Armar preguntas de señales
     questions.signals = data
       .filter(item => item?.nombre_visible)
       .map(item => {
-        const localPath = normalizePath(item.archivo); // p.ej. "Reglamentarias/Pare.png"
+        const localPath = normalizePath(item.archivo); // ej: "Reglamentarias/Pare.png"
         const imageSrc = item.url && item.url.startsWith('http') ? item.url : localPath;
 
         const correct = item.nombre_visible;
@@ -63,31 +86,30 @@ async function loadQuestions() {
         return {
           question: '¿Cuál es el nombre de esta señal?',
           image: imageSrc,
-          // caption/el nombre bajo la imagen removido a propósito
           options,
           correct
         };
       });
 
-    // Guardar el máximo de señales y actualizar input/label en HTML
+    // Máximo de señales disponibles
     maxSignals = questions.signals.length;
-    const maxSpan = document.getElementById('max-signals');
-    if (maxSpan) maxSpan.textContent = maxSignals;
-
+    document.getElementById('max-signals').textContent = maxSignals;
     const inputSignals = document.getElementById('num-questions-3');
-    if (inputSignals) {
-      inputSignals.max = maxSignals;
-      if (!inputSignals.value || Number(inputSignals.value) > maxSignals) {
-        inputSignals.value = maxSignals; // precargar con el máximo
-      }
+    inputSignals.max = maxSignals;
+    if (!inputSignals.value || Number(inputSignals.value) > maxSignals) {
+      inputSignals.value = maxSignals;
     }
+
+    // Año en footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
   } catch (err) {
     console.error('Error cargando bancos:', err);
-    alert('No se pudieron cargar las preguntas. Verifica el hosting de questions.json e inventario.csv.');
+    alert('No se pudieron cargar las preguntas. Revisa questions.json e inventario.csv en el hosting.');
   }
 }
 
-/* ---------------- Core flow ---------------- */
+/* ============== Flujo principal ============== */
 
 function startQuiz(type, num = null) {
   quizType = type;
@@ -102,12 +124,9 @@ function startQuiz(type, num = null) {
   } else if (type === 'signals') {
     const pool = [...(questions.signals || [])];
     shuffle(pool);
-
-    // Asegurar rango válido
     let total = pool.length;
     let n = parseInt(num, 10);
     if (isNaN(n) || n <= 0 || n > total) n = total;
-
     currentQuiz = pool.slice(0, n);
   } else {
     currentQuiz = [];
@@ -117,26 +136,24 @@ function startQuiz(type, num = null) {
   score = 0;
   wrongAnswers = [];
 
-  // Transición de pantallas
-  showScreen('quiz');
+  // Pantallas
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  document.getElementById('end-screen').style.display = 'none';
 
   showQuestion();
   updateScore();
-  updateProgress(); // 0%
+  updateProgress();
 }
 
 function showQuestion() {
   const q = currentQuiz[currentIndex];
-  if (!q) {
-    endQuiz();
-    return;
-  }
+  if (!q) { endQuiz(); return; }
 
   // Enunciado
-  const qEl = document.getElementById('question');
-  qEl.textContent = q.question || '';
+  document.getElementById('question').textContent = q.question || '';
 
-  // Imagen (si aplica)
+  // Imagen (opcional)
   const imgEl = document.getElementById('question-image');
   if (q.image) {
     imgEl.src = q.image;
@@ -151,40 +168,22 @@ function showQuestion() {
   const opts = [...(q.options || [])];
   shuffle(opts);
 
-  // Crear botones con animación progresiva
-  opts.forEach((opt, i) => {
+  opts.forEach(opt => {
     const btn = document.createElement('button');
     btn.textContent = String(opt);
-    btn.setAttribute('data-index', String(i));
-    btn.style.opacity = '0';
-    btn.style.transform = 'translateY(6px)';
     btn.onclick = () => selectAnswer(opt, q.correct);
     optionsDiv.appendChild(btn);
-
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        btn.style.transition = 'opacity 200ms ease, transform 200ms ease';
-        btn.style.opacity = '1';
-        btn.style.transform = 'translateY(0)';
-      }, 40 * i);
-    });
   });
 
   document.getElementById('next-btn').disabled = true;
-  // Atajo por teclado
-  enableKeyShortcuts();
   updateProgress();
 }
 
 function selectAnswer(selected, correct) {
-  // Deshabilitar atajos mientras se colorea
-  disableKeyShortcuts();
-
   const buttons = document.querySelectorAll('#options button');
   buttons.forEach(btn => {
     btn.disabled = true;
     const txt = btn.textContent;
-    // estilos visuales
     if (txt === correct) btn.classList.add('correct');
     if (txt === String(selected) && selected !== correct) btn.classList.add('wrong');
   });
@@ -212,27 +211,25 @@ function nextQuestion() {
 }
 
 function updateProgress() {
-  const bar = document.getElementById('progress');
   const progress = (currentIndex / (currentQuiz.length || 1)) * 100;
-  bar.style.width = `${progress}%`;
+  document.getElementById('progress').style.width = `${progress}%`;
 }
 
 function updateScore() {
-  document.getElementById('score').textContent =
-    `Puntaje: ${score} / ${currentQuiz.length || 0}`;
+  document.getElementById('score').textContent = `Puntaje: ${score} / ${currentQuiz.length || 0}`;
 }
 
 function endQuiz() {
-  showScreen('end');
-  document.getElementById('final-score').textContent =
-    `Tu puntaje final: ${score} / ${currentQuiz.length || 0}`;
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('end-screen').style.display = 'block';
+  document.getElementById('final-score').textContent = `Tu puntaje final: ${score} / ${currentQuiz.length || 0}`;
 
+  // (Opcional) Mostrar resumen por alert para no alterar estructura inicial
   if (wrongAnswers.length > 0) {
     let summary = "Resumen de preguntas erradas:\n";
     wrongAnswers.forEach((item, i) => {
       summary += `${i + 1}. Pregunta: ${item.question}\n   Respuesta correcta: ${item.correct}\n`;
     });
-    // Nota: mantenemos alert para simplicidad; si prefieres, lo mostramos en pantalla.
     alert(summary);
   } else {
     alert("¡Felicidades! No tuviste errores.");
@@ -240,67 +237,13 @@ function endQuiz() {
   wrongAnswers = [];
 }
 
-/* ---------------- UI helpers ---------------- */
-
-function showScreen(which) {
-  const start = document.getElementById('start-screen');
-  const quiz = document.getElementById('quiz-screen');
-  const end = document.getElementById('end-screen');
-
-  start.style.display = which === 'start' ? 'block' : 'none';
-  quiz.style.display = which === 'quiz' ? 'block' : 'none';
-  end.style.display = which === 'end' ? 'block' : 'none';
-
-  // Toggle clase .visible para consistencia con CSS
-  start.classList.toggle('visible', which === 'start');
-  quiz.classList.toggle('visible', which === 'quiz');
-  end.classList.toggle('visible', which === 'end');
-}
-
-function toggleDrawer(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.style.display = (el.style.display === 'none' || !el.style.display) ? 'grid' : 'none';
-}
-
-/* ---------------- Keyboard shortcuts ---------------- */
-
-let keyHandlerActive = false;
-
-function keyHandler(e) {
-  if (!keyHandlerActive) return;
-  const code = e.key;
-
-  // 1..9 selecciona opción
-  if (/^[1-9]$/.test(code)) {
-    const idx = parseInt(code, 10) - 1;
-    const btn = document.querySelector(`#options button[data-index="${idx}"]`);
-    if (btn && !btn.disabled) {
-      btn.click();
-    }
-  }
-
-  // Enter -> siguiente
-  if (code === 'Enter') {
-    const next = document.getElementById('next-btn');
-    if (!next.disabled) next.click();
-  }
-}
-
-function enableKeyShortcuts() {
-  keyHandlerActive = true;
-}
-
-function disableKeyShortcuts() {
-  keyHandlerActive = false;
-}
-
-/* ---------------- Event wiring ---------------- */
+/* ============== Enlaces de UI ============== */
 
 document.getElementById('quiz1-btn').onclick = () => startQuiz('quiz1');
 
 document.getElementById('quiz2-btn').onclick = () => {
-  toggleDrawer('quiz2-options');
+  const box = document.getElementById('quiz2-options');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
 };
 document.getElementById('start-quiz2').onclick = () => {
   const num = parseInt(document.getElementById('num-questions').value, 10);
@@ -308,7 +251,8 @@ document.getElementById('start-quiz2').onclick = () => {
 };
 
 document.getElementById('quiz3-btn').onclick = () => {
-  toggleDrawer('quiz3-options');
+  const box = document.getElementById('quiz3-options');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
 };
 document.getElementById('start-quiz3').onclick = () => {
   const num = parseInt(document.getElementById('num-questions-3').value, 10);
@@ -318,24 +262,11 @@ document.getElementById('start-quiz3').onclick = () => {
 document.getElementById('next-btn').onclick = nextQuestion;
 
 document.getElementById('restart-btn').onclick = () => {
-  showScreen('start');
-  // cerrar cajones si quedaron abiertos
-  const q2 = document.getElementById('quiz2-options');
-  const q3 = document.getElementById('quiz3-options');
-  if (q2) q2.style.display = 'none';
-  if (q3) q3.style.display = 'none';
+  document.getElementById('end-screen').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'block';
+  document.getElementById('quiz2-options').style.display = 'none';
+  document.getElementById('quiz3-options').style.display = 'none';
 };
 
-// Tema: oscuro/claro (opcional, por defecto oscuro)
-document.getElementById('theme-btn').onclick = () => {
-  document.body.classList.toggle('light');
-};
-
-// Footer year
-document.getElementById('year').textContent = new Date().getFullYear();
-
-// Atajos globales
-document.addEventListener('keydown', keyHandler);
-
-// Cargar bancos al inicio
+// Cargar bancos
 loadQuestions();
