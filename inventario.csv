@@ -1,0 +1,161 @@
+categoria,archivo,nombre_visible,url
+Reglamentarias,Reglamentarias\Pare.png,Pare,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr01_pare.png
+Reglamentarias,Reglamentarias\Ceda El Paso.png,Ceda El Paso,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr02_ceda_el_paso.png
+Reglamentarias,Reglamentarias\Siga De Frente.png,Siga De Frente,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr03_siga_de_frente.png
+Reglamentarias,Reglamentarias\No Pase.png,No Pase,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr04_no_pase.png
+Reglamentarias,Reglamentarias\Giro Izquierda.png,Giro Izquierda,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr05_giro_izquierda.png
+Reglamentarias,Reglamentarias\Giro Derecha.png,Giro Derecha,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr06_giro_derecha.png
+Reglamentarias,Reglamentarias\Prohibido Girar Izquierda.png,Prohibido Girar Izquierda,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr06_prohibido_girar_izquierda.png
+Reglamentarias,Reglamentarias\Prohibido Girar Derecha.png,Prohibido Girar Derecha,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr08_prohibido_girar_derecha.png
+Reglamentarias,Reglamentarias\Prohibido Girar En U.png,Prohibido Girar En U,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr10_prohibido_girar_en_u.png
+Reglamentarias,Reglamentarias\Doble Via.png,Doble Via,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr11_doble_via.png
+Reglamentarias,Reglamentarias\Tres Carriles Uno Contraflujo.png,Tres Carriles Uno Contraflujo,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr12_tres_carriles_uno_contraflujo.png
+Reglamentarias,Reglamentarias\Tres Carriles Dos Contraflujo.png,Tres Carriles Dos Contraflujo,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr13_tres_carriles_dos_contraflujo.png
+Reglamentarias,Reglamentarias\Phohibido Cambio Calzada.png,Phohibido Cambio Calzada,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr14_phohibido_cambio_calzada.png
+Reglamentarias,Reglamentarias\Circulacion Prohibida Automotores.png,Circulacion Prohibida Automotores,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr16_circulacion_prohibida_automotores.png
+Reglamentarias,Reglamentarias\Vehiculos Pesados Derecha.png,Vehiculos Pesados Derecha,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr17_vehiculos_pesados_derecha.png
+Reglamentarias,Reglamentarias\Prohibida Vehiculos Carga.png,Prohibida Vehiculos Carga,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr18_prohibida_vehiculos_carga.png
+Reglamentarias,Reglamentarias\Peatones Izquierda.png,Peatones Izquierda,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr19_peatones_izquierda.png
+Reglamentarias,Reglamentarias\Circulacion Prohibida Peatones.png,Circulacion Prohibida Peatones,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr20_circulacion_prohibida_peatones.png
+Reglamentarias,Reglamentarias\Prohibicion Cabalgaduras.png,Prohibicion Cabalgaduras,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr21_prohibicion_cabalgaduras.png
+Reglamentarias,Reglamentarias\Prohibida Bicicletas.png,Prohibida Bicicletas,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr22_prohibida_bicicletas.png
+Reglamentarias,Reglamentarias\Circulacion Prohibida Motocicletas.png,Circulacion Prohibida Motocicletas,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr23_circulacion_prohibida_motocicletas.png
+Reglamentarias,Reglamentarias\Circulacion Prohibida Maquinaria.png,Circulacion Prohibida Maquinaria,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr24_circulacion_prohibida_maquinaria.png
+Reglamentarias,Reglamentarias\Circulacion Prohibida Traccion Animal.png,Circulacion Prohibida Traccion Animal,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr25_circulacion_prohibida_traccion_animal.png
+Reglamentarias,Reglamentarias\Prohibido Adelantar.png,Prohibido Adelantar,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr26_prohibido_adelantar.png
+Reglamentarias,Reglamentarias\Prohibido Parquear.png,Prohibido Parquear,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr28_prohibido_parquear.png
+Reglamentarias,Reglamentarias\No Parquear Ni Detenerse.png,No Parquear Ni Detenerse,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr28A_no_parquear_ni_detenerse.png
+Reglamentarias,Reglamentarias\Prohibido Pitar.png,Prohibido Pitar,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr29_prohibido_pitar.png
+Reglamentarias,Reglamentarias\Velocidad Maxima.png,Velocidad Maxima,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr30_velocidad_maxima.png
+Reglamentarias,Reglamentarias\Peso Maximo Permitido.png,Peso Maximo Permitido,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr31_peso_maximo_permitido.png
+Reglamentarias,Reglamentarias\Altura Maxima Permitida.png,Altura Maxima Permitida,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr32_altura_maxima_permitida.png
+Reglamentarias,Reglamentarias\Ancho Maximo.png,Ancho Maximo,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr33_ancho_maximo.png
+Reglamentarias,Reglamentarias\Estacionamiento Taxi.png,Estacionamiento Taxi,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr34_estacionamiento_taxi.png
+Reglamentarias,Reglamentarias\Circulacion Luces Bajas.png,Circulacion Luces Bajas,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr35_circulacion_luces_bajas.png
+Reglamentarias,Reglamentarias\Reten.png,Reten,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr36_reten.png
+Reglamentarias,Reglamentarias\Ciclorruta.png,Ciclorruta,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr37_ciclorruta.png
+Reglamentarias,Reglamentarias\Sentido Unico.png,Sentido Unico,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr38_sentido_unico.png
+Reglamentarias,Reglamentarias\Sentido Doble.png,Sentido Doble,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr39_sentido_doble.png
+Reglamentarias,Reglamentarias\Paradero.png,Paradero,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr40_paradero.png
+Reglamentarias,Reglamentarias\Prohibido Dejar Recoger Pasajeros.png,Prohibido Dejar Recoger Pasajeros,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr41_prohibido_dejar_recoger_pasajeros.png
+Reglamentarias,Reglamentarias\Zona Carga.png,Zona Carga,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr42_zona_carga.png
+Reglamentarias,Reglamentarias\Prohibido Carga.png,Prohibido Carga,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr43_prohibido_carga.png
+Reglamentarias,Reglamentarias\Espaciamiento.png,Espaciamiento,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr44_espaciamiento.png
+Reglamentarias,Reglamentarias\Separador Izquierda.png,Separador Izquierda,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr45_separador_izquierda.png
+Reglamentarias,Reglamentarias\Separador Derecha.png,Separador Derecha,https://practicatest.co/static/img/co/temario/senales_reglamentarias/sr46_separador_derecha.png
+Preventivas,Preventivas\CURVA PELIGROSA A LA IZQUIERDA.png,CURVA PELIGROSA A LA IZQUIERDA,https://practicatest.co/static/img/co/temario/senales_preventivas/sp01_curva_peligrosa_izquierda.png
+Preventivas,Preventivas\CURVA PELIGROSA A LA DERECHA.png,CURVA PELIGROSA A LA DERECHA,https://practicatest.co/static/img/co/temario/senales_preventivas/sp02_curva_peligrosa_derecha.png
+Preventivas,Preventivas\Curva Pronunciada Izquierda.png,Curva Pronunciada Izquierda,https://practicatest.co/static/img/co/temario/senales_preventivas/sp03_curva_pronunciada_izquierda.png
+Preventivas,Preventivas\Curva Pronunciada Derecha.png,Curva Pronunciada Derecha,https://practicatest.co/static/img/co/temario/senales_preventivas/sp04_curva_pronunciada_derecha.png
+Preventivas,Preventivas\Contracurva Derecha.png,Contracurva Derecha,https://practicatest.co/static/img/co/temario/senales_preventivas/sp05_contracurva_derecha.png
+Preventivas,Preventivas\Contracurva Izquierda.png,Contracurva Izquierda,https://practicatest.co/static/img/co/temario/senales_preventivas/sp06_contracurva_izquierda.png
+Preventivas,Preventivas\Curva Sucesiva Derecha.png,Curva Sucesiva Derecha,https://practicatest.co/static/img/co/temario/senales_preventivas/sp07_curva_sucesiva_derecha.png
+Preventivas,Preventivas\Curva Sucesiva Izquierda.png,Curva Sucesiva Izquierda,https://practicatest.co/static/img/co/temario/senales_preventivas/sp08_curva_sucesiva_izquierda.png
+Preventivas,Preventivas\Contracurva Pronunciada Izquierda.png,Contracurva Pronunciada Izquierda,https://practicatest.co/static/img/co/temario/senales_preventivas/sp09_contracurva_pronunciada_izquierda.png
+Preventivas,Preventivas\Contracurva Pronunciada Derecha.png,Contracurva Pronunciada Derecha,https://practicatest.co/static/img/co/temario/senales_preventivas/sp10_contracurva_pronunciada_derecha.png
+Preventivas,Preventivas\Interseccion Vias.png,Interseccion Vias,https://practicatest.co/static/img/co/temario/senales_preventivas/sp11_interseccion_vias.png
+Preventivas,Preventivas\Via Lateral Izquierda.png,Via Lateral Izquierda,https://practicatest.co/static/img/co/temario/senales_preventivas/sp12_via_lateral_izquierda.png
+Preventivas,Preventivas\Via Lateral Derecha.png,Via Lateral Derecha,https://practicatest.co/static/img/co/temario/senales_preventivas/sp13_via_lateral_derecha.png
+Preventivas,Preventivas\Bifuracion En T.png,Bifuracion En T,https://practicatest.co/static/img/co/temario/senales_preventivas/sp14_bifuracion_en_t.png
+Preventivas,Preventivas\Bifucacion En Y.png,Bifucacion En Y,https://practicatest.co/static/img/co/temario/senales_preventivas/sp15_bifucacion_en_y.png
+Preventivas,Preventivas\Bifuracion Izquierda.png,Bifuracion Izquierda,https://practicatest.co/static/img/co/temario/senales_preventivas/sp16_bifuracion_izquierda.png
+Preventivas,Preventivas\Bifuracion Derecha.png,Bifuracion Derecha,https://practicatest.co/static/img/co/temario/senales_preventivas/sp17_bifuracion_derecha.png
+Preventivas,Preventivas\Bifuracion Escalonada Izquierda.png,Bifuracion Escalonada Izquierda,https://practicatest.co/static/img/co/temario/senales_preventivas/sp18_bifuracion_escalonada_izquierda.png
+Preventivas,Preventivas\Bifuracion Escalonada Derecha.png,Bifuracion Escalonada Derecha,https://practicatest.co/static/img/co/temario/senales_preventivas/sp19_bifuracion_escalonada_derecha.png
+Preventivas,Preventivas\Glorieta.png,Glorieta,https://practicatest.co/static/img/co/temario/senales_preventivas/sp20_glorieta.png
+Preventivas,Preventivas\Incorporacion Izquierda.png,Incorporacion Izquierda,https://practicatest.co/static/img/co/temario/senales_preventivas/sp21_incorporacion_izquierda.png
+Preventivas,Preventivas\Incorporacion Derecha.png,Incorporacion Derecha,https://practicatest.co/static/img/co/temario/senales_preventivas/sp22_incorporacion_derecha.png
+Preventivas,Preventivas\Semaforo.png,Semaforo,https://practicatest.co/static/img/co/temario/senales_preventivas/sp23_semaforo.png
+Preventivas,Preventivas\Superficie Rizada.png,Superficie Rizada,https://practicatest.co/static/img/co/temario/senales_preventivas/sp24_superficie_rizada.png
+Preventivas,Preventivas\Resalto.png,Resalto,https://practicatest.co/static/img/co/temario/senales_preventivas/sp25_resalto.png
+Preventivas,Preventivas\Depresion.png,Depresion,https://practicatest.co/static/img/co/temario/senales_preventivas/sp26_depresion.png
+Preventivas,Preventivas\Descenso Peligroso.png,Descenso Peligroso,https://practicatest.co/static/img/co/temario/senales_preventivas/sp27_descenso_peligroso.png
+Preventivas,Preventivas\Reduccion Simetrica Via.png,Reduccion Simetrica Via,https://practicatest.co/static/img/co/temario/senales_preventivas/sp28_reduccion_simetrica_via.png
+Preventivas,Preventivas\Prevencion De Pare.png,Prevencion De Pare,https://practicatest.co/static/img/co/temario/senales_preventivas/sp29_prevencion_de_pare.png
+Preventivas,Preventivas\Reduccion Calzada Izquierda.png,Reduccion Calzada Izquierda,https://practicatest.co/static/img/co/temario/senales_preventivas/sp30_reduccion_calzada_izquierda.png
+Preventivas,Preventivas\Reduccion Asimetrica Derecha.png,Reduccion Asimetrica Derecha,https://practicatest.co/static/img/co/temario/senales_preventivas/sp31_reduccion_asimetrica_derecha.png
+Preventivas,Preventivas\Ensanche Via.png,Ensanche Via,https://practicatest.co/static/img/co/temario/senales_preventivas/sp32_ensanche_via.png
+Preventivas,Preventivas\Prevencion Ceda Paso.png,Prevencion Ceda Paso,https://practicatest.co/static/img/co/temario/senales_preventivas/sp33_prevencion_ceda_paso.png
+Preventivas,Preventivas\Ensanche Asimetrico Izquierda.png,Ensanche Asimetrico Izquierda,https://practicatest.co/static/img/co/temario/senales_preventivas/sp34_ensanche_asimetrico_izquierda.png
+Preventivas,Preventivas\Ensanche Asimetrico Derecha.png,Ensanche Asimetrico Derecha,https://practicatest.co/static/img/co/temario/senales_preventivas/sp35_ensanche_asimetrico_derecha.png
+Preventivas,Preventivas\Puente Angosto.png,Puente Angosto,https://practicatest.co/static/img/co/temario/senales_preventivas/sp36_puente_angosto.png
+Preventivas,Preventivas\Tunel.png,Tunel,https://practicatest.co/static/img/co/temario/senales_preventivas/sp37_tunel.png
+Preventivas,Preventivas\Peso Maximo Permitido.png,Peso Maximo Permitido,https://practicatest.co/static/img/co/temario/senales_preventivas/sp38_peso_maximo_permitido.png
+Preventivas,Preventivas\Circulacion Dos Sentidos.png,Circulacion Dos Sentidos,https://practicatest.co/static/img/co/temario/senales_preventivas/sp39_circulacion_dos_sentidos.png
+Preventivas,Preventivas\Flecha Direccion.png,Flecha Direccion,https://practicatest.co/static/img/co/temario/senales_preventivas/sp40_flecha_direccion.png
+Preventivas,Preventivas\Tres Carriles Uno Contraflujo.png,Tres Carriles Uno Contraflujo,https://practicatest.co/static/img/co/temario/senales_preventivas/sp41_tres_carriles_uno_contraflujo.png
+Preventivas,Preventivas\Zona Derrumbe.png,Zona Derrumbe,https://practicatest.co/static/img/co/temario/senales_preventivas/sp42_zona_derrumbe.png
+Preventivas,Preventivas\Tres Carriles Multisentido.png,Tres Carriles Multisentido,https://practicatest.co/static/img/co/temario/senales_preventivas/sp43_tres_carriles_multisentido.png
+Preventivas,Preventivas\Superficie Deslizante.png,Superficie Deslizante,https://practicatest.co/static/img/co/temario/senales_preventivas/sp44_superficie_deslizante.png
+Preventivas,Preventivas\Maquinaria Agricola.png,Maquinaria Agricola,https://practicatest.co/static/img/co/temario/senales_preventivas/sp45_maquinaria_agricola.png
+Preventivas,Preventivas\Peatones Via.png,Peatones Via,https://practicatest.co/static/img/co/temario/senales_preventivas/sp46_peatones_via.png
+Preventivas,Preventivas\Zona Escolar.png,Zona Escolar,https://practicatest.co/static/img/co/temario/senales_preventivas/sp47_zona_escolar.png
+Preventivas,Preventivas\Zona Deportiva.png,Zona Deportiva,https://practicatest.co/static/img/co/temario/senales_preventivas/sp48_zona_deportiva.png
+Preventivas,Preventivas\Animales Via.png,Animales Via,https://practicatest.co/static/img/co/temario/senales_preventivas/sp49_animales_via.png
+Preventivas,Preventivas\Altura Libre.png,Altura Libre,https://practicatest.co/static/img/co/temario/senales_preventivas/sp50_altura_libre.png
+Preventivas,Preventivas\Ancho Libre.png,Ancho Libre,https://practicatest.co/static/img/co/temario/senales_preventivas/sp51_ancho_libre.png
+Preventivas,Preventivas\Cruce Nivel Ferrocaril.png,Cruce Nivel Ferrocaril,https://practicatest.co/static/img/co/temario/senales_preventivas/sp52_cruce_nivel_ferrocaril.png
+Preventivas,Preventivas\Barrera.png,Barrera,https://practicatest.co/static/img/co/temario/senales_preventivas/sp53_barrera.png
+Preventivas,Preventivas\Paso A Nivel.png,Paso A Nivel,https://practicatest.co/static/img/co/temario/senales_preventivas/sp54_paso_a_nivel.png
+Preventivas,Preventivas\Iniciacion Via Con Separador Dos Sentidos.png,Iniciacion Via Con Separador Dos Sentidos,https://practicatest.co/static/img/co/temario/senales_preventivas/sp55_iniciacion_via_con_separador_dos_sentidos.png
+Preventivas,Preventivas\Iniciacion Via Con Separador Uno Sentido.png,Iniciacion Via Con Separador Uno Sentido,https://practicatest.co/static/img/co/temario/senales_preventivas/sp55A_iniciacion_via_con_separador_uno_sentido.png
+Preventivas,Preventivas\Terminacion Via Con Separador.png,Terminacion Via Con Separador,https://practicatest.co/static/img/co/temario/senales_preventivas/sp56_terminacion_via_con_separador.png
+Preventivas,Preventivas\Terminacion Via Con Separador.png,Terminacion Via Con Separador,https://practicatest.co/static/img/co/temario/senales_preventivas/sp56A_terminacion_via_con_separador.png
+Preventivas,Preventivas\Final Pavimento.png,Final Pavimento,https://practicatest.co/static/img/co/temario/senales_preventivas/sp57_final_pavimento.png
+Preventivas,Preventivas\Ciclistas En Via.png,Ciclistas En Via,https://practicatest.co/static/img/co/temario/senales_preventivas/sp59_ciclistas_en_via.png
+Preventivas,Preventivas\Riesgo Acidentes.png,Riesgo Acidentes,https://practicatest.co/static/img/co/temario/senales_preventivas/sp67_riesgo_acidentes.png
+Informativas,Informativas\Ruta Nacional.png,Ruta Nacional,https://practicatest.co/static/img/co/temario/senales_informativas/si01_ruta_nacional.png
+Informativas,Informativas\Ruta Departamental.png,Ruta Departamental,https://practicatest.co/static/img/co/temario/senales_informativas/si01A_ruta_departamental.png
+Informativas,Informativas\Ruta Panamericana.png,Ruta Panamericana,https://practicatest.co/static/img/co/temario/senales_informativas/si02_ruta_panamericana.png
+Informativas,Informativas\Ruta Marginal Selva.png,Ruta Marginal Selva,https://practicatest.co/static/img/co/temario/senales_informativas/si03_ruta_marginal_selva.png
+Informativas,Informativas\Poste Referencia.png,Poste Referencia,https://practicatest.co/static/img/co/temario/senales_informativas/si04_poste_referencia.png
+Informativas,Informativas\Informacion Previa Destino.png,Informacion Previa Destino,https://practicatest.co/static/img/co/temario/senales_informativas/si05_informacion_previa_destino.png
+Informativas,Informativas\Informativa Decision Destino.png,Informativa Decision Destino,https://practicatest.co/static/img/co/temario/senales_informativas/si05A_informativa_decision_destino.png
+Informativas,Informativas\Croquis.png,Croquis,https://practicatest.co/static/img/co/temario/senales_informativas/si05B_croquis.png
+Informativas,Informativas\Descripcion Giros.png,Descripcion Giros,https://practicatest.co/static/img/co/temario/senales_informativas/si05C_descripcion_giros.png
+Informativas,Informativas\Confirmativa Destino.png,Confirmativa Destino,https://practicatest.co/static/img/co/temario/senales_informativas/si06_confirmativa_destino.png
+Informativas,Informativas\Sitio Parqueo.png,Sitio Parqueo,https://practicatest.co/static/img/co/temario/senales_informativas/si07_sitio_parqueo.png
+Informativas,Informativas\Zonas Especiales Parqueo.png,Zonas Especiales Parqueo,https://practicatest.co/static/img/co/temario/senales_informativas/si07A_zonas_especiales_parqueo.png
+Informativas,Informativas\Paradero Buses.png,Paradero Buses,https://practicatest.co/static/img/co/temario/senales_informativas/si08_paradero_buses.png
+Informativas,Informativas\Estacionamiento Taxi.png,Estacionamiento Taxi,https://practicatest.co/static/img/co/temario/senales_informativas/si09_estacionamiento_taxi.png
+Informativas,Informativas\Transbordador.png,Transbordador,https://practicatest.co/static/img/co/temario/senales_informativas/si10_transbordador.png
+Informativas,Informativas\Via Ciclistas.png,Via Ciclistas,https://practicatest.co/static/img/co/temario/senales_informativas/si11_via_ciclistas.png
+Informativas,Informativas\Monumento.png,Monumento,https://practicatest.co/static/img/co/temario/senales_informativas/si12_monumento.png
+Informativas,Informativas\Zona Militar.png,Zona Militar,https://practicatest.co/static/img/co/temario/senales_informativas/si13_zona_militar.png
+Informativas,Informativas\Aeropuerto.png,Aeropuerto,https://practicatest.co/static/img/co/temario/senales_informativas/si14_aeropuerto.png
+Informativas,Informativas\Hospedaje.png,Hospedaje,https://practicatest.co/static/img/co/temario/senales_informativas/si15_hospedaje.png
+Informativas,Informativas\Primeros Auxilios.png,Primeros Auxilios,https://practicatest.co/static/img/co/temario/senales_informativas/si16_primeros_auxilios.png
+Informativas,Informativas\Servicios Sanitarios.png,Servicios Sanitarios,https://practicatest.co/static/img/co/temario/senales_informativas/si17_servicios_sanitarios.png
+Informativas,Informativas\Restaurante.png,Restaurante,https://practicatest.co/static/img/co/temario/senales_informativas/si18_restaurante.png
+Informativas,Informativas\Telefono.png,Telefono,https://practicatest.co/static/img/co/temario/senales_informativas/si19_telefono.png
+Informativas,Informativas\Iglesia.png,Iglesia,https://practicatest.co/static/img/co/temario/senales_informativas/si20_iglesia.png
+Informativas,Informativas\Taller.png,Taller,https://practicatest.co/static/img/co/temario/senales_informativas/si21_taller.png
+Informativas,Informativas\Estacion De Servicio.png,Estacion De Servicio,https://practicatest.co/static/img/co/temario/senales_informativas/si22_estacion_de_servicio.png
+Informativas,Informativas\Montallantas.png,Montallantas,https://practicatest.co/static/img/co/temario/senales_informativas/si23_montallantas.png
+Informativas,Informativas\Cruce Peatonal.png,Cruce Peatonal,https://practicatest.co/static/img/co/temario/senales_informativas/si24_cruce_peatonal.png
+Informativas,Informativas\Discapacitados.png,Discapacitados,https://practicatest.co/static/img/co/temario/senales_informativas/si25_discapacitados.png
+Informativas,Informativas\Nomenclatura Urbana.png,Nomenclatura Urbana,https://practicatest.co/static/img/co/temario/senales_informativas/si26_nomenclatura_urbana.png
+Informativas,Informativas\Seguridad Vial.png,Seguridad Vial,https://practicatest.co/static/img/co/temario/senales_informativas/si27_seguridad_vial.png
+Informativas,Informativas\Informacion Geografica.png,Informacion Geografica,https://practicatest.co/static/img/co/temario/senales_informativas/si28_informacion_geografica.png
+Informativas,Informativas\Transporte Ferroviario.png,Transporte Ferroviario,https://practicatest.co/static/img/co/temario/senales_informativas/si29_transporte_ferroviario.png
+Informativas,Informativas\Transporte Masivo.png,Transporte Masivo,https://practicatest.co/static/img/co/temario/senales_informativas/si30_transporte_masivo.png
+Informativas,Informativas\Zona Recreativa.png,Zona Recreativa,https://practicatest.co/static/img/co/temario/senales_informativas/si31_zona_recreativa.png
+Informativas,Informativas\Cambio Moneda.png,Cambio Moneda,https://practicatest.co/static/img/co/temario/senales_informativas/si32_cambio_moneda.png
+Informativas,Informativas\Zona Camping.png,Zona Camping,https://practicatest.co/static/img/co/temario/senales_informativas/si33_zona_camping.png
+Informativas,Informativas\Playa.png,Playa,https://practicatest.co/static/img/co/temario/senales_informativas/si34_playa.png
+Informativas,Informativas\Museo.png,Museo,https://practicatest.co/static/img/co/temario/senales_informativas/si35_museo.png
+Informativas,Informativas\Muelle.png,Muelle,https://practicatest.co/static/img/co/temario/senales_informativas/si36_muelle.png
+Informativas,Informativas\Zoologico.png,Zoologico,https://practicatest.co/static/img/co/temario/senales_informativas/si37_zoologico.png
+Informativas,Informativas\Informacion Turistica.png,Informacion Turistica,https://practicatest.co/static/img/co/temario/senales_informativas/si38_informacion_turistica.png
+Informativas,Informativas\Artesanias.png,Artesanias,https://practicatest.co/static/img/co/temario/senales_informativas/si39_artesanias.png
+Informativas,Informativas\Bienes Arqueologicos.png,Bienes Arqueologicos,https://practicatest.co/static/img/co/temario/senales_informativas/si40_bienes_arqueologicos.png
+Informativas,Informativas\Lago.png,Lago,https://practicatest.co/static/img/co/temario/senales_informativas/si41_lago.png
+Informativas,Informativas\Polideportivo.png,Polideportivo,https://practicatest.co/static/img/co/temario/senales_informativas/si42_polideportivo.png
+Informativas,Informativas\Mirador.png,Mirador,https://practicatest.co/static/img/co/temario/senales_informativas/si43_mirador.png
+Informativas,Informativas\Alquiler Autos.png,Alquiler Autos,https://practicatest.co/static/img/co/temario/senales_informativas/si44_alquiler_autos.png
+Informativas,Informativas\Atractivo Natural.png,Atractivo Natural,https://practicatest.co/static/img/co/temario/senales_informativas/si45_atractivo_natural.png
+Informativas,Informativas\Volcan.png,Volcan,https://practicatest.co/static/img/co/temario/senales_informativas/si46_volcan.png
+Informativas,Informativas\Nevado.png,Nevado,https://practicatest.co/static/img/co/temario/senales_informativas/si47_nevado.png
+Informativas,Informativas\Termal.png,Termal,https://practicatest.co/static/img/co/temario/senales_informativas/si48_termal.png
+Informativas,Informativas\Cascada.png,Cascada,https://practicatest.co/static/img/co/temario/senales_informativas/si49_cascada.png
+Informativas,Informativas\Pesca.png,Pesca,https://practicatest.co/static/img/co/temario/senales_informativas/si50_pesca.png
