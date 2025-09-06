@@ -1,0 +1,1653 @@
+{
+  "quiz1": [
+    {
+      "question": "CUAL DE LAS SIGUIENTES AFIRMACIONES ES LA CORRECTA?",
+      "options": [
+        "a. El cinturón de seguridaed disminuye las posibilidades de sufrir lesiones en un accidente.",
+        "b. Para quienes viajan en el asiento trasero de un automóvil, el cinturón de seguridad no les presta utilidad.",
+        "c. Usar el cinturón de seguridad es más necesario cuando se conduce en carretera."
+      ],
+      "correct": "a. El cinturón de seguridaed disminuye las posibilidades de sufrir lesiones en un accidente."
+    },
+    {
+      "question": "LA LICENCIA DE CONDUCCION ES",
+      "options": [
+        "a. Un doc. Publico que identifica un vehículo automotor, acredita su propiedad e identifica su propietario.",
+        "b. Es un documento público de carácter personal, e intransferible expedido por una autoridad competente, el cual autoriza a una persona para la conducción de vehículos con validez en todo el territorio nacional.",
+        "c. Un doc. Publico con validez, en todo el territorio nacional, el cual certifica las condiciones técnicas y mecánicas de un vehículo."
+      ],
+      "correct": "b. Es un documento público de carácter personal, e intransferible expedido por una autoridad competente, el cual autoriza a una persona para la conducción de vehículos con validez en todo el territorio nacional."
+    },
+    {
+      "question": "AL ADELANTAR ANIMALES QUE VAN POR EL CAMINO USTED NO DEBERIA HACER.",
+      "options": [
+        "a. Acelerar el motor o tocar la bocina",
+        "b. Cambiar a una marcha más baja",
+        "c. Usar los señalizadores de viraje"
+      ],
+      "correct": "a. Acelerar el motor o tocar la bocina"
+    },
+    {
+      "question": "QUE PUEDE ESPERARSE DE UN CONDUCTOR IMPULSIVO",
+      "options": [
+        "a. Que reaccione adecuadamente ante cualquier imprevisto",
+        "b. Que actúe sin pensar en las consecuencias",
+        "c. Que conduzca con excesiva precaución"
+      ],
+      "correct": "b. Que actúe sin pensar en las consecuencias"
+    },
+    {
+      "question": "DE CUAL MANERA PUEDE USTED CONTRIBUIR CON MAYOR EFICACIA A LA SEGURIDAD DE TRANSITO",
+      "options": [
+        "a. Manteniendo su vehículo en condiciones optimas",
+        "b. Evitando conducir durante la noche",
+        "c. Conduciendo a la defensiva."
+      ],
+      "correct": "c. Conduciendo a la defensiva."
+    },
+    {
+      "question": "CUAL DE LAS SIGUIENTES AFIRMACIONES SON CORRECTAS EN CUANTO A LA CAPACIDAD DE REACCION DE LOS CONDUCTORES JOVENES INEXPERTOS, COMPARADOS CON LOS CONDUCTORES EXPERIMENTADOS CUYA EDAD FLUCTUA ENTRE 35 Y 50 AÑOS.",
+      "options": [
+        "a. Ante situaciones complejas los conductores jóvenes reaccionan más rápido.",
+        "b. Los conductores jóvenes siempre actúan con mayor rapidez.",
+        "c. En situaciones reales, que requieren reacciones complejas, los conductores experimentados, reaccionan en un tiempo más corto que los jóvenes inexpertos."
+      ],
+      "correct": "c. En situaciones reales, que requieren reacciones complejas, los conductores experimentados, reaccionan en un tiempo más corto que los jóvenes inexpertos."
+    },
+    {
+      "question": "SI USTED CHOCA CONTRA UN AUTOMOVIL ESTACIONADO Y NO PUEDE LOCALIZAR AL PROPIETARIO QUE DEBE HACER,",
+      "options": [
+        "a. Alejarse del lugar.",
+        "b. Solicitar la presencia de la autoridad competente.",
+        "c. Esperar a que aparezca el propietario."
+      ],
+      "correct": "b. Solicitar la presencia de la autoridad competente."
+    },
+    {
+      "question": "DURANTE LA CIRCULACION, EL USO DE TELEFONIA CELULAR ESTA PROHIBIDA PARA EL CONDUCTOR PORQUE EN TANTO FACTOR DE RIESGO",
+      "options": [
+        "a. Disminuye la capacidad de atención y limita el sentido de audición aumentando el tiempo de reacción.",
+        "b. Debido a que el conductor debe tener ambas manos en la acción de conducir, el equipo celular reducirá la capacidad para maniobrar.",
+        "c. Ambas respuestas son correctas."
+      ],
+      "correct": "c. Ambas respuestas son correctas."
+    },
+    {
+      "question": "COMO AFECTA EL CONSUMO DE ALCOHOL EN SU CONDUCCION.",
+      "options": [
+        "a. Acelera sus reacciones",
+        "b. Mejora su coordinación",
+        "c. Reduce su concentración"
+      ],
+      "correct": "c. Reduce su concentración"
+    },
+    {
+      "question": "SON HERRAMIENTAS BASICAS DEL KIT DE CARRETERA",
+      "options": [
+        "a. Gato, cruceta, conos, lámpara, tacos y botiquín",
+        "b. Llanta de repuesto, destornillador, alicate, extintor",
+        "c. A y B son correctas."
+      ],
+      "correct": "c. A y B son correctas."
+    },
+    {
+      "question": "EN QUE CONDICIONES DEBE ESTAR LA LLANTA DE REPUESTO",
+      "options": [
+        "a. En buen estado",
+        "b. Redibujada o arreglada",
+        "c. Reencauchada y lisa"
+      ],
+      "correct": "a. En buen estado"
+    },
+    {
+      "question": "POR CUAL DE LAS SIGUIENTES SITUACIONES SE PUEDE OCASIONAR EL SOBRE CALENTAMIENTO DE UN MOTOR DE UN AUTO.",
+      "options": [
+        "a. Fugas de refrigerantes en mangueras, radiador o bomba de agua",
+        "b. Ventilador del radiador en malas condiciones",
+        "c. Ambas son correctas"
+      ],
+      "correct": "c. Ambas son correctas"
+    },
+    {
+      "question": "LA PROFUNDIDAD DE LOS SURCOS DE LOS NEUMÁTICOS DE UN AUTOMÓVIL NO DEBERÍA SER INFERIOR A.",
+      "options": [
+        "a. 5,0 mm.",
+        "b. 1,6 mm.",
+        "c. 1,2 mm."
+      ],
+      "correct": "b. 1,6 mm."
+    },
+    {
+      "question": "QUIEN TIENE LA OBLIGACION DE CONOCER LAS LEYES DE TRANSITO Y CUMPLIR CON LAS MISMAS.",
+      "options": [
+        "a. Todos los usuarios de la vía.",
+        "b. Solo los peatones.",
+        "c. Solo el conductor del vehículo."
+      ],
+      "correct": "a. Todos los usuarios de la vía."
+    },
+    {
+      "question": "CUAL DE ESTOS LIQUIDOS, EN EL CASO DE ESTAR A UN NIVEL BAJO, PODRIA CAUSAR UN ACCIDENTE",
+      "options": [
+        "a. El líquido de frenos",
+        "b. El agua de la batería",
+        "c. El líquido refrigerante"
+      ],
+      "correct": "a. El líquido de frenos"
+    },
+    {
+      "question": "EN CUAL DE LOS SIGUIENTES CASOS USTED ESTA COMETIENDO UNA INFRACCION, Y PUEDE SER SANCIONADO CON MULTA SEGÚN EL CODIGO NACIONAL DE TRANSITO.",
+      "options": [
+        "a. Estacionar un vehículo en sitios prohibidos.",
+        "b. No portar los documentos reglamentarios.",
+        "c. Ambas son correctas."
+      ],
+      "correct": "c. Ambas son correctas."
+    },
+    {
+      "question": "CUANDO UN VEHICULO FUE INMOVILIZADO Y LLEVADO A LOS PATIOS AUTORIZADOS SALE DE ESTOS CON FALLAS O FALTA ALGUN ELEMENTO QUE ANTES SI CONTENIA AL MOMENTO DE INGRESAR, QUIEN DEBERA RESPONDER Y PAGAR LOS DAÑOS CAUSADOS",
+      "options": [
+        "a. El propietario del vehículo.",
+        "b. La autoridad de tránsito.",
+        "c. El propietario o administrador del parqueadero."
+      ],
+      "correct": "c. El propietario o administrador del parqueadero."
+    },
+    {
+      "question": "USTED VA DESCENDIENDO UNA PENDIENTE MUY LARGA, ¿Qué DEBE HACER PARA AYUDAR A CONTROLAR LA VELOCIDAD DE SU VEHICULO?",
+      "options": [
+        "a. Tomar el manubrio firmemente.",
+        "b. Seleccionar un cambio de velocidad más bajo.",
+        "c. Presionar el pedal de embrague."
+      ],
+      "correct": "b. Seleccionar un cambio de velocidad más bajo."
+    },
+    {
+      "question": "EN UN PAVIMENTO MOJADO, ¿INFLUYE EL ESTADO DE LOS NEUMÁTICOS EN LA DISTANCIA DE FRENADO DE SU VEHÍCULO?",
+      "options": [
+        "a. No, porque una vez se accione el freno la distancia de frenado es la misma para cada vehículo.",
+        "b. Si, a mayor desgaste de los neumáticos, menor es dicha distancia.",
+        "c. Sí, porque a mayor o menor desgaste de los neumáticos, entre otros factores, determinara que dicha distancia sea mayor o menor."
+      ],
+      "correct": "c. Sí, porque a mayor o menor desgaste de los neumáticos, entre otros factores, determinara que dicha distancia sea mayor o menor."
+    },
+    {
+      "question": "QUE DEBE HACER UN CONDUCTOR SI SE ENCUENTRA EN LA VIA CON FORMACIONES DE TROPAS, DESFILES, PROCESIONES, ENTIERROS, ESTUDIANTES O ACTIVIDADES DEPORTIVAS.",
+      "options": [
+        "a. Conducir por zonas prohibidas.",
+        "b. Pedir permiso.",
+        "c. Respetar y esperar."
+      ],
+      "correct": "c. Respetar y esperar."
+    },
+    {
+      "question": "¿EN QUE SITUACIONES USTED PUEDE HACER USO DE LA BOCINA DE SU VEHICULO?",
+      "options": [
+        "a. Cuando cede a otro el derecho a la vía.",
+        "b. Cuando saluda a otros usuarios de la vía.",
+        "c. Cuando trata de prevenir a otros a cerca de un peligro."
+      ],
+      "correct": "c. Cuando trata de prevenir a otros a cerca de un peligro."
+    },
+    {
+      "question": "¿QUE CONSEJO DARIA USTED A UN CONDUCTOR QUE HA INGERIDO BEBIDAS ALCOHOLICAS EN UNA FIESTA?",
+      "options": [
+        "a. Que se vuelva a su casa en un taxi.",
+        "b. Que tome una taza de café cargado y luego conduzca a casa.",
+        "c. Que se vuelva a casa conduciendo lenta y cuidadosamente."
+      ],
+      "correct": "a. Que se vuelva a su casa en un taxi."
+    },
+    {
+      "question": "USTED VA SIGUIENDO UN AUTOMOVIL QUE ES CONDUCIDO POR UNA PERSONA DE LA TERCERA EDAD AVANZADA. ¿USTED QUE DEBERIA HACER?",
+      "options": [
+        "a. Dar por seguro que el conductor manejara muy mal.",
+        "b. Estar consciente de que las reacciones del conductor pueden no ser tan rápidas como las suyas.",
+        "c. Encender y apagar sus luces y adelantarlo."
+      ],
+      "correct": "b. Estar consciente de que las reacciones del conductor pueden no ser tan rápidas como las suyas."
+    },
+    {
+      "question": "SI VAMOS EN EL VEHICULO Y QUEREMOS TIRAR ALGO A LA BASURA ¿Qué HACEMOS?",
+      "options": [
+        "a. Lo tiramos por la ventanilla cuando estemos parados.",
+        "b. Lo tiramos por la ventanilla mientras estamos en marcha.",
+        "c. Guardamos la basura en el vehículo, para echarla en un contenedor cuando estemos parados."
+      ],
+      "correct": "c. Guardamos la basura en el vehículo, para echarla en un contenedor cuando estemos parados."
+    },
+    {
+      "question": "PORTAR ESTOS DOCUMENTOS AL DIA ES REQUISITO FUDAMENTAL PARA LA NO MULTA.",
+      "options": [
+        "a. Soat, licencia de tránsito, revisión técnico mecánica, licencia de conducción.",
+        "b. Seguro contra todo riesgos, factura del vehículo.",
+        "c. Permiso del propietario, soat, licencia de conducción."
+      ],
+      "correct": "a. Soat, licencia de tránsito, revisión técnico mecánica, licencia de conducción."
+    },
+    {
+      "question": "SI EN CASO DE EMERGENCIA UN CONDUCTOR DEBE HACER USO DE LAS SEÑALES CORPORALES PARA GIRAR A LA DERECHA DEBERA:",
+      "options": [
+        "a. Sacar el brazo izquierdo y extenderlo horizontalmente.",
+        "b. Sacar el brazo izquierdo formando una escuadra hacia abajo.",
+        "c. Sacar el brazo izquierdo formando una escuadra hacia arriba."
+      ],
+      "correct": "c. Sacar el brazo izquierdo formando una escuadra hacia arriba."
+    },
+    {
+      "question": "QUE SE ENTIENDE POR CONDUCIR A LA DEFENSIVA.",
+      "options": [
+        "a. Hacer valer sus derechos en todo momento.",
+        "b. Tomar en cuenta los posibles errores de los demás.",
+        "c. Hacer ver a los demás sus errores al conducir."
+      ],
+      "correct": "b. Tomar en cuenta los posibles errores de los demás."
+    },
+    {
+      "question": "FRANJA LONGITUDINAL DE LA VIA URBANA DESTINADA EXCLUSIVAMENTE A LA CIRCULACION DE PEATONES, UBICADA A LOS COSTADOS DE ESTAS.",
+      "options": [
+        "a. Berma.",
+        "b. Anden.",
+        "c. Corredor."
+      ],
+      "correct": "b. Anden."
+    },
+    {
+      "question": "ES LA PERSONA HABILITADA Y CAPACITADA TECNICA Y TEORICAMENTE PARA OPERAR UN VEHICULO.",
+      "options": [
+        "a. Instructor.",
+        "b. Conductor.",
+        "c. Agente de tránsito."
+      ],
+      "correct": "b. Conductor."
+    },
+    {
+      "question": "SI USTED SE ENCUENTRA CIRCULANDO CON SU VEHICULO EN DIAS DE LLUVIA DEBE:",
+      "options": [
+        "a. Superar el límite de velocidad.",
+        "b. Mantener las llantas en la vía disminuyendo la velocidad.",
+        "c. Acelerar para evitar que la lluvia lo sorprenda por mucho más tiempo en el camino."
+      ],
+      "correct": "b. Mantener las llantas en la vía disminuyendo la velocidad."
+    },
+    {
+      "question": "USTED VA POR UNA CALLE DE DOBLE SENTIDO DE CIRCULACIÓN, PARA VIRAR A LA IZQUIERDA, USTED DEBERIA UBICARSE EN:",
+      "options": [
+        "a. Lo más a la derecha posible de la línea central.",
+        "b. Justo a la izquierda de la línea del centro de la calzada.",
+        "c. Justo a la derecha de la línea del centro de la calzada."
+      ],
+      "correct": "b. Justo a la izquierda de la línea del centro de la calzada."
+    },
+    {
+      "question": "¿EN QUE MOMENTO ES OBLIGATORIO EL ENCENDIDO DE LAS LUCES DE FAROLAS O FRONTALES EN LOS VEHICULOS?",
+      "options": [
+        "a. En todo momento.",
+        "b. Al efectuar el estacionamiento.",
+        "c. Desde las 6:00 PM, hasta las 6:00 AM del día siguiente y cuando las condiciones sean adversas."
+      ],
+      "correct": "c. Desde las 6:00 PM, hasta las 6:00 AM del día siguiente y cuando las condiciones sean adversas."
+    },
+    {
+      "question": "EL ADELANTAMIENTO DEBE HACERSE POR:",
+      "options": [
+        "a. La derecha.",
+        "b. La izquierda.",
+        "c. Por cualquier pista."
+      ],
+      "correct": "b. La izquierda."
+    },
+    {
+      "question": "CONDUCIR UN VEHICULO EN ESTADO DE EMBRIAGUEZ SEGÚN LA RESOLUCION 3027 DEL 2010 ES CAUSAL DE:",
+      "options": [
+        "a. Inmovilización del vehículo, comparendo de 45 SDLV, suspensión de la licencia de conducción.",
+        "b. Inmovilización del vehículo, comparendo de 45 SDLV, suspensión de la licencia de conducción, curso de sensibilización,",
+        "c. Inmovilización del vehículo, comparendo de 45 SDLV, suspensión de la licencia de conducción, curso de sensibilización y en caso de ser reincidente se le cancela la licencia de conducción por 25 años."
+      ],
+      "correct": "a. Inmovilización del vehículo, comparendo de 45 SDLV, suspensión de la licencia de conducción."
+    },
+    {
+      "question": "SI USTED VA CONDUCIENDO UNA INTERSECCION CON SEMAFORO Y LA LUZ AMARILLA LE SORPRENDE JUSTO EN LA ZONA DE LA BOCA CALLE, USTED DEBE:",
+      "options": [
+        "a. Acelerar lo más rápido posible.",
+        "b. Frenar y luego cruzar.",
+        "c. Seguir la marcha porque se lo habilita."
+      ],
+      "correct": "c. Seguir la marcha porque se lo habilita."
+    },
+    {
+      "question": "CIRCULANDO EN VEHICULO DURANTE LA LLUVIA",
+      "options": [
+        "a. Reducirá el tráfico y por eso se puede ir a más rápido.",
+        "b. La conducción debe ser más prudente, movilizándose a velocidades bajas.",
+        "c. Aumentará la eficacia del sistema de frenado."
+      ],
+      "correct": "b. La conducción debe ser más prudente, movilizándose a velocidades bajas."
+    },
+    {
+      "question": "LA REVISION PREVENTIVA QUE SE LE DEBE HACER AL VEHICULO ES:",
+      "options": [
+        "a. Revisión de los niveles de aceite, agua de motor, agua limpia parabrisas, calibración de llantas",
+        "b. Medición de gasolina, agua limpia parabrisas.",
+        "c. Todas las anteriores."
+      ],
+      "correct": "c. Todas las anteriores."
+    },
+    {
+      "question": "¿QUE SANCION LE SERA IMPUESTA AL CONDUCTOR DE UN VEHICULO, QUE NO LLEVE CONSIGO LA LICENCIA DE CONDUCCIÓN O ESTA SE ENCUENTRE VENCIDA?",
+      "options": [
+        "a. 10 SMLDV.",
+        "b. 15 SMDLV.",
+        "c. 8 SMDLV."
+      ],
+      "correct": "c. 8 SMDLV."
+    },
+    {
+      "question": "EN QUE OCASIONES LA AUTORIDAD DE TRANSITO PODRA RETIRAR CON GRUA VEHICULOS DE LAS CALLES.",
+      "options": [
+        "a. Cuando el vehículo se encuentre estacionado en sitios prohibidos y su conductor no se encuentre cerca de su vehículo.",
+        "b. Cuando el vehículo se encuentra bloqueando una vía principal y su conductor no se encuentre cerca.",
+        "c. A y B son correctas."
+      ],
+      "correct": "c. A y B son correctas."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 40",
+      "options": [
+        "a. ciclo vía.",
+        "b. Prohibido circular en moto.",
+        "c. Prohibido circular en bicicleta."
+      ],
+      "correct": "c. Prohibido circular en bicicleta.",
+      "imageDesc": "Señal circular roja con una bicicleta tachada."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 41",
+      "options": [
+        "a. Permitido girar en U.",
+        "b. No gire en U.",
+        "c. Prohibido girar en U."
+      ],
+      "correct": "c. Prohibido girar en U.",
+      "imageDesc": "Señal circular roja con una flecha en U tachada."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 42",
+      "options": [
+        "a. No gire a la derecha.",
+        "b. No es permitido girar a la derecha.",
+        "c. Prohibido girar a la derecha."
+      ],
+      "correct": "c. Prohibido girar a la derecha.",
+      "imageDesc": "Señal circular roja con flecha a la derecha tachada."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 43",
+      "options": [
+        "a. adelante por la derecha",
+        "b. vehículo pesado a la derecha",
+        "c. adelante por la izquierda"
+      ],
+      "correct": "b. vehículo pesado a la derecha",
+      "imageDesc": "Señal de camión pasando por la derecha."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 44",
+      "options": [
+        "a. ceda el paso",
+        "b. peaje",
+        "c. hágale"
+      ],
+      "correct": "a. ceda el paso",
+      "imageDesc": "Señal triangular amarilla con 'CEDA EL PASO'."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 45",
+      "options": [
+        "a. velocidad máxima",
+        "b. exceso de velocidad",
+        "c. solo se permite esta velocidad"
+      ],
+      "correct": "a. velocidad máxima",
+      "imageDesc": "Señal circular roja con número 90."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 46",
+      "options": [
+        "a. no pitar",
+        "b. prohibido usar la bocina",
+        "c. no haga bulla"
+      ],
+      "correct": "b. prohibido usar la bocina",
+      "imageDesc": "Señal circular roja con bocina tachada."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 47",
+      "options": [
+        "a. prohibido parquear",
+        "b. permitido parquear",
+        "c. no pare"
+      ],
+      "correct": "a. prohibido parquear",
+      "imageDesc": "Señal circular roja con P tachada."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 48",
+      "options": [
+        "a. prohibido parar",
+        "b. prohibido parquear",
+        "c. a y b son correctas"
+      ],
+      "correct": "c. a y b son correctas",
+      "imageDesc": "Señal circular roja con E y P tachadas."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 49",
+      "options": [
+        "a. prohibido fumar",
+        "b. permitido fumar",
+        "c. no prenda fuego"
+      ],
+      "correct": "a. prohibido fumar",
+      "imageDesc": "Señal circular roja con cigarrillo tachado."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 50",
+      "options": [
+        "a. Servicio de teléfono",
+        "b. S.A.I.",
+        "c. Wifi gratis"
+      ],
+      "correct": "a. Servicio de teléfono",
+      "imageDesc": "Señal azul con teléfono."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 51",
+      "options": [
+        "a. Bomba",
+        "b. estación de servicios",
+        "c. venta de gasolina"
+      ],
+      "correct": "b. estación de servicios",
+      "imageDesc": "Señal azul con bomba de gasolina."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 52",
+      "options": [
+        "a. comedero",
+        "b. estadero",
+        "c. restaurante"
+      ],
+      "correct": "c. restaurante",
+      "imageDesc": "Señal azul con tenedor y cuchillo."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 53",
+      "options": [
+        "a. solo motos",
+        "b. sillas de ruedas",
+        "c. zona para limitados físicos"
+      ],
+      "correct": "c. zona para limitados físicos",
+      "imageDesc": "Señal azul con símbolo de discapacidad."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 54",
+      "options": [
+        "a. paradero",
+        "b. parada de bus",
+        "c. servicio público"
+      ],
+      "correct": "b. parada de bus",
+      "imageDesc": "Señal azul con bus."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 55",
+      "options": [
+        "a. puente",
+        "b. parqueadero",
+        "c. paradero"
+      ],
+      "correct": "b. parqueadero",
+      "imageDesc": "Señal azul con P."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 56",
+      "options": [
+        "a. capilla",
+        "b. Zona de cultos",
+        "c. hospital"
+      ],
+      "correct": "a. capilla",
+      "imageDesc": "Señal azul con iglesia."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 57",
+      "options": [
+        "a. llantería",
+        "b. taller",
+        "c. ferretería"
+      ],
+      "correct": "b. taller",
+      "imageDesc": "Señal azul con herramienta."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 58",
+      "options": [
+        "a. zona hospitalaria",
+        "b. primeros auxilios",
+        "c. curitas"
+      ],
+      "correct": "b. primeros auxilios",
+      "imageDesc": "Señal azul con cruz roja."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 59",
+      "options": [
+        "a. monta cargas",
+        "b. monta llantas",
+        "c. llantería"
+      ],
+      "correct": "b. monta llantas",
+      "imageDesc": "Señal azul con llanta."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 60",
+      "options": [
+        "a. zona escolar",
+        "b. zona de niños",
+        "c. paso peatonal"
+      ],
+      "correct": "a. zona escolar",
+      "imageDesc": "Señal triangular amarilla con niños."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 61",
+      "options": [
+        "a. para abajo",
+        "b. descenso peligroso",
+        "c. ascenso peligroso"
+      ],
+      "correct": "b. descenso peligroso",
+      "imageDesc": "Señal triangular amarilla con pendiente descendente."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 62",
+      "options": [
+        "a. bifurcación a la izquierda",
+        "b. intersección",
+        "c. cruce"
+      ],
+      "correct": "a. bifurcación a la izquierda",
+      "imageDesc": "Señal triangular amarilla con Y a la izquierda."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 63",
+      "options": [
+        "a. zona de derrumbes",
+        "b. zona peligrosa",
+        "c. peligro inminente"
+      ],
+      "correct": "a. zona de derrumbes",
+      "imageDesc": "Señal triangular amarilla con rocas cayendo."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 64",
+      "options": [
+        "a. superficie resbalosa",
+        "b. curva",
+        "c. camino curvo"
+      ],
+      "correct": "a. superficie resbalosa",
+      "imageDesc": "Señal triangular amarilla con auto patinando."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 65",
+      "options": [
+        "a. rompoi",
+        "b. romboy",
+        "c. glorieta"
+      ],
+      "correct": "c. glorieta",
+      "imageDesc": "Señal triangular amarilla con círculo de flechas."
+    },
+    {
+      "question": "DETERMINE QUE INDICA CADA SEÑAL 66",
+      "options": [
+        "a. Señales paralelas",
+        "b. Señales oblicuas",
+        "c. Señales horizontales"
+      ],
+      "correct": "c. Señales horizontales",
+      "imageDesc": "Líneas blancas horizontales en el pavimento."
+    },
+    {
+      "question": "LAS SEÑALES DE LINEA BLANCA INDICAN:",
+      "options": [
+        "a. Que la vía esta invertida.",
+        "b. Que es un carril de doble sentido de tránsito.",
+        "c. Que es una vía de un solo sentido de tránsito."
+      ],
+      "correct": "c. Que es una vía de un solo sentido de tránsito."
+    },
+    {
+      "question": "QUE SE ENTIENDE POR SEGURIDAD VIAL:",
+      "options": [
+        "a. Es un sistema para prevenir accidentes.",
+        "b. Es un método para evitar fallas mecánicas.",
+        "c. Es un estudio que ayuda a mejorar la conducción."
+      ],
+      "correct": "a. Es un sistema para prevenir accidentes."
+    },
+    {
+      "question": "LA CICLO RUTA ES:",
+      "options": [
+        "a. Vía o sección de calzada destinada ocasionalmente para el tránsito de bicicletas, triciclos y peatones.",
+        "b. Vía o sección de la calzada destinada al tránsito de bicicletas en forma exclusiva.",
+        "c. Es una calle para las bicicletas."
+      ],
+      "correct": "b. Vía o sección de la calzada destinada al tránsito de bicicletas en forma exclusiva."
+    },
+    {
+      "question": "LA ETICA VIAL ES:",
+      "options": [
+        "a. Un sistema de normas para evitar peleas.",
+        "b. Es el estudio del comportamiento en la conducción.",
+        "c. Son los valores para ser mejor persona.c"
+      ],
+      "correct": "b. Es el estudio del comportamiento en la conducción."
+    }
+  ],
+  "quiz2": [
+    {
+      "question": "¿Qué es un Accidente de tránsito?",
+      "options": [
+        "a. Evento voluntario generado por un vehículo.",
+        "b. Evento generalmente involuntario, generado al menos por un vehículo en movimiento, que causa daños a personas y bienes.",
+        "c. Daños solo a vehículos."
+      ],
+      "correct": "b. Evento generalmente involuntario, generado al menos por un vehículo en movimiento, que causa daños a personas y bienes."
+    },
+    {
+      "question": "¿Qué es un Adelantamiento?",
+      "options": [
+        "a. Maniobra para detener un vehículo.",
+        "b. Maniobra mediante la cual un vehículo se pone delante de otro que lo antecede en el mismo carril.",
+        "c. Cambio de carril sin motivo."
+      ],
+      "correct": "b. Maniobra mediante la cual un vehículo se pone delante de otro que lo antecede en el mismo carril."
+    },
+    {
+      "question": "¿Qué es un Agente de tránsito?",
+      "options": [
+        "a. Persona que viaja en un vehículo.",
+        "b. Todo funcionario o persona civil investida de autoridad para regular la circulación vehicular y peatonal.",
+        "c. Conductor de un bus."
+      ],
+      "correct": "b. Todo funcionario o persona civil investida de autoridad para regular la circulación vehicular y peatonal."
+    },
+    {
+      "question": "¿Qué es Alcoholemia?",
+      "options": [
+        "a. Cantidad de alcohol en la sangre en un momento dado.",
+        "b. Prueba de laboratorio para orina.",
+        "c. Sistema para detectar alcohol en el aire."
+      ],
+      "correct": "a. Cantidad de alcohol en la sangre en un momento dado."
+    },
+    {
+      "question": "¿Qué es un Automóvil antiguo?",
+      "options": [
+        "a. Vehículo con 50 años.",
+        "b. Automotor que haya cumplido 35 años y conserve características originales.",
+        "c. Vehículo clásico."
+      ],
+      "correct": "b. Automotor que haya cumplido 35 años y conserve características originales."
+    },
+    {
+      "question": "¿Qué es un Automóvil clásico?",
+      "options": [
+        "a. Vehículo con 35 años.",
+        "b. Automotor que haya cumplido 50 años y sea catalogado internacionalmente como tal.",
+        "c. Vehículo moderno."
+      ],
+      "correct": "b. Automotor que haya cumplido 50 años y sea catalogado internacionalmente como tal."
+    },
+    {
+      "question": "¿Qué es una Autopista?",
+      "options": [
+        "a. Vía sin pavimentar.",
+        "b. Vía de calzadas separadas con control total de acceso y salida.",
+        "c. Vía para peatones."
+      ],
+      "correct": "b. Vía de calzadas separadas con control total de acceso y salida."
+    },
+    {
+      "question": "¿Qué es una Bahía de estacionamiento?",
+      "options": [
+        "a. Zona para tránsito rápido.",
+        "b. Parte complementaria de la vía para estacionamiento de vehículos.",
+        "c. Área para peatones."
+      ],
+      "correct": "b. Parte complementaria de la vía para estacionamiento de vehículos."
+    },
+    {
+      "question": "¿Qué es una Berma?",
+      "options": [
+        "a. Zona para vehículos.",
+        "b. Parte de la estructura de la vía para soporte lateral de la calzada.",
+        "c. Carril exclusivo para buses."
+      ],
+      "correct": "b. Parte de la estructura de la vía para soporte lateral de la calzada."
+    },
+    {
+      "question": "¿Qué es una Bicicleta?",
+      "options": [
+        "a. Vehículo motorizado.",
+        "b. Vehículo no motorizado de dos o más ruedas propulsado por pedales.",
+        "c. Vehículo para carga."
+      ],
+      "correct": "b. Vehículo no motorizado de dos o más ruedas propulsado por pedales."
+    },
+    {
+      "question": "¿Qué es un Bus?",
+      "options": [
+        "a. Vehículo para carga.",
+        "b. Vehículo automotor destinado al transporte colectivo de personas y equipajes.",
+        "c. Vehículo pequeño para 10 pasajeros."
+      ],
+      "correct": "b. Vehículo automotor destinado al transporte colectivo de personas y equipajes."
+    },
+    {
+      "question": "¿Qué es una Buseta?",
+      "options": [
+        "a. Vehículo para más de 30 pasajeros.",
+        "b. Vehículo para transporte de 20 a 30 pasajeros con distancia entre ejes inferior a 4 metros.",
+        "c. Vehículo para carga."
+      ],
+      "correct": "b. Vehículo para transporte de 20 a 30 pasajeros con distancia entre ejes inferior a 4 metros."
+    },
+    {
+      "question": "¿Qué es una Cabina?",
+      "options": [
+        "a. Estructura para carga.",
+        "b. Recinto separado de la carrocería destinado al conductor.",
+        "c. Parte del motor."
+      ],
+      "correct": "b. Recinto separado de la carrocería destinado al conductor."
+    },
+    {
+      "question": "¿Qué es una Calzada?",
+      "options": [
+        "a. Zona para peatones.",
+        "b. Zona de la vía destinada a la circulación de vehículos.",
+        "c. Área de estacionamiento."
+      ],
+      "correct": "b. Zona de la vía destinada a la circulación de vehículos."
+    },
+    {
+      "question": "¿Qué es un Camión?",
+      "options": [
+        "a. Vehículo para pasajeros.",
+        "b. Vehículo automotor para transportar carga.",
+        "c. Vehículo pequeño."
+      ],
+      "correct": "b. Vehículo automotor para transportar carga."
+    },
+    {
+      "question": "¿Qué es una Camioneta picó?",
+      "options": [
+        "a. Vehículo para carga pesada.",
+        "b. Vehículo automotor destinado al transporte de personas en la cabina y carga en el platón.",
+        "c. Vehículo para tractar remolques."
+      ],
+      "correct": "b. Vehículo automotor destinado al transporte de personas en la cabina y carga en el platón."
+    },
+    {
+      "question": "¿Qué es un Camión tractor?",
+      "options": [
+        "a. Vehículo para pasajeros.",
+        "b. Vehículo automotor destinado a arrastrar semi-remolques o remolques.",
+        "c. Vehículo pequeño."
+      ],
+      "correct": "b. Vehículo automotor destinado a arrastrar semi-remolques o remolques."
+    },
+    {
+      "question": "¿Qué es la Capacidad de pasajeros?",
+      "options": [
+        "a. Máximo tonelaje de carga.",
+        "b. Número de personas autorizado para ser transportadas en un vehículo.",
+        "c. Volumen del motor."
+      ],
+      "correct": "b. Número de personas autorizado para ser transportadas en un vehículo."
+    },
+    {
+      "question": "¿Qué es la Capacidad de carga?",
+      "options": [
+        "a. Número de pasajeros.",
+        "b. Máximo tonelaje autorizado en un vehículo sin exceder el peso bruto vehicular.",
+        "c. Cilindrada del motor."
+      ],
+      "correct": "b. Máximo tonelaje autorizado en un vehículo sin exceder el peso bruto vehicular."
+    },
+    {
+      "question": "¿Qué es una Carretera?",
+      "options": [
+        "a. Vía para peatones.",
+        "b. Vía destinada a la circulación de vehículos con seguridad y comodidad.",
+        "c. Vía sin pavimentar."
+      ],
+      "correct": "b. Vía destinada a la circulación de vehículos con seguridad y comodidad."
+    },
+    {
+      "question": "¿Qué es un Carril?",
+      "options": [
+        "a. Parte de la vía para peatones.",
+        "b. Parte de la calzada destinada al tránsito de una sola fila de vehículos.",
+        "c. Zona de estacionamiento."
+      ],
+      "correct": "b. Parte de la calzada destinada al tránsito de una sola fila de vehículos."
+    },
+    {
+      "question": "¿Qué es una Carrocería?",
+      "options": [
+        "a. Bastidor del vehículo.",
+        "b. Estructura del vehículo instalada sobre un chasis para transporte de personas o carga.",
+        "c. Motor del vehículo."
+      ],
+      "correct": "b. Estructura del vehículo instalada sobre un chasis para transporte de personas o carga."
+    },
+    {
+      "question": "¿Qué es un Casco?",
+      "options": [
+        "a. Pieza para proteger los pies.",
+        "b. Pieza que cubre la cabeza diseñada para proteger contra golpes, cumpliendo normas Icontec.",
+        "c. Cinturón de seguridad."
+      ],
+      "correct": "b. Pieza que cubre la cabeza diseñada para proteger contra golpes, cumpliendo normas Icontec."
+    },
+    {
+      "question": "¿Qué es un Centro de diagnóstico automotor?",
+      "options": [
+        "a. Escuela de conducción.",
+        "b. Ente para examen técnico-mecánico y revisión ecológica de vehículos.",
+        "c. Centro de rehabilitación."
+      ],
+      "correct": "b. Ente para examen técnico-mecánico y revisión ecológica de vehículos."
+    },
+    {
+      "question": "¿Qué es un Centro de enseñanza para conductores?",
+      "options": [
+        "a. Establecimiento para capacitar personas en conducción de vehículos automotores y motocicletas.",
+        "b. Centro para diagnóstico.",
+        "c. Parqueadero."
+      ],
+      "correct": "a. Establecimiento para capacitar personas en conducción de vehículos automotores y motocicletas."
+    },
+    {
+      "question": "¿Qué es un Centro de enseñanza para formación de instructores?",
+      "options": [
+        "a. Establecimiento para formar instructores en técnicas de conducción.",
+        "b. Centro de diagnóstico.",
+        "c. Escuela para peatones."
+      ],
+      "correct": "a. Establecimiento para formar instructores en técnicas de conducción."
+    },
+    {
+      "question": "¿Qué es un Centro integral de atención?",
+      "options": [
+        "a. Establecimiento para rehabilitación de infractores a normas de tránsito.",
+        "b. Taller mecánico.",
+        "c. Hospital."
+      ],
+      "correct": "a. Establecimiento para rehabilitación de infractores a normas de tránsito."
+    },
+    {
+      "question": "¿Qué es un Chasis?",
+      "options": [
+        "a. Conjunto de elementos que proporcionan soporte a las partes del vehículo mediante un bastidor.",
+        "b. Motor.",
+        "c. Carrocería."
+      ],
+      "correct": "a. Conjunto de elementos que proporcionan soporte a las partes del vehículo mediante un bastidor."
+    },
+    {
+      "question": "¿Qué es Chatarrización?",
+      "options": [
+        "a. Reparación de un vehículo.",
+        "b. Desintegración total de un vehículo automotor.",
+        "c. Pintura del vehículo."
+      ],
+      "correct": "b. Desintegración total de un vehículo automotor."
+    },
+    {
+      "question": "¿Qué es un Choque o colisión?",
+      "options": [
+        "a. Encuentro violento entre dos o más vehículos o con objeto fijo.",
+        "b. Maniobra de adelantamiento.",
+        "c. Parada súbita."
+      ],
+      "correct": "a. Encuentro violento entre dos o más vehículos o con objeto fijo."
+    },
+    {
+      "question": "¿Qué es un Ciclista?",
+      "options": [
+        "a. Conductor de automóvil.",
+        "b. Conductor de bicicleta o triciclo.",
+        "c. Peatón."
+      ],
+      "correct": "b. Conductor de bicicleta o triciclo."
+    },
+    {
+      "question": "¿Qué es una Ciclovía?",
+      "options": [
+        "a. Vía exclusiva para bicicletas.",
+        "b. Vía o sección de calzada destinada ocasionalmente para tránsito de bicicletas, triciclos y peatones.",
+        "c. Vía para autos."
+      ],
+      "correct": "b. Vía o sección de calzada destinada ocasionalmente para tránsito de bicicletas, triciclos y peatones."
+    },
+    {
+      "question": "¿Qué es una Ciclo ruta?",
+      "options": [
+        "a. Vía o sección de la calzada destinada al tránsito de bicicletas en forma exclusiva.",
+        "b. Vía ocasional.",
+        "c. Vía para peatones."
+      ],
+      "correct": "a. Vía o sección de la calzada destinada al tránsito de bicicletas en forma exclusiva."
+    },
+    {
+      "question": "¿Qué es Cilindrada?",
+      "options": [
+        "a. Capacidad volumétrica total de los cilindros de un motor.",
+        "b. Peso del vehículo.",
+        "c. Número de pasajeros."
+      ],
+      "correct": "a. Capacidad volumétrica total de los cilindros de un motor."
+    },
+    {
+      "question": "¿Qué es un Cinturón de seguridad?",
+      "options": [
+        "a. Conjunto de tiras para sujetar a los ocupantes al asiento y prevenir golpes.",
+        "b. Pieza para la cabeza.",
+        "c. Frenos del vehículo."
+      ],
+      "correct": "a. Conjunto de tiras para sujetar a los ocupantes al asiento y prevenir golpes."
+    },
+    {
+      "question": "¿Qué es Clase de vehículo?",
+      "options": [
+        "a. Denominación dada a un automotor conforme a su destinación y especificaciones.",
+        "b. Color del vehículo.",
+        "c. Año del modelo."
+      ],
+      "correct": "a. Denominación dada a un automotor conforme a su destinación y especificaciones."
+    },
+    {
+      "question": "¿Qué es una Columna motorizada?",
+      "options": [
+        "a. Grupo de vehículos en desplazamiento militar bajo un mando.",
+        "b. Columna de peatones.",
+        "c. Vehículo individual."
+      ],
+      "correct": "a. Grupo de vehículos en desplazamiento militar bajo un mando."
+    },
+    {
+      "question": "¿Qué es una Combinación de vehículos?",
+      "options": [
+        "a. Conjunto acoplado de dos o más unidades vehiculares.",
+        "b. Vehículo solo.",
+        "c. Peatones y vehículos."
+      ],
+      "correct": "a. Conjunto acoplado de dos o más unidades vehiculares."
+    },
+    {
+      "question": "¿Qué es un Comparendo?",
+      "options": [
+        "a. Orden formal de notificación para que el presunto contraventor se presente ante la autoridad.",
+        "b. Accidente.",
+        "c. Permiso de conducción."
+      ],
+      "correct": "a. Orden formal de notificación para que el presunto contraventor se presente ante la autoridad."
+    },
+    {
+      "question": "¿Qué es un Conductor?",
+      "options": [
+        "a. Persona habilitada y capacitada para operar un vehículo.",
+        "b. Peatón.",
+        "c. Pasajero."
+      ],
+      "correct": "a. Persona habilitada y capacitada para operar un vehículo."
+    },
+    {
+      "question": "¿Qué es un Conjunto óptico?",
+      "options": [
+        "a. Grupo de luces de servicio, direccionales, freno y reverso.",
+        "b. Motor.",
+        "c. Chasis."
+      ],
+      "correct": "a. Grupo de luces de servicio, direccionales, freno y reverso."
+    },
+    {
+      "question": "¿Qué es un Croquis?",
+      "options": [
+        "a. Plano descriptivo de un accidente levantado en el sitio.",
+        "b. Mapa general.",
+        "c. Dibujo artístico."
+      ],
+      "correct": "a. Plano descriptivo de un accidente levantado en el sitio."
+    },
+    {
+      "question": "¿Cuál es el ámbito de aplicación del Código Nacional de Tránsito?",
+      "options": [
+        "a. Solo vías públicas.",
+        "b. Todo el territorio nacional, regulando circulación de peatones, vehículos, etc.",
+        "c. Solo ciudades."
+      ],
+      "correct": "b. Todo el territorio nacional, regulando circulación de peatones, vehículos, etc."
+    },
+    {
+      "question": "¿Cuáles son los principios rectores del código?",
+      "options": [
+        "a. Seguridad, calidad, oportunidad, cubrimiento, libertad de acceso, etc.",
+        "b. Solo seguridad.",
+        "c. Solo descentralización."
+      ],
+      "correct": "a. Seguridad, calidad, oportunidad, cubrimiento, libertad de acceso, etc."
+    },
+    {
+      "question": "¿Qué es Accesibilidad?",
+      "options": [
+        "a. Condición que permite el fácil disfrute de servicios públicos por toda la población.",
+        "b. Velocidad máxima.",
+        "c. Tipo de vehículo."
+      ],
+      "correct": "a. Condición que permite el fácil disfrute de servicios públicos por toda la población."
+    },
+    {
+      "question": "¿Qué es un Acompañante?",
+      "options": [
+        "a. Persona que viaja con el conductor de un vehículo automotor.",
+        "b. Agente de tránsito.",
+        "c. Peatón."
+      ],
+      "correct": "a. Persona que viaja con el conductor de un vehículo automotor."
+    },
+    {
+      "question": "¿Qué es un Año del modelo?",
+      "options": [
+        "a. Año asignado por el fabricante al modelo del vehículo.",
+        "b. Año de compra.",
+        "c. Año de chatarrización."
+      ],
+      "correct": "a. Año asignado por el fabricante al modelo del vehículo."
+    },
+    {
+      "question": "¿Qué es un Aprendiz?",
+      "options": [
+        "a. Persona que recibe técnicas de conducción de un instructor.",
+        "b. Conductor experimentado.",
+        "c. Agente."
+      ],
+      "correct": "a. Persona que recibe técnicas de conducción de un instructor."
+    },
+    {
+      "question": "¿Qué es una Barrera para control vehicular?",
+      "options": [
+        "a. Dispositivo con punzones para retenes y control.",
+        "b. Señal de tránsito.",
+        "c. Cinturón."
+      ],
+      "correct": "a. Dispositivo con punzones para retenes y control."
+    },
+    {
+      "question": "¿Qué es una Bocacalle?",
+      "options": [
+        "a. Embocadura de una calle en una intersección.",
+        "b. Calle principal.",
+        "c. Puente."
+      ],
+      "correct": "a. Embocadura de una calle en una intersección."
+    },
+    {
+      "question": "¿Qué es un Carreteable?",
+      "options": [
+        "a. Vía pavimentada.",
+        "b. Vía sin pavimentar destinada a la circulación de vehículos.",
+        "c. Ciclovía."
+      ],
+      "correct": "b. Vía sin pavimentar destinada a la circulación de vehículos."
+    },
+    {
+      "question": "¿Qué es una Alcoholometría?",
+      "options": [
+        "a. Examen para determinar nivel de alcohol en sangre.",
+        "b. Prueba de orina.",
+        "c. Sensor de aire."
+      ],
+      "correct": "a. Examen para determinar nivel de alcohol en sangre."
+    },
+    {
+      "question": "¿Qué es Alcoholuria?",
+      "options": [
+        "a. Prueba para alcohol en orina.",
+        "b. En sangre.",
+        "c. En aire."
+      ],
+      "correct": "a. Prueba para alcohol en orina."
+    },
+    {
+      "question": "¿Qué es un Alcohosensor?",
+      "options": [
+        "a. Sistema para determinar alcohol en aire exhalado.",
+        "b. Prueba de sangre.",
+        "c. Examen de orina."
+      ],
+      "correct": "a. Sistema para determinar alcohol en aire exhalado."
+    },
+    {
+      "question": "¿Qué es un Aro del modelo?",
+      "options": [
+        "a. Año asignado al modelo.",
+        "b. Año que asigna el fabricante al modelo del vehículo.",
+        "c. Año de importación."
+      ],
+      "correct": "b. Año que asigna el fabricante al modelo del vehículo."
+    },
+    {
+      "question": "¿Qué es una Acera o andén?",
+      "options": [
+        "a. Franja longitudinal de la vía urbana para peatones.",
+        "b. Calzada para vehículos.",
+        "c. Berma."
+      ],
+      "correct": "a. Franja longitudinal de la vía urbana para peatones."
+    },
+    {
+      "question": "¿Qué le corresponde al Ministerio de Transporte?",
+      "options": [
+        "a. Definir, orientar, vigilar la política de tránsito.",
+        "b. Solo vigilar.",
+        "c. Construir vías."
+      ],
+      "correct": "a. Definir, orientar, vigilar la política de tránsito."
+    },
+    {
+      "question": "¿Qué promueven las autoridades de tránsito?",
+      "options": [
+        "a. Difusión y conocimiento del código.",
+        "b. Solo multas.",
+        "c. Construcción de vehículos."
+      ],
+      "correct": "a. Difusión y conocimiento del código."
+    },
+    {
+      "question": "¿Qué es un Centro de diagnóstico automotor?",
+      "options": [
+        "a. Para examen técnico y ecológico.",
+        "b. Escuela.",
+        "c. Hospital."
+      ],
+      "correct": "a. Para examen técnico y ecológico."
+    },
+    {
+      "question": "¿Qué es un Choque?",
+      "options": [
+        "a. Encuentro violento.",
+        "b. Parada.",
+        "c. Adelantamiento."
+      ],
+      "correct": "a. Encuentro violento."
+    },
+    {
+      "question": "¿Qué es un Conjunto óptico?",
+      "options": [
+        "a. Luces del vehículo.",
+        "b. Motor.",
+        "c. Frenos."
+      ],
+      "correct": "a. Luces del vehículo."
+    },
+    {
+      "question": "¿Qué es un Comparendo?",
+      "options": [
+        "a. Notificación por infracción.",
+        "b. Licencia.",
+        "c. Seguro."
+      ],
+      "correct": "a. Notificación por infracción."
+    },
+    {
+      "question": "¿Qué es un Croquis?",
+      "options": [
+        "a. Plano de accidente.",
+        "b. Mapa vial.",
+        "c. Dibujo general."
+      ],
+      "correct": "a. Plano de accidente."
+    },
+    {
+      "question": "¿Qué es un Ciclista?",
+      "options": [
+        "a. Conductor de bicicleta.",
+        "b. Peatón.",
+        "c. Motociclista."
+      ],
+      "correct": "a. Conductor de bicicleta."
+    },
+    {
+      "question": "¿Qué es una Ciclovía?",
+      "options": [
+        "a. Vía ocasional para bicicletas.",
+        "b. Vía exclusiva.",
+        "c. Calzada general."
+      ],
+      "correct": "a. Vía ocasional para bicicletas."
+    },
+    {
+      "question": "¿Qué es una Ciclo ruta?",
+      "options": [
+        "a. Vía exclusiva para bicicletas.",
+        "b. Ocasional.",
+        "c. Para peatones."
+      ],
+      "correct": "a. Vía exclusiva para bicicletas."
+    },
+    {
+      "question": "¿Qué es Cilindrada?",
+      "options": [
+        "a. Volumen de cilindros.",
+        "b. Peso.",
+        "c. Pasajeros."
+      ],
+      "correct": "a. Volumen de cilindros."
+    },
+    {
+      "question": "¿Qué es un Cinturón de seguridad?",
+      "options": [
+        "a. Para sujetar ocupantes.",
+        "b. Casco.",
+        "c. Frenos."
+      ],
+      "correct": "a. Para sujetar ocupantes."
+    },
+    {
+      "question": "¿Qué es Clase de vehículo?",
+      "options": [
+        "a. Denominación por destinación.",
+        "b. Color.",
+        "c. Año."
+      ],
+      "correct": "a. Denominación por destinación."
+    },
+    {
+      "question": "¿Qué es una Columna motorizada?",
+      "options": [
+        "a. Grupo militar de vehículos.",
+        "b. Peatones.",
+        "c. Vehículo solo."
+      ],
+      "correct": "a. Grupo militar de vehículos."
+    },
+    {
+      "question": "¿Qué es una Combinación de vehículos?",
+      "options": [
+        "a. Conjunto acoplado.",
+        "b. Vehículo individual.",
+        "c. Peatones y autos."
+      ],
+      "correct": "a. Conjunto acoplado."
+    },
+    {
+      "question": "¿Qué es un Conductor?",
+      "options": [
+        "a. Persona capacitada para operar vehículo.",
+        "b. Pasajero.",
+        "c. Peatón."
+      ],
+      "correct": "a. Persona capacitada para operar vehículo."
+    },
+    {
+      "question": "¿Qué es un Casco?",
+      "options": [
+        "a. Protector de cabeza.",
+        "b. Cinturón.",
+        "c. Frenos."
+      ],
+      "correct": "a. Protector de cabeza."
+    },
+    {
+      "question": "¿Qué es un Chasis?",
+      "options": [
+        "a. Soporte del vehículo.",
+        "b. Motor.",
+        "c. Carrocería."
+      ],
+      "correct": "a. Soporte del vehículo."
+    },
+    {
+      "question": "¿Qué es Chatarrización?",
+      "options": [
+        "a. Desintegración total.",
+        "b. Reparación.",
+        "c. Pintura."
+      ],
+      "correct": "a. Desintegración total."
+    },
+    {
+      "question": "¿Qué es un Bus?",
+      "options": [
+        "a. Transporte colectivo.",
+        "b. Carga.",
+        "c. Pequeño."
+      ],
+      "correct": "a. Transporte colectivo."
+    },
+    {
+      "question": "¿Qué es una Buseta?",
+      "options": [
+        "a. 20-30 pasajeros.",
+        "b. Más de 30.",
+        "c. Carga."
+      ],
+      "correct": "a. 20-30 pasajeros."
+    },
+    {
+      "question": "¿Qué es una Cabina?",
+      "options": [
+        "a. Para conductor.",
+        "b. Carga.",
+        "c. Motor."
+      ],
+      "correct": "a. Para conductor."
+    },
+    {
+      "question": "¿Qué es una Calzada?",
+      "options": [
+        "a. Para vehículos.",
+        "b. Peatones.",
+        "c. Estacionamiento."
+      ],
+      "correct": "a. Para vehículos."
+    },
+    {
+      "question": "¿Qué es un Camión?",
+      "options": [
+        "a. Para carga.",
+        "b. Pasajeros.",
+        "c. Pequeño."
+      ],
+      "correct": "a. Para carga."
+    },
+    {
+      "question": "¿Qué es una Camioneta picó?",
+      "options": [
+        "a. Pasajeros y carga.",
+        "b. Carga pesada.",
+        "c. Remolques."
+      ],
+      "correct": "a. Pasajeros y carga."
+    },
+    {
+      "question": "¿Qué es un Camión tractor?",
+      "options": [
+        "a. Para remolques.",
+        "b. Pasajeros.",
+        "c. Pequeño."
+      ],
+      "correct": "a. Para remolques."
+    },
+    {
+      "question": "¿Qué es la Capacidad de pasajeros?",
+      "options": [
+        "a. Número autorizado de personas.",
+        "b. Tonelaje.",
+        "c. Volumen."
+      ],
+      "correct": "a. Número autorizado de personas."
+    },
+    {
+      "question": "¿Qué es la Capacidad de carga?",
+      "options": [
+        "a. Máximo tonelaje.",
+        "b. Pasajeros.",
+        "c. Cilindrada."
+      ],
+      "correct": "a. Máximo tonelaje."
+    },
+    {
+      "question": "¿Qué es una Carretera?",
+      "options": [
+        "a. Para vehículos con seguridad.",
+        "b. Peatones.",
+        "c. Sin pavimentar."
+      ],
+      "correct": "a. Para vehículos con seguridad."
+    },
+    {
+      "question": "¿Qué es un Carril?",
+      "options": [
+        "a. Fila de vehículos.",
+        "b. Peatones.",
+        "c. Estacionamiento."
+      ],
+      "correct": "a. Fila de vehículos."
+    },
+    {
+      "question": "¿Qué es una Carrocería?",
+      "options": [
+        "a. Estructura para transporte.",
+        "b. Bastidor.",
+        "c. Motor."
+      ],
+      "correct": "a. Estructura para transporte."
+    },
+    {
+      "question": "¿Qué es una Berma?",
+      "options": [
+        "a. Soporte lateral.",
+        "b. Vehículos.",
+        "c. Carril buses."
+      ],
+      "correct": "a. Soporte lateral."
+    },
+    {
+      "question": "¿Qué es una Bicicleta?",
+      "options": [
+        "a. No motorizado por pedales.",
+        "b. Motorizado.",
+        "c. Carga."
+      ],
+      "correct": "a. No motorizado por pedales."
+    },
+    {
+      "question": "¿Qué es un Centro integral de atención?",
+      "options": [
+        "a. Rehabilitación infractores.",
+        "b. Taller.",
+        "c. Hospital."
+      ],
+      "correct": "a. Rehabilitación infractores."
+    },
+    {
+      "question": "¿Qué es un Centro de enseñanza para formación de instructores?",
+      "options": [
+        "a. Formación de instructores.",
+        "b. Diagnóstico.",
+        "c. Peatones."
+      ],
+      "correct": "a. Formación de instructores."
+    },
+    {
+      "question": "¿Qué es un Centro de enseñanza para conductores?",
+      "options": [
+        "a. Capacitación conductores.",
+        "b. Diagnóstico.",
+        "c. Parqueadero."
+      ],
+      "correct": "a. Capacitación conductores."
+    },
+    {
+      "question": "¿Qué es un Centro de diagnóstico automotor?",
+      "options": [
+        "a. Examen técnico.",
+        "b. Escuela.",
+        "c. Hospital."
+      ],
+      "correct": "a. Examen técnico."
+    },
+    {
+      "question": "¿Qué es una Bahía de estacionamiento?",
+      "options": [
+        "a. Zona de transición para estacionar.",
+        "b. Tránsito rápido.",
+        "c. Peatones."
+      ],
+      "correct": "a. Zona de transición para estacionar."
+    },
+    {
+      "question": "¿Qué es una Autopista?",
+      "options": [
+        "a. Calzadas separadas con control de acceso.",
+        "b. Sin pavimentar.",
+        "c. Peatones."
+      ],
+      "correct": "a. Calzadas separadas con control de acceso."
+    },
+    {
+      "question": "¿Qué es un Automóvil clásico?",
+      "options": [
+        "a. 50 años catalogado.",
+        "b. 35 años.",
+        "c. Moderno."
+      ],
+      "correct": "a. 50 años catalogado."
+    },
+    {
+      "question": "¿Qué es un Automóvil antiguo?",
+      "options": [
+        "a. 35 años originales.",
+        "b. 50 años.",
+        "c. Clásico."
+      ],
+      "correct": "a. 35 años originales."
+    },
+    {
+      "question": "¿Qué es un Aprendiz?",
+      "options": [
+        "a. Recibe técnicas de instructor.",
+        "b. Experimentado.",
+        "c. Agente."
+      ],
+      "correct": "a. Recibe técnicas de instructor."
+    },
+    {
+      "question": "¿Qué es un Año del modelo?",
+      "options": [
+        "a. Asignado por fabricante.",
+        "b. Compra.",
+        "c. Chatarrización."
+      ],
+      "correct": "a. Asignado por fabricante."
+    },
+    {
+      "question": "¿Qué es un Acompañante?",
+      "options": [
+        "a. Viaja con conductor.",
+        "b. Agente.",
+        "c. Peatón."
+      ],
+      "correct": "a. Viaja con conductor."
+    },
+    {
+      "question": "¿Qué es Accesibilidad?",
+      "options": [
+        "a. Fácil disfrute de servicios.",
+        "b. Velocidad.",
+        "c. Vehículo."
+      ],
+      "correct": "a. Fácil disfrute de servicios."
+    },
+    {
+      "question": "¿Qué es un Agente de tránsito?",
+      "options": [
+        "a. Autoridad para regular tránsito.",
+        "b. Viajero.",
+        "c. Bus."
+      ],
+      "correct": "a. Autoridad para regular tránsito."
+    },
+    {
+      "question": "¿Qué es un Adelantamiento?",
+      "options": [
+        "a. Ponerse delante en carril.",
+        "b. Detener.",
+        "c. Cambio sin motivo."
+      ],
+      "correct": "a. Ponerse delante en carril."
+    },
+    {
+      "question": "¿Qué es un Accidente de tránsito?",
+      "options": [
+        "a. Evento involuntario con daños.",
+        "b. Voluntario.",
+        "c. Solo vehículos."
+      ],
+      "correct": "a. Evento involuntario con daños."
+    },
+    {
+      "question": "¿Qué es una Acera?",
+      "options": [
+        "a. Para peatones.",
+        "b. Vehículos.",
+        "c. Berma."
+      ],
+      "correct": "a. Para peatones."
+    },
+    {
+      "question": "¿Qué es Alcoholometría?",
+      "options": [
+        "a. En sangre.",
+        "b. Orina.",
+        "c. Aire."
+      ],
+      "correct": "a. En sangre."
+    },
+    {
+      "question": "¿Qué es Alcoholemia?",
+      "options": [
+        "a. Cantidad en sangre.",
+        "b. Laboratorio orina.",
+        "c. Sensor aire."
+      ],
+      "correct": "a. Cantidad en sangre."
+    },
+    {
+      "question": "¿Qué es una Barrera para control vehicular?",
+      "options": [
+        "a. Con punzones para control.",
+        "b. Señal.",
+        "c. Cinturón."
+      ],
+      "correct": "a. Con punzones para control."
+    },
+    {
+      "question": "¿Qué es una Bocacalle?",
+      "options": [
+        "a. Embocadura en intersección.",
+        "b. Principal.",
+        "c. Puente."
+      ],
+      "correct": "a. Embocadura en intersección."
+    },
+    {
+      "question": "¿Qué es un Carreteable?",
+      "options": [
+        "a. Sin pavimentar para vehículos.",
+        "b. Pavimentada.",
+        "c. Ciclovía."
+      ],
+      "correct": "a. Sin pavimentar para vehículos."
+    }
+  ]
+}

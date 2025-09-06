@@ -1,0 +1,47 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Tránsito - Preguntas y Respuestas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Juego de Tránsito</h1>
+        <div id="start-screen">
+            <p>Selecciona un tema para jugar:</p>
+            <button id="quiz1-btn">Cuestionario Teórico (70 preguntas)</button>
+            <div id="quiz2-options" style="display: none;">
+                <p>Selecciona el número de preguntas para Definiciones de Tránsito:</p>
+                <select id="num-questions">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                    <option value="50">50</option>
+                </select>
+                <button id="start-quiz2">Iniciar</button>
+            </div>
+            <button id="quiz2-btn">Definiciones de Tránsito (de 10 a 50 preguntas)</button>
+        </div>
+        <div id="quiz-screen" style="display: none;">
+            <div class="progress-bar">
+                <div id="progress" style="width: 0%;"></div>
+            </div>
+            <h2 id="question"></h2>
+            <p id="image-desc" style="display: none;"></p>
+            <div id="options"></div>
+            <button id="next-btn" disabled>Siguiente</button>
+            <p id="score">Puntaje: 0</p>
+        </div>
+        <div id="end-screen" style="display: none;">
+            <h2>¡Juego Terminado!</h2>
+            <p id="final-score"></p>
+            <button id="restart-btn">Reiniciar</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
