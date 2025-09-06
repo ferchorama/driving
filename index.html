@@ -1,61 +1,70 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Práctica para escuelas de conducción</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <title>Juego de Tránsito</title>
+  <!-- Fuentes (opcionales, respetan tus familias tipográficas) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <meta name="color-scheme" content="dark" />
 </head>
 <body>
-    <div class="container">
-        <h1>Práctica para escuelas de conducción</h1>
-        <div id="start-screen">
-            <p>Selecciona un tema para jugar:</p>
-            <button id="quiz1-btn">Cuestionario Teórico (70 preguntas)</button>
-            <div id="quiz2-options" style="display: none;">
-                <p>Selecciona el número de preguntas para Código Nacional de Tránsito:</p>
-                <select id="num-questions">
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="40">40</option>
-                    <option value="50">50</option>
-                </select>
-                <button id="start-quiz2">Iniciar</button>
-            </div>
-            <button id="quiz2-btn">Código Nacional de Tránsito (de 10 a 50 preguntas)</button>
-            <button id="quiz3-btn">Señales de Tránsito (de 10 a 50 preguntas)</button>
-            <div id="quiz3-options" style="display: none;">
-                <p>Selecciona el número de preguntas para Señales de Tránsito:</p>
-                <select id="num-questions-3">
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="40">40</option>
-                    <option value="50">50</option>
-                </select>
-                <button id="start-quiz3">Iniciar</button>
-            </div>
-        </div>
-        <div id="quiz-screen" style="display: none;">
-            <div class="progress-bar">
-                <div id="progress" style="width: 0%;"></div>
-            </div>
-            <h2 id="question"></h2>
-            <img id="question-image" src="" alt="Señal de tránsito" style="display: none;">
-            <p id="image-desc" style="display: none;"></p>
-            <div id="options"></div>
-            <button id="next-btn" disabled>Siguiente</button>
-            <p id="score">Puntaje: 0</p>
-        </div>
-        <div id="end-screen" style="display: none;">
-            <h2>¡Juego Terminado!</h2>
-            <p id="final-score"></p>
-            <button id="restart-btn">Reiniciar</button>
-        </div>
+  <div class="container">
+    <!-- Pantalla inicial -->
+    <div id="start-screen">
+      <h1>Juego de Tránsito</h1>
+
+      <h2>Elige un modo</h2>
+      <p class="muted">Practica teoría, código nacional o señales de tránsito. Configura el número de preguntas antes de comenzar.</p>
+
+      <button id="quiz1-btn">Quiz Teórico</button>
+
+      <div class="spacer"></div>
+
+      <h2>Código Nacional</h2>
+      <p class="muted">Reglamentación y normativa aplicable.</p>
+      <button id="quiz2-btn">Configurar</button>
+      <div id="quiz2-options" class="panel" style="display:none;">
+        <label for="num-questions" class="label">Número de preguntas</label>
+        <input type="number" id="num-questions" placeholder="Número de preguntas" min="5" max="100" />
+        <button id="start-quiz2">Iniciar Quiz 2</button>
+      </div>
+
+      <div class="spacer"></div>
+
+      <h2>Señales</h2>
+      <p class="muted">Identifica las señales por su nombre.</p>
+      <button id="quiz3-btn">Configurar</button>
+      <div id="quiz3-options" class="panel" style="display:none;">
+        <label for="num-questions-3" class="label">
+          Número de preguntas (máximo <span id="max-signals">...</span>)
+        </label>
+        <input type="number" id="num-questions-3" min="1" />
+        <button id="start-quiz3">Iniciar Quiz 3</button>
+      </div>
     </div>
-    <script src="script.js"></script>
+
+    <!-- Pantalla del quiz -->
+    <div id="quiz-screen" style="display:none;">
+      <div class="progress-bar"><div id="progress"></div></div>
+      <div id="score"></div>
+
+      <h2 id="question"></h2>
+      <img id="question-image" alt="Imagen de la pregunta" style="display:none; max-width:300px;" />
+
+      <div id="options"></div>
+
+      <button id="next-btn">Siguiente</button>
+    </div>
+
+    <!-- Pantalla final -->
+    <div id="end-screen" style="display:none;">
+      <h2 id="final-score"></h2>
+      <button id="restart-btn">Reiniciar</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
