@@ -1,4 +1,4 @@
-// script.js (reemplazo completo)
+// script.js (reemplazo completo, sin caption bajo la imagen)
 let questions = {};
 let currentQuiz = [];
 let currentIndex = 0;
@@ -6,10 +6,10 @@ let score = 0;
 let quizType = '';
 let wrongAnswers = [];
 
-// Utilidad: normaliza rutas locales tipo "Carpeta\archivo.png" -> "Carpeta/archivo.png"
+// Utilidad: normaliza rutas locales tipo "Carpeta\\archivo.png" -> "Carpeta/archivo.png"
 const normalizePath = (p) => (p || '').replace(/\\/g, '/').replace(/^\.?\//, '');
 
-// Fisher-Yates in-place
+// Fisher–Yates in-place
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -17,12 +17,12 @@ function shuffle(array) {
   }
 }
 
-// Genera 3 opciones erróneas (todas distintas y ≠ correcta)
+// Genera 3 opciones erróneas (distintas y ≠ correcta)
 function generateWrongOptions(correctAnswer, pool) {
   const set = new Set();
   while (set.size < 3) {
     const r = pool[Math.floor(Math.random() * pool.length)];
-    const candidate = r.nombre_visible;
+    const candidate = r?.nombre_visible;
     if (candidate && candidate !== correctAnswer) set.add(candidate);
   }
   return Array.from(set);
@@ -38,35 +38,34 @@ async function loadQuestions() {
   const csvResponse = await fetch('inventario.csv');
   const csvText = await csvResponse.text();
 
-  // Parse CSV (simple, sin comas en campos)
+  // Parse CSV (simple, sin comas internas)
   const rows = csvText.trim().split('\n').map(r => r.split(','));
   const headers = rows[0].map(h => h.trim());
   const data = rows.slice(1).map(row => {
     const obj = {};
-    headers.forEach((h, i) => obj[h] = (row[i] || '').trim());
+    headers.forEach((h, i) => (obj[h] = (row[i] || '').trim()));
     return obj;
   });
 
-  // Crea preguntas de señales; usa URL externa si está, si no, fallback local normalizado
-  questions.signals = data.map(item => {
-    const localPath = normalizePath(item.archivo); // p.ej. "Reglamentarias/Pare.png"
-    const imageSrc = item.url && item.url.startsWith('http') ? item.url : localPath;
+  // Crea preguntas de señales; usa URL externa si existe, si no fallback local normalizado
+  questions.signals = data
+    .filter(item => item?.nombre_visible)
+    .map(item => {
+      const localPath = normalizePath(item.archivo); // p.ej. "Reglamentarias/Pare.png"
+      const imageSrc = item.url && item.url.startsWith('http') ? item.url : localPath;
 
-    const correct = item.nombre_visible;
-    const wrongs = generateWrongOptions(correct, data);
-    const options = [correct, ...wrongs];
+      const correct = item.nombre_visible;
+      const wrongs = generateWrongOptions(correct, data);
+      const options = [correct, ...wrongs];
 
-    return {
-      question: '¿Cuál es el nombre de esta señal?',
-      image: imageSrc,
-      imageDesc: `${item.categoria} · ${correct}`,
-      options,
-      correct
-    };
-  });
-
-  // Opcional: podrías validar que existan bancos
-  // console.log('quiz1:', questions.quiz1?.length, 'quiz2:', questions.quiz2?.length, 'signals:', questions.signals?.length);
+      return {
+        question: '¿Cuál es el nombre de esta señal?',
+        image: imageSrc,
+        // 🔕 Eliminamos cualquier uso de caption/description
+        options,
+        correct
+      };
+    });
 }
 
 function startQuiz(type, num = null) {
@@ -108,7 +107,7 @@ function showQuestion() {
   }
 
   // Enunciado
-  document.getElementById('question').textContent = q.question;
+  document.getElementById('question').textContent = q.question || '';
 
   // Imagen (si aplica)
   const imgEl = document.getElementById('question-image');
@@ -119,13 +118,9 @@ function showQuestion() {
     imgEl.style.display = 'none';
   }
 
+  // 🔕 Caption removido: aseguramos que no se muestre nada
   const descEl = document.getElementById('image-desc');
-  if (q.imageDesc) {
-    descEl.textContent = q.imageDesc;
-    descEl.style.display = 'block';
-  } else {
-    descEl.style.display = 'none';
-  }
+  if (descEl) descEl.style.display = 'none';
 
   // Opciones: clonar → barajar → pintar
   const optionsDiv = document.getElementById('options');
@@ -159,7 +154,7 @@ function selectAnswer(selected, correct) {
     score++;
   } else {
     wrongAnswers.push({
-      question: currentQuiz[currentIndex].question,
+      question: currentQuiz[currentIndex]?.question || '',
       correct
     });
   }
@@ -183,13 +178,15 @@ function updateProgress() {
 }
 
 function updateScore() {
-  document.getElementById('score').textContent = `Puntaje: ${score} / ${currentQuiz.length || 0}`;
+  document.getElementById('score').textContent =
+    `Puntaje: ${score} / ${currentQuiz.length || 0}`;
 }
 
 function endQuiz() {
   document.getElementById('quiz-screen').style.display = 'none';
   document.getElementById('end-screen').style.display = 'block';
-  document.getElementById('final-score').textContent = `Tu puntaje final: ${score} / ${currentQuiz.length || 0}`;
+  document.getElementById('final-score').textContent =
+    `Tu puntaje final: ${score} / ${currentQuiz.length || 0}`;
 
   if (wrongAnswers.length > 0) {
     let summary = "Resumen de preguntas erradas:\n";
@@ -203,7 +200,7 @@ function endQuiz() {
   wrongAnswers = [];
 }
 
-// Listeners (se mantiene estructura/estilos actuales)
+// Listeners (estructura/estilos actuales)
 document.getElementById('quiz1-btn').onclick = () => startQuiz('quiz1');
 
 document.getElementById('quiz2-btn').onclick = () => {
