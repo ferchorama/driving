@@ -1,4 +1,4 @@
-// script.js (mejoras menores: toggle de paneles, atajos de teclado, alt de imagen, límites de señales)
+// script.js — mantiene tu lógica y textos, sin cambios funcionales mayores
 let questions = {};
 let currentQuiz = [];
 let currentIndex = 0;
@@ -48,7 +48,7 @@ async function loadQuestions() {
     return obj;
   });
 
-  // Crea preguntas de señales
+  // Crea preguntas de señales (sin caption)
   questions.signals = data
     .filter(item => item && item.nombre_visible)
     .map(item => {
@@ -137,7 +137,7 @@ function showQuestion() {
     imgEl.style.display = 'none';
   }
 
-  // Opciones: clonar → barajar → pintar
+  // Opciones: clonar → barajar → pintar (sigues usando tu UI con botones)
   const optionsDiv = document.getElementById('options');
   optionsDiv.innerHTML = '';
   const opts = [...(q.options || [])];
@@ -214,7 +214,7 @@ function endQuiz() {
   wrongAnswers = [];
 }
 
-/* ====== Mejoras menores de interacción ====== */
+/* ====== Interacción ====== */
 // Toggle de paneles “Configurar”
 document.getElementById('quiz1-btn').onclick = () => startQuiz('quiz1');
 
@@ -245,10 +245,8 @@ document.getElementById('restart-btn').onclick = () => {
   document.getElementById('quiz3-options').style.display = 'none';
 };
 
-// Atajos de teclado (1–9 para responder, Enter para avanzar)
-let keysOn = false;
+// Atajos (1–9 selecciona, Enter avanza)
 document.addEventListener('keydown', (e) => {
-  // activar solo cuando estamos en la pantalla de quiz
   const inQuiz = document.getElementById('quiz-screen').style.display === 'block';
   if (!inQuiz) return;
 

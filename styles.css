@@ -1,118 +1,149 @@
-/* styles.css (mejorado, manteniendo tu look & feel) */
-body {
-  background-color: #121212;
-  color: #ffffff;
-  font-family: 'Roboto', 'Arial', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;      /* antes height:100vh (mejor manejo en móviles) */
+/* styles.css — oscuro + responsive móvil vertical */
+:root{
+  --bg: #121212;
+  --panel: #1e1e1e;
+  --panel-2: #171717;
+  --text: #ffffff;
+  --muted: #aaaaaa;
+  --brand: #bb86fc;
+  --primary: #03dac6;
+  --primary-d: #018786;
+  --border: #2b2b2b;
+}
+
+/* Base */
+*{ box-sizing: border-box; }
+html, body {
   margin: 0;
+  color: var(--text);
+  background-color: var(--bg);
+  font-family: 'Roboto', 'Arial', sans-serif;
+  /* Permite crecer en móvil y evita recortes por barras del navegador */
+  min-height: 100dvh;
 }
 
+/* Contenedor principal responsivo */
 .container {
-  background-color: #1e1e1e;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  background-color: var(--panel);
+  padding: clamp(14px, 4vw, 24px);
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, .5);
   text-align: center;
-  max-width: 600px;
+  max-width: min(680px, 96vw);
   width: 100%;
+  margin: clamp(10px, 3vh, 28px) auto;
 }
 
+/* Tipografías fluidas */
 h1, h2 {
-  color: #bb86fc;
+  color: var(--brand);
   font-family: 'Montserrat', sans-serif;
   margin: 10px 0 8px 0;
 }
+h1 { font-size: clamp(22px, 5vw, 28px); }
+h2 { font-size: clamp(18px, 4.5vw, 22px); }
 
-.muted {
-  color: #aaaaaa;
-  margin: 0 0 10px 0;
-}
-
+.muted { color: var(--muted); margin: 0 0 10px 0; }
 .spacer { height: 8px; }
 
-.label { display: block; text-align: left; margin: 8px 0 6px 0; color: #cccccc; }
-
+/* Botones e inputs: grandes y táctiles */
+.btn,
 button {
-  background-color: #03dac6;
-  color: #000000;
+  background-color: var(--primary);
+  color: #000;
   border: none;
-  padding: 10px 20px;
+  padding: clamp(12px, 3.6vw, 14px) clamp(14px, 5vw, 18px);
   margin: 10px 0;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s, transform .12s ease;
-  font-family: 'Roboto', sans-serif;
+  transition: background-color .25s, transform .12s ease;
+  width: 100%;          /* táctil y a una columna en móvil */
+}
+.btn:hover, button:hover { background-color: var(--primary-d); transform: translateY(-1px); }
+.btn:disabled, button:disabled { background-color: #555; cursor: not-allowed; }
+
+.btn.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 
-button:hover {
-  background-color: #018786;
-  transform: translateY(-1px);
-}
-
-button:disabled {
-  background-color: #555555;
-  cursor: not-allowed;
-}
-
+/* Inputs */
+.label { display: block; text-align: left; margin: 8px 0 6px 0; color: #cccccc; }
 input[type="number"]{
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1px solid #2b2b2b;
-  background: #171717;
-  color: #fff;
+  padding: clamp(10px, 3.6vw, 12px);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
 }
 
 /* Paneles de configuración */
 .panel {
-  background: #171717;
-  border: 1px solid #2b2b2b;
-  border-radius: 8px;
-  padding: 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: clamp(10px, 3.6vw, 14px);
+  text-align: left;
 }
 
 /* Progreso */
 .progress-bar {
   background-color: #333333;
-  border-radius: 5px;
-  height: 10px;
+  border-radius: 6px;
+  height: clamp(10px, 2.6vw, 12px);
   margin-bottom: 12px;
 }
 #progress {
-  background-color: #03dac6;
+  background: linear-gradient(90deg, var(--primary), #7cc3ff);
   height: 100%;
-  border-radius: 5px;
+  border-radius: 6px;
   transition: width 0.3s;
 }
 
-/* Compatibilidad con la versión anterior por si queda en caché */
-#progress-container {           /* <- por si HTML viejo persiste */
-  background-color: #333333;
-  border-radius: 5px;
-  height: 10px;
-  margin-bottom: 20px;
+/* Texto dinámico */
+#score { margin-bottom: 8px; color: var(--muted); font-size: clamp(14px, 3.8vw, 16px); }
+
+/* Imagen */
+#question-image {
+  display: block;
+  margin: 14px auto 10px auto;
+  max-width: min(420px, 92vw);
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
 }
 
-/* Opciones como botones (manteniendo tu interfaz) */
+/* Opciones (manteniendo tu interfaz con botones) */
 #options button {
   display: block;
   width: 100%;
   margin: 10px 0;
+  white-space: normal;
+  text-align: left;
 }
 
-/* Imagen y descripción */
-#image-desc {
-  font-style: italic;
-  color: #aaaaaa;
-  font-family: 'Roboto', sans-serif;
+/* Navegación fija en móvil para que el botón Siguiente siempre esté a mano */
+.sticky-nav {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,.25) 40%, rgba(0,0,0,.45));
+  padding-top: 8px;
 }
 
-#question-image {
-  display: block;
-  margin: 15px auto 10px auto;
-  max-width: 240px;
-  height: auto;
+/* Ajustes adicionales para móvil vertical */
+@media (max-width: 480px) and (orientation: portrait) {
+  .container {
+    border-radius: 0;
+    max-width: 100%;
+    margin: 0;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  #question-image { max-height: 42vh; object-fit: contain; }
 }
