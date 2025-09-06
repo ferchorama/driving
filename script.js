@@ -1,4 +1,4 @@
-// script.js — mantiene tu lógica y textos, sin cambios funcionales mayores
+// script.js — Código Nacional usa SIEMPRE todas las preguntas
 let questions = {};
 let currentQuiz = [];
 let currentIndex = 0;
@@ -89,14 +89,15 @@ function startQuiz(type, num = null) {
     currentQuiz = [...(questions.quiz1 || [])];
     shuffle(currentQuiz);
   } else if (type === 'quiz2') {
+    // ⬇️ SIEMPRE todas las preguntas de Código Nacional
     const pool = [...(questions.quiz2 || [])];
     shuffle(pool);
-    currentQuiz = num ? pool.slice(0, num) : pool;
+    currentQuiz = pool; // no se corta por 'num'
   } else if (type === 'signals') {
     const pool = [...(questions.signals || [])];
     shuffle(pool);
 
-    // Aseguramos que num sea válido
+    // Aseguramos que num sea válido (en Señales sí puede seleccionarse)
     let total = pool.length;
     let n = parseInt(num, 10);
     if (isNaN(n) || n <= 0 || n > total) n = total;
@@ -111,7 +112,6 @@ function startQuiz(type, num = null) {
   wrongAnswers = [];
 
   document.getElementById('start-screen').style.display = 'none';
-  document.getElementById('quiz2-options').style.display = 'none';
   document.getElementById('quiz3-options').style.display = 'none';
   document.getElementById('quiz-screen').style.display = 'block';
 
@@ -137,7 +137,7 @@ function showQuestion() {
     imgEl.style.display = 'none';
   }
 
-  // Opciones: clonar → barajar → pintar (sigues usando tu UI con botones)
+  // Opciones: clonar → barajar → pintar (misma UI con botones)
   const optionsDiv = document.getElementById('options');
   optionsDiv.innerHTML = '';
   const opts = [...(q.options || [])];
@@ -215,18 +215,11 @@ function endQuiz() {
 }
 
 /* ====== Interacción ====== */
-// Toggle de paneles “Configurar”
+// Iniciar modos
 document.getElementById('quiz1-btn').onclick = () => startQuiz('quiz1');
+document.getElementById('quiz2-btn').onclick = () => startQuiz('quiz2'); // inicia directo con todas las preguntas
 
-document.getElementById('quiz2-btn').onclick = () => {
-  const box = document.getElementById('quiz2-options');
-  box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
-};
-document.getElementById('start-quiz2').onclick = () => {
-  const num = parseInt(document.getElementById('num-questions').value, 10);
-  startQuiz('quiz2', num);
-};
-
+// Señales: panel opcional
 document.getElementById('quiz3-btn').onclick = () => {
   const box = document.getElementById('quiz3-options');
   box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
@@ -241,7 +234,6 @@ document.getElementById('next-btn').onclick = nextQuestion;
 document.getElementById('restart-btn').onclick = () => {
   document.getElementById('end-screen').style.display = 'none';
   document.getElementById('start-screen').style.display = 'block';
-  document.getElementById('quiz2-options').style.display = 'none';
   document.getElementById('quiz3-options').style.display = 'none';
 };
 
