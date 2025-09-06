@@ -10,26 +10,30 @@ async function loadQuestions() {
     const response = await fetch('questions.json');
     questions = await response.json();
 
-    // Cargar datos del CSV de señales
+    // Cargar datos del CSV de señales (versión corregida y robusta)
     const csvResponse = await fetch('inventario.csv');
     const csvText = await csvResponse.text();
-    const rows = csvText.trim().split('\n').map(row => row.split(','));
-    const headers = rows[0];
-    const data = rows.slice(1).map(row => {
+    const rows = csvText.trim().split(/\r?\n/); // Divide por líneas, compatible con Windows/Mac/Linux
+    const headers = rows.shift().split(',').map(h => h.trim());
+
+    const data = rows.map(rowStr => {
+        const row = rowStr.split(',');
         let obj = {};
-        headers.forEach((header, index) => obj[header] = row[index]);
+        headers.forEach((header, index) => {
+            obj[header] = row[index] ? row[index].trim() : '';
+        });
         return obj;
-    });
+    }).filter(item => item.nombre_visible); // Filtra cualquier fila vacía
 
     // Crear preguntas basadas en las señales
     questions.signals = data.map(item => ({
         question: `¿Cuál es el nombre de esta señal?`,
-        // FIX: Correct the image path by using the 'archivo' field and replacing backslashes
-        image: item.archivo.replace(/\\/g, '/'),
+        image: item.archivo.replace(/\\/g, '/'), // Corrige la ruta de la imagen
         options: [item.nombre_visible, ...generateWrongOptions(item.nombre_visible, data)],
         correct: item.nombre_visible
     }));
 }
+
 
 function generateWrongOptions(correctAnswer, data) {
     let wrongOptions = new Set();

@@ -73,5 +73,8 @@ button:disabled {
 }
 
 #question-image {
-    margin: 10px 0;
+    display: block;
+    margin: 15px auto;
+    max-width: 200px;
+    height: auto;
 }
