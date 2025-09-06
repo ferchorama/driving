@@ -1,4 +1,5 @@
-// script.js — Código Nacional usa SIEMPRE todas las preguntas
+// script.js — "Código Nacional" usa SIEMPRE todas las preguntas
+// y ahora además fusiona preguntas extra desde questions_extra.json (si existe).
 let questions = {};
 let currentQuiz = [];
 let currentIndex = 0;
@@ -19,6 +20,7 @@ function shuffle(array) {
 }
 
 // Genera 3 opciones erróneas (todas distintas y ≠ correcta)
+// Nota: esta función es para señales; las preguntas del código ya vienen con opciones.
 function generateWrongOptions(correctAnswer, pool) {
   const set = new Set();
   while (set.size < 3) {
@@ -29,17 +31,44 @@ function generateWrongOptions(correctAnswer, pool) {
   return Array.from(set);
 }
 
-// Carga JSON + CSV de señales
+// Fusión segura de preguntas (evita duplicados por enunciado exacto)
+function mergeQuiz2(base = [], extra = []) {
+  const map = new Map();
+  base.forEach(q => { if (q?.question) map.set(q.question.trim(), q); });
+  extra.forEach(q => {
+    if (q?.question) {
+      const key = q.question.trim();
+      if (!map.has(key)) map.set(key, q);
+    }
+  });
+  return Array.from(map.values());
+}
+
+// Carga JSON + CSV de señales + (opcional) extra de código
 async function loadQuestions() {
-  // Banco teórico (quiz1/quiz2)
+  // 1) Banco teórico (quiz1/quiz2) base
   const response = await fetch('questions.json');
   questions = await response.json();
 
-  // CSV de señales
+  // 2) Banco extra de "Código Nacional" (opcional). Si no existe, se ignora sin error.
+  try {
+    const extraRes = await fetch('questions_extra.json', { cache: 'no-store' });
+    if (extraRes.ok) {
+      const extraData = await extraRes.json();
+      const extraQuiz2 = Array.isArray(extraData?.quiz2) ? extraData.quiz2 : [];
+      // Fusionar evitando duplicados
+      questions.quiz2 = mergeQuiz2(questions.quiz2 || [], extraQuiz2);
+    }
+  } catch (e) {
+    // Si 404 u otro error, seguimos con el banco base
+    console.warn('questions_extra.json no disponible (se continúa con el banco base).');
+  }
+
+  // 3) CSV de señales
   const csvResponse = await fetch('inventario.csv');
   const csvText = await csvResponse.text();
 
-  // Parse CSV
+  // Parse CSV simple
   const rows = csvText.trim().split('\n').map(r => r.split(','));
   const headers = rows[0].map(h => h.trim());
   const data = rows.slice(1).map(row => {
@@ -48,7 +77,7 @@ async function loadQuestions() {
     return obj;
   });
 
-  // Crea preguntas de señales (sin caption)
+  // Crea preguntas de señales (sin caption, con opciones a partir de nombres)
   questions.signals = data
     .filter(item => item && item.nombre_visible)
     .map(item => {
@@ -89,10 +118,10 @@ function startQuiz(type, num = null) {
     currentQuiz = [...(questions.quiz1 || [])];
     shuffle(currentQuiz);
   } else if (type === 'quiz2') {
-    // ⬇️ SIEMPRE todas las preguntas de Código Nacional
+    // ⬇️ SIEMPRE todas las preguntas de Código Nacional (ya fusionadas si existía questions_extra.json)
     const pool = [...(questions.quiz2 || [])];
     shuffle(pool);
-    currentQuiz = pool; // no se corta por 'num'
+    currentQuiz = pool;
   } else if (type === 'signals') {
     const pool = [...(questions.signals || [])];
     shuffle(pool);
@@ -137,7 +166,7 @@ function showQuestion() {
     imgEl.style.display = 'none';
   }
 
-  // Opciones: clonar → barajar → pintar (misma UI con botones)
+  // Opciones: barajar → pintar (UI con botones)
   const optionsDiv = document.getElementById('options');
   optionsDiv.innerHTML = '';
   const opts = [...(q.options || [])];
