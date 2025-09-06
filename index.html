@@ -1,48 +1,114 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Juego de Tránsito</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quiz de Tránsito</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="start-screen">
-    <h1>Juego de Tránsito</h1>
-    <button id="quiz1-btn">Quiz Teórico</button>
-    <button id="quiz2-btn">Quiz Código Nacional</button>
-    <button id="quiz3-btn">Quiz Señales</button>
-
-    <!-- Opciones Quiz 2 -->
-    <div id="quiz2-options" style="display:none;">
-      <input type="number" id="num-questions" placeholder="Número de preguntas">
-      <button id="start-quiz2">Iniciar Quiz 2</button>
+  <header class="app-header">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">🚦</span>
+      <h1>Quiz de Tránsito</h1>
     </div>
-
-    <!-- Opciones Quiz 3 (Señales) -->
-    <div id="quiz3-options" style="display:none;">
-      <label for="num-questions-3">
-        Número de preguntas (máximo <span id="max-signals">...</span>):
-      </label>
-      <input type="number" id="num-questions-3" min="1">
-      <button id="start-quiz3">Iniciar Quiz 3</button>
+    <div class="meta">
+      <button id="theme-btn" class="icon-btn" title="Tema oscuro/claro" aria-label="Cambiar tema">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+          <path d="M21.64 13a1 1 0 0 0-1.05-.14 8 8 0 1 1-9.45-9.45 1 1 0 0 0-.14-2A10 10 0 1 0 23.64 13a1 1 0 0 0-2-.14Z"/>
+        </svg>
+      </button>
     </div>
-  </div>
+  </header>
 
-  <div id="quiz-screen" style="display:none;">
-    <p id="question"></p>
-    <img id="question-image" style="display:none; max-width:300px;">
-    <div id="options"></div>
-    <button id="next-btn">Siguiente</button>
-    <div id="progress-container">
-      <div id="progress"></div>
-    </div>
-    <p id="score"></p>
-  </div>
+  <!-- Pantalla inicial -->
+  <main id="start-screen" class="screen visible">
+    <section class="intro">
+      <h2>Elige un modo</h2>
+      <p class="muted">Practica teoría, código nacional o señales de tránsito. Configura el número de preguntas antes de comenzar.</p>
+    </section>
 
-  <div id="end-screen" style="display:none;">
-    <p id="final-score"></p>
-    <button id="restart-btn">Reiniciar</button>
-  </div>
+    <section class="cards">
+      <article class="card">
+        <div class="card-body">
+          <h3 class="card-title">Teórico</h3>
+          <p class="card-text">Preguntas generales de educación vial.</p>
+          <button id="quiz1-btn" class="btn primary">Iniciar</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-body">
+          <h3 class="card-title">Código Nacional</h3>
+          <p class="card-text">Reglamentación y normativa aplicable.</p>
+          <button id="quiz2-btn" class="btn">Configurar</button>
+          <div id="quiz2-options" class="drawer" role="region" aria-label="Opciones Quiz Código" style="display:none;">
+            <label class="field">
+              <span>Número de preguntas</span>
+              <input id="num-questions" type="number" min="5" max="100" value="10" inputmode="numeric" />
+            </label>
+            <button id="start-quiz2" class="btn primary">Iniciar</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-body">
+          <h3 class="card-title">Señales</h3>
+          <p class="card-text">Identifica las señales por su nombre.</p>
+          <button id="quiz3-btn" class="btn">Configurar</button>
+          <div id="quiz3-options" class="drawer" role="region" aria-label="Opciones Quiz Señales" style="display:none;">
+            <label class="field">
+              <span>Número de preguntas (máximo <strong id="max-signals">...</strong>)</span>
+              <input id="num-questions-3" type="number" min="1" value="10" inputmode="numeric" />
+            </label>
+            <button id="start-quiz3" class="btn primary">Iniciar</button>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Pantalla del quiz -->
+  <main id="quiz-screen" class="screen" style="display:none;">
+    <section class="hud">
+      <div class="progress-wrap" aria-label="Progreso">
+        <div class="progress-bar" id="progress"></div>
+      </div>
+      <div id="score" class="score">Puntaje: 0 / 0</div>
+    </section>
+
+    <section class="question-wrap">
+      <h2 id="question" class="question">Pregunta</h2>
+      <figure class="image-wrap">
+        <img id="question-image" alt="Imagen de la pregunta" style="display:none;" />
+        <!-- Caption eliminado por requerimiento -->
+      </figure>
+      <div id="options" class="options" role="group" aria-label="Opciones de respuesta"></div>
+
+      <div class="nav">
+        <button id="next-btn" class="btn next" disabled>Siguiente</button>
+      </div>
+
+      <p class="hint muted">
+        Sugerencia: también puedes responder con teclas <kbd>1</kbd>-<kbd>9</kbd> y avanzar con <kbd>Enter</kbd>.
+      </p>
+    </section>
+  </main>
+
+  <!-- Pantalla final -->
+  <main id="end-screen" class="screen" style="display:none;">
+    <section class="result-card">
+      <h2 id="final-score">Tu puntaje final: 0 / 0</h2>
+      <div class="actions">
+        <button id="restart-btn" class="btn">Volver al inicio</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <small class="muted">© <span id="year"></span> Práctica para Escuelas de Conducción</small>
+  </footer>
 
   <script src="script.js"></script>
 </body>
