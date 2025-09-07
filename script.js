@@ -1,14 +1,20 @@
-// script.js — versión robusta y corregida
-// - Corrige errores de sintaxis (spread ... en vez de ".")
-// - Protege accesos a nodos opcionales
-// - Carga bancos (questions.json, questions_extra.json, article2_definitions.json)
-// - Genera banco de señales desde inventario.csv
-// - Reemplaza "DETERMINE..." del teórico por preguntas con imagen (40–49)
-// - Limpia sufijos legales en quiz2 (si vinieran en JSON previos)
-// - En quiz2 siempre usa TODAS las preguntas
+// script.js — versión optimizada (lógica y robustez) SIN cambios de interfaz
+// - Carga modular con caché y lazy-load de definiciones (ART. 2°) al abrir quiz de Código
+// - Manejo de errores: retry, timeout, validación suave de datos, logs descriptivos
+// - Parser CSV robusto (comillas, comas), desduplicación y limpieza de sufijos legales
+// - Mantiene toda la funcionalidad y la misma UI
 
-/* ============== Estado global ============== */
-let questions = {};
+/* ===========================
+   ESTADO GLOBAL Y CONSTANTES
+   =========================== */
+const PATHS = {
+  base: 'questions.json',
+  extra: 'questions_extra.json',
+  inventoryCSV: 'inventario.csv',
+  article2: 'article2_definitions.json'
+};
+
+let questions = { quiz1: [], quiz2: [], signals: [] };
 let currentQuiz = [];
 let currentIndex = 0;
 let score = 0;
@@ -16,16 +22,118 @@ let quizType = '';
 let wrongAnswers = [];
 let maxSignals = 0;
 
-/* ============== Utilidades ============== */
-const normalizePath = (p) => (p || '').replace(/\\/g, '/').replace(/^\.?\//, '');
+// Caché de carga
+const LOADED = {
+  base: false,
+  extra: false,
+  inventory: false,
+  article2: false
+};
 
+// Utilidad simple para IDs estables de pregunta (enunciado+imagen)
+function stableId(str) {
+  const s = String(str || '');
+  let hash = 5381;
+  for (let i = 0; i < s.length; i++) hash = ((hash << 5) + hash) ^ s.charCodeAt(i);
+  return 'q_' + (hash >>> 0).toString(16);
+}
+
+/* ===========================
+   UTILIDADES BÁSICAS
+   =========================== */
+// Timeout de fetch
+function withTimeout(promise, ms, label = 'operación') {
+  let timer;
+  const timeout = new Promise((_, rej) => {
+    timer = setTimeout(() => rej(new Error(`Timeout ${ms}ms en ${label}`)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
+async function fetchText(url, { retries = 1, timeout = 10000 } = {}) {
+  let lastErr;
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const res = await withTimeout(fetch(url, { cache: 'no-store' }), timeout, `fetch ${url}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status} al cargar ${url}`);
+      return await res.text();
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[fetchText] intento ${i + 1} falló para ${url}:`, err);
+    }
+  }
+  throw lastErr;
+}
+
+async function fetchJson(url, opts) {
+  const txt = await fetchText(url, opts);
+  try {
+    return JSON.parse(txt);
+  } catch (err) {
+    console.error(`[fetchJson] JSON inválido en ${url}:`, err);
+    throw err;
+  }
+}
+
+const normalizePath = (p) => (p || '').replace(/\\/g, '/').replace(/^\.?\//, '');
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+function sampleDistinct(arr, k, excludeIndex = -1) {
+  const n = arr.length;
+  if (k <= 0 || n === 0) return [];
+  const idxs = new Set();
+  while (idxs.size < Math.min(k, n - (excludeIndex >= 0 ? 1 : 0))) {
+    const r = Math.floor(Math.random() * n);
+    if (r === excludeIndex) continue;
+    idxs.add(r);
+  }
+  return Array.from(idxs).map(i => arr[i]);
+}
 
+/* ===========================
+   PARSER CSV ROBUSTO
+   =========================== */
+function parseCSV(text) {
+  // Soporta campos entre comillas con comas internas y dobles comillas escapadas
+  const rows = [];
+  let i = 0, field = '', row = [], inQuotes = false;
+  const pushField = () => { row.push(field); field = ''; };
+  const pushRow = () => { rows.push(row); row = []; };
+
+  while (i < text.length) {
+    const ch = text[i];
+
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i += 2; continue; } // doble comilla -> literal
+        inQuotes = false; i++; continue;
+      } else {
+        field += ch; i++; continue;
+      }
+    } else {
+      if (ch === '"') { inQuotes = true; i++; continue; }
+      if (ch === ',') { pushField(); i++; continue; }
+      if (ch === '\n') { pushField(); pushRow(); i++; continue; }
+      if (ch === '\r') { // CRLF
+        if (text[i + 1] === '\n') i++;
+        pushField(); pushRow(); i++; continue;
+      }
+      field += ch; i++; continue;
+    }
+  }
+  // último campo/fila
+  pushField();
+  if (row.length > 1 || (row.length === 1 && row[0].trim() !== '')) pushRow();
+  return rows;
+}
+
+/* ===========================
+   LIMPIEZA DE SUFIJOS LEGALES
+   =========================== */
 function stripLegalTags(text) {
   if (typeof text !== 'string') return text;
   let t = text;
@@ -34,7 +142,6 @@ function stripLegalTags(text) {
   t = t.replace(/\s*—\s*ley\s*76[89]\/2002\s*$/i, '');
   return t.trim();
 }
-
 function cleanQuiz2LegalTagsAndSyncCorrect() {
   if (!Array.isArray(questions.quiz2)) return;
   const collapse = (s) => (s || '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -42,6 +149,7 @@ function cleanQuiz2LegalTagsAndSyncCorrect() {
     if (!q || !Array.isArray(q.options)) return;
     q.options = q.options.map(stripLegalTags);
     const cleanedCorrect = stripLegalTags(q.correct);
+    // Alineación tolerante
     let idx = q.options.findIndex(o => o === cleanedCorrect);
     if (idx === -1) {
       const target = collapse(cleanedCorrect.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
@@ -49,12 +157,17 @@ function cleanQuiz2LegalTagsAndSyncCorrect() {
         collapse(String(o).normalize('NFD').replace(/[\u0300-\u036f]/g, '')) === target
       );
     }
-    if (idx === -1) q.options = [cleanedCorrect, ...q.options.filter(o => o !== cleanedCorrect)];
+    if (idx === -1) {
+      // forzar consistencia si no está incluida
+      q.options = [cleanedCorrect, ...q.options.filter(o => o !== cleanedCorrect)];
+    }
     q.correct = cleanedCorrect;
   });
 }
 
-/* ============== Eliminar cualquier recuadro explicativo residual ============== */
+/* ===========================
+   UI: LIMPIEZA DE RECUADROS
+   =========================== */
 function removeExplanationBoxes() {
   const exp = document.getElementById('explanation');
   if (exp && exp.parentNode) exp.parentNode.removeChild(exp);
@@ -74,7 +187,9 @@ function removeExplanationBoxes() {
   });
 }
 
-/* ============== Señales del teórico #40–#49 (con overrides de imagen) ============== */
+/* ===========================
+   SEÑALES Y REEMPLAZOS TEÓRICO
+   =========================== */
 const THEORETICAL_REPLACEMENTS = [
   { num: 40, correct: 'Prohibido circular en bicicleta', img: 'Reglamentarias/Prohibida Bicicletas.png' },
   { num: 41, correct: 'Prohibido girar en U', img: 'Reglamentarias/Prohibido Girar En U.png' },
@@ -89,31 +204,32 @@ const THEORETICAL_REPLACEMENTS = [
 ];
 
 function generateWrongOptions(correctAnswer, pool) {
-  const set = new Set();
-  while (set.size < 3 && pool.length) {
-    const r = pool[Math.floor(Math.random() * pool.length)];
-    const candidate = r.nombre_visible;
-    if (candidate && candidate !== correctAnswer) set.add(candidate);
-  }
+  const names = pool.map(p => p.nombre_visible).filter(Boolean);
+  const unique = Array.from(new Set(names)).filter(n => n !== correctAnswer);
+  shuffle(unique);
+  const pick = unique.slice(0, 3);
   const fallbacks = [
     'Cruce escolar','Zona escolar','Curva peligrosa','Vía cerrada',
     'Obras en la vía','Prohibido girar a la izquierda','Siga de frente',
     'Doble calzada','Reductor de velocidad'
   ];
-  for (const f of fallbacks) {
-    if (set.size >= 3) break;
-    if (f !== correctAnswer) set.add(f);
+  while (pick.length < 3) {
+    const f = fallbacks[pick.length];
+    if (f && f !== correctAnswer && !pick.includes(f)) pick.push(f);
+    else break;
   }
-  return Array.from(set);
+  return pick;
 }
 
 function replaceDeterminePlaceholders(inventory) {
   if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
   const isDetermine = q => typeof q?.question === 'string' &&
     /^\s*determine que indica cada se(ñ|n)al/i.test(q.question);
-  // Limpia los existentes
+
+  // Limpia placeholders del banco
   questions.quiz1 = questions.quiz1.filter(q => !isDetermine(q));
-  // Inserta las 40–49 con imagen
+
+  // Inserta 40–49 con imagen
   for (const r of THEORETICAL_REPLACEMENTS) {
     let image = r.img || null;
     if (!image) {
@@ -129,166 +245,225 @@ function replaceDeterminePlaceholders(inventory) {
       if (best) image = best.url && best.url.startsWith('http') ? best.url : normalizePath(best.archivo);
     }
     const wrongs = generateWrongOptions(r.correct, inventory);
-    questions.quiz1.push({
+    const q = {
+      id: stableId(`teorico-${r.num}-${r.correct}`),
       question: `(#${r.num}) ¿Cuál es el nombre de esta señal?`,
       image,
       options: [r.correct, ...wrongs],
       correct: r.correct
-    });
+    };
+    questions.quiz1.push(q);
   }
 }
 
-/* ============== Preguntas a partir del ART. 2° (definiciones) ============== */
-function appendArticle2DefinitionQuestions(defBank) {
-  const list = Array.isArray(defBank?.article2_definitions) ? defBank.article2_definitions : [];
-  if (!list.length) return;
-
-  const newQs = [];
-  const total = list.length;
-
-  for (let i = 0; i < total; i++) {
-    const entry = list[i];
-    if (!entry?.term || !entry?.definition) continue;
-
-    // 3 distractores = otras definiciones del mismo artículo
-    const indices = [];
-    while (indices.length < 3 && indices.length < total - 1) {
-      const r = Math.floor(Math.random() * total);
-      if (r !== i && !indices.includes(r)) indices.push(r);
-    }
-    const distractors = indices.map(idx => list[idx].definition);
-
-    newQs.push({
-      question: `Según el ARTÍCULO 2° (Definiciones), ¿qué se entiende por “${entry.term}”?`,
-      options: [entry.definition, ...distractors],
-      correct: entry.definition
-    });
-  }
-
-  if (!Array.isArray(questions.quiz2)) questions.quiz2 = [];
-  const seen = new Set(questions.quiz2.map(q => (q.question || '').trim()));
-  newQs.forEach(q => {
-    const key = (q.question || '').trim();
-    if (!seen.has(key)) {
-      questions.quiz2.push(q);
-      seen.add(key);
-    }
+/* ===========================
+   VALIDACIÓN SUAVE DE BANCOS
+   =========================== */
+function normalizeQuestion(q) {
+  if (!q) return null;
+  const nq = { ...q };
+  nq.id = q.id || stableId(`${q.question}|${q.image || ''}`);
+  if (!Array.isArray(nq.options)) nq.options = [];
+  // Elimina falsy, normaliza a strings y desduplica preservando orden
+  const seen = new Set();
+  nq.options = nq.options
+    .map(o => (o == null ? '' : String(o).trim()))
+    .filter(o => o.length > 0 && (seen.has(o) ? false : (seen.add(o), true)));
+  // Si la correcta no está, intente agregar al inicio
+  const corr = (q.correct == null ? '' : String(q.correct).trim());
+  if (!nq.options.includes(corr) && corr) nq.options.unshift(corr);
+  // Asegurar mínimo 2 opciones
+  if (nq.options.length < 2) return null;
+  nq.correct = corr || nq.options[0];
+  return nq;
+}
+function mergeUniqueQuestions(dstArr, srcArr) {
+  const map = new Map();
+  dstArr.forEach(q => map.set(q.id || stableId(`${q.question}|${q.image || ''}`), q));
+  srcArr.forEach(q => {
+    const n = normalizeQuestion(q);
+    if (!n) return;
+    if (!map.has(n.id)) map.set(n.id, n);
   });
+  return Array.from(map.values());
 }
 
-/* ============== Carga principal ============== */
-async function loadQuestions() {
+/* ===========================
+   CARGA MODULAR DE BANCOS
+   =========================== */
+async function loadBaseQuestions() {
+  if (LOADED.base) return;
+  const base = await fetchJson(PATHS.base, { retries: 1 });
+  // Normaliza y asigna
+  questions.quiz1 = mergeUniqueQuestions([], Array.isArray(base.quiz1) ? base.quiz1 : []);
+  questions.quiz2 = mergeUniqueQuestions([], Array.isArray(base.quiz2) ? base.quiz2 : []);
+  LOADED.base = true;
+}
+
+async function loadExtraQuestions() {
+  if (LOADED.extra) return;
   try {
-    removeExplanationBoxes();
-
-    // 1) Banco base
-    const base = await fetch('questions.json', { cache: 'no-store' }).then(r => r.json());
-    questions = base;
-
-    // 2) Banco extra (opcional) fusionado sin duplicados
-    try {
-      const extraRes = await fetch('questions_extra.json', { cache: 'no-store' });
-      if (extraRes.ok) {
-        const extra = await extraRes.json();
-
-        if (Array.isArray(extra?.quiz1)) {
-          const map1 = new Map();
-          (questions.quiz1 || []).forEach(q => map1.set((q.question || '').trim(), q));
-          extra.quiz1.forEach(q => {
-            const k = (q?.question || '').trim();
-            if (k && !map1.has(k)) map1.set(k, q);
-          });
-          questions.quiz1 = Array.from(map1.values());
-        }
-
-        if (Array.isArray(extra?.quiz2)) {
-          const map2 = new Map();
-          (questions.quiz2 || []).forEach(q => map2.set((q.question || '').trim(), q));
-          extra.quiz2.forEach(q => {
-            const k = (q?.question || '').trim();
-            if (k && !map2.has(k)) map2.set(k, q);
-          });
-          questions.quiz2 = Array.from(map2.values());
-        }
-      }
-    } catch (_) {
-      // opcional
+    const extra = await fetchJson(PATHS.extra, { retries: 1 });
+    if (Array.isArray(extra.quiz1)) {
+      questions.quiz1 = mergeUniqueQuestions(questions.quiz1, extra.quiz1);
     }
-
-    // 3) Inventario de señales (CSV)
-    const csv = await fetch('inventario.csv', { cache: 'no-store' }).then(r => r.text());
-    const rows = csv.trim().split('\n').map(r => r.split(','));
-    const headers = rows[0].map(h => h.trim());
-    const inventory = rows.slice(1).map(row => {
-      const o = {}; headers.forEach((h, i) => (o[h] = (row[i] || '').trim())); return o;
-    }).filter(o => o?.nombre_visible);
-
-    // 4) Banco "Señales"
-    questions.signals = inventory.map(r => {
-      const imagen = r.url && r.url.startsWith('http') ? r.url : normalizePath(r.archivo);
-      const correcta = r.nombre_visible;
-      const err = generateWrongOptions(correcta, inventory);
-      return {
-        question: '¿Cuál es el nombre de esta señal?',
-        image: imagen,
-        options: [correcta, ...err],
-        correct: correcta
-      };
-    });
-
-    // 5) Reemplazar “DETERMINE…” del teórico por preguntas con imagen (40–49)
-    replaceDeterminePlaceholders(inventory);
-
-    // 6) Limpiar sufijos legales residuales en quiz2 (si vinieran del JSON)
-    cleanQuiz2LegalTagsAndSyncCorrect();
-
-    // 7) Definiciones ART. 2° (si está disponible)
-    try {
-      const defsRes = await fetch('article2_definitions.json', { cache: 'no-store' });
-      if (defsRes.ok) {
-        const defs = await defsRes.json();
-        appendArticle2DefinitionQuestions(defs);
-      }
-    } catch (_) {}
-
-    // 8) Datos dependientes de UI (máximo señales, etc.)
-    maxSignals = (questions.signals || []).length;
-    const maxSpan = document.getElementById('max-signals');
-    if (maxSpan) maxSpan.textContent = maxSignals;
-
-    const inputSignals = document.getElementById('num-questions-3');
-    if (inputSignals) {
-      inputSignals.max = maxSignals;
-      if (!inputSignals.value || Number(inputSignals.value) > maxSignals) {
-        inputSignals.value = maxSignals;
-      }
+    if (Array.isArray(extra.quiz2)) {
+      questions.quiz2 = mergeUniqueQuestions(questions.quiz2, extra.quiz2);
     }
   } catch (err) {
-    console.error('Error cargando bancos:', err);
+    console.warn('[loadExtraQuestions] opcional no disponible:', err?.message || err);
+  }
+  LOADED.extra = true;
+}
+
+async function loadInventorySignals() {
+  if (LOADED.inventory) return;
+  const txt = await fetchText(PATHS.inventoryCSV, { retries: 1 });
+  const rows = parseCSV(txt.replace(/^\uFEFF/, '')); // quita BOM si existe
+  if (!rows.length) {
+    console.warn('[loadInventorySignals] CSV vacío');
+    LOADED.inventory = true;
+    return;
+  }
+  const headers = rows[0].map(h => (h || '').trim());
+  const idxNombre = headers.findIndex(h => /nombre_visible/i.test(h));
+  const idxArchivo = headers.findIndex(h => /archivo/i.test(h));
+  const idxUrl = headers.findIndex(h => /^url$/i.test(h));
+
+  if (idxNombre === -1 || (idxArchivo === -1 && idxUrl === -1)) {
+    console.warn('[loadInventorySignals] CSV sin columnas requeridas (nombre_visible, archivo/url)');
+    LOADED.inventory = true;
+    return;
+  }
+
+  const inventory = rows.slice(1).map(r => ({
+    nombre_visible: (r[idxNombre] || '').trim(),
+    archivo: (r[idxArchivo] || '').trim(),
+    url: (r[idxUrl] || '').trim()
+  })).filter(o => o.nombre_visible);
+
+  // Construye banco de señales
+  const built = inventory.map(r => {
+    const imagen = r.url && r.url.startsWith('http') ? r.url : normalizePath(r.archivo);
+    const correcta = r.nombre_visible;
+    const err = generateWrongOptions(correcta, inventory);
+    return normalizeQuestion({
+      id: stableId(`signal-${correcta}-${imagen}`),
+      question: '¿Cuál es el nombre de esta señal?',
+      image: imagen,
+      options: [correcta, ...err],
+      correct: correcta
+    });
+  }).filter(Boolean);
+
+  questions.signals = mergeUniqueQuestions([], built);
+
+  // Actualiza UI dependiente
+  maxSignals = questions.signals.length;
+  const maxSpan = document.getElementById('max-signals');
+  if (maxSpan) maxSpan.textContent = maxSignals;
+
+  const inputSignals = document.getElementById('num-questions-3');
+  if (inputSignals) {
+    inputSignals.max = maxSignals;
+    if (!inputSignals.value || Number(inputSignals.value) > maxSignals) {
+      inputSignals.value = maxSignals;
+    }
+  }
+
+  // Reemplazar placeholders del teórico por 40–49 con imagen
+  replaceDeterminePlaceholders(inventory);
+
+  LOADED.inventory = true;
+}
+
+async function loadArticle2Definitions() {
+  if (LOADED.article2) return;
+  try {
+    const defs = await fetchJson(PATHS.article2, { retries: 1 });
+    const list = Array.isArray(defs?.article2_definitions) ? defs.article2_definitions : [];
+    if (!list.length) {
+      console.warn('[loadArticle2Definitions] sin definiciones en JSON');
+      LOADED.article2 = true;
+      return;
+    }
+    // Generar preguntas a partir de definiciones
+    const newQs = [];
+    for (let i = 0; i < list.length; i++) {
+      const entry = list[i];
+      if (!entry?.term || !entry?.definition) continue;
+      const distractorDefs = sampleDistinct(list, 3, i).map(e => e.definition).filter(Boolean);
+      const q = normalizeQuestion({
+        id: stableId(`art2-${entry.term}`),
+        question: `Según el ARTÍCULO 2° (Definiciones), ¿qué se entiende por “${entry.term}”?`,
+        options: [entry.definition, ...distractorDefs],
+        correct: entry.definition
+      });
+      if (q) newQs.push(q);
+    }
+    questions.quiz2 = mergeUniqueQuestions(questions.quiz2, newQs);
+  } catch (err) {
+    console.warn('[loadArticle2Definitions] opcional no disponible:', err?.message || err);
+  }
+  LOADED.article2 = true;
+}
+
+/* ===========================
+   CARGA INICIAL (mínima)
+   =========================== */
+async function boot() {
+  try {
+    removeExplanationBoxes();
+    await loadBaseQuestions();   // banco principal
+    await loadExtraQuestions();  // banco extra (opcional)
+    await loadInventorySignals(); // señales (para max-signals y quiz3)
+    cleanQuiz2LegalTagsAndSyncCorrect();
+  } catch (err) {
+    console.error('[boot] Error inicial:', err);
     alert('No se pudo cargar el banco de preguntas. Revisa la consola del navegador.');
   }
 }
 
-/* ============== Flujo del juego ============== */
+/* ===========================
+   FLUJO DE JUEGO (UI)
+   =========================== */
 function startQuiz(type, num = null) {
   quizType = type;
 
-  if (type === 'quiz1') {
-    currentQuiz = [...(questions.quiz1 || [])]; shuffle(currentQuiz);
-  } else if (type === 'quiz2') {
+  // Lazy-load de definiciones SOLO si se entra al quiz2
+  const ensureQuiz2 = async () => {
+    await loadArticle2Definitions();
+    // refresca limpieza (por si vinieron sufijos de otra fuente)
+    cleanQuiz2LegalTagsAndSyncCorrect();
     const pool = [...(questions.quiz2 || [])]; shuffle(pool);
     currentQuiz = pool; // SIEMPRE TODAS
+    renderStart();
+  };
+
+  if (type === 'quiz1') {
+    currentQuiz = [...(questions.quiz1 || [])]; shuffle(currentQuiz);
+    renderStart();
+  } else if (type === 'quiz2') {
+    ensureQuiz2().then(() => {
+      showQuestion(); updateScore();
+    });
+    return; // renderStart lo hace ensureQuiz2
   } else if (type === 'signals') {
     const pool = [...(questions.signals || [])]; shuffle(pool);
     const total = pool.length;
     let n = parseInt(num, 10);
     if (isNaN(n) || n <= 0 || n > total) n = total;
     currentQuiz = pool.slice(0, n);
+    renderStart();
   } else {
     currentQuiz = [];
+    renderStart();
   }
 
-  currentIndex = 0; score = 0; wrongAnswers = [];
+  showQuestion(); updateScore();
+}
+
+function renderStart() {
   const start = document.getElementById('start-screen');
   if (start) start.style.display = 'none';
   const q2opt = document.getElementById('quiz2-options');
@@ -296,7 +471,6 @@ function startQuiz(type, num = null) {
   const q3opt = document.getElementById('quiz3-options');
   if (q3opt) q3opt.style.display = 'none';
   document.getElementById('quiz-screen').style.display = 'block';
-  showQuestion(); updateScore();
 }
 
 function showQuestion() {
@@ -305,7 +479,8 @@ function showQuestion() {
   const q = currentQuiz[currentIndex];
   if (!q) { endQuiz(); return; }
 
-  document.getElementById('question').textContent = q.question || '';
+  const qEl = document.getElementById('question');
+  qEl.textContent = q.question || '';
 
   const imgEl = document.getElementById('question-image');
   if (q.image) { imgEl.src = q.image; imgEl.style.display = 'block'; }
@@ -314,6 +489,7 @@ function showQuestion() {
   const optionsDiv = document.getElementById('options');
   optionsDiv.innerHTML = '';
   const opts = [...(q.options || [])]; shuffle(opts);
+
   opts.forEach(opt => {
     const btn = document.createElement('button');
     btn.textContent = String(opt);
@@ -365,7 +541,9 @@ function endQuiz() {
   wrongAnswers = [];
 }
 
-/* ============== Listeners ============== */
+/* ===========================
+   EVENT LISTENERS
+   =========================== */
 document.getElementById('quiz1-btn').onclick = () => startQuiz('quiz1');
 document.getElementById('quiz2-btn').onclick = () => startQuiz('quiz2');
 
@@ -392,5 +570,7 @@ document.getElementById('restart-btn').onclick = () => {
   if (q3opt) q3opt.style.display = 'none';
 };
 
-/* ============== Inicio ============== */
-loadQuestions();
+/* ===========================
+   INICIO
+   =========================== */
+boot();
