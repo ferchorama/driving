@@ -1,12 +1,9 @@
-// script.js — Restauración robusta de las 10 preguntas con imagen en el QUIZ TEÓRICO (quiz1)
-// + Fix explícito para:
-//   #40 -> "Reglamentarias/Prohibida Bicicletas.png"
-//   #41 -> "Reglamentarias/Prohibido Girar En U.png"
-//   #43 -> "Reglamentarias/Vehiculos Pesados Derecha.png"  <- NUEVO
-//   #48 -> "Reglamentarias/No Parquear Ni Detenerse.png"
-//   #49 -> "Reglamentarias/Prohibido fumar.webp"
-// Mantiene optimizaciones: carga modular, manejo de errores, parser CSV, limpieza de sufijos legales,
-// eliminación de recuadros explicativos, lazy-load de definiciones para quiz2, etc.
+// script.js — Lógica del juego optimizada + overrides de imágenes de señales
+// - Mantiene: carga modular, manejo de errores, parser CSV, limpieza de sufijos legales,
+//   reemplazo de placeholders en teórico (#40–#49), lazy-load de definiciones para quiz2,
+//   y sin cambios de interfaz.
+// - NUEVO: override global de imagen para "Circulación Prohibida Peatones"
+//          -> "Reglamentarias/Circulación prohibida de peatones.png"
 
 /* ===========================
    RUTAS Y ESTADO GLOBAL
@@ -176,9 +173,28 @@ function removeExplanationBoxes() {
 }
 
 /* ===========================
+   FUNCIONES DE NORMALIZACIÓN
+   =========================== */
+const NORM = s =>
+  (s || '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+/* ===========================
+   OVERRIDES GLOBALES DE IMAGEN PARA SEÑALES
+   =========================== */
+// Clave: NORM(nombre_correcto) -> ruta fija
+const FIXED_SIGNAL_IMAGE_MAP = new Map([
+  ['circulacion prohibida peatones', 'Reglamentarias/Circulación prohibida de peatones.png']
+  // (si luego quieres centralizar aquí #40, #41, #43, #48, #49 también, se pueden añadir)
+]);
+
+/* ===========================
    TEÓRICO: 10 PREGUNTAS CON IMAGEN (#40–#49)
    =========================== */
-// Se agregan fixedImage para #40, #41, #43, #48 y #49 (este commit añade #43)
+// Se mantienen overrides específicos ya acordados
 const THEORETICAL_ITEMS_40_49 = [
   { num: 40, correct: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta', 'prohibido el paso de bicicletas', 'bicicletas'], fixedImage: 'Reglamentarias/Prohibida Bicicletas.png' },
   { num: 41, correct: 'Prohibido girar en U', synonyms: ['no u', 'no retorno', 'prohibido girar en u'], fixedImage: 'Reglamentarias/Prohibido Girar En U.png' },
@@ -191,13 +207,6 @@ const THEORETICAL_ITEMS_40_49 = [
   { num: 48, correct: 'Prohibido parquear y prohibido parar o detenerse', synonyms: ['no parquear ni detenerse', 'prohibido parar y estacionar'], fixedImage: 'Reglamentarias/No Parquear Ni Detenerse.png' },
   { num: 49, correct: 'Prohibido fumar', synonyms: ['no fumar', 'prohibido fumar'], fixedImage: 'Reglamentarias/Prohibido fumar.webp' }
 ];
-
-const NORM = s =>
-  (s || '')
-    .toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
 
 function findInventoryByNameLike(label, inventory) {
   if (!Array.isArray(inventory) || !inventory.length) return null;
@@ -235,7 +244,7 @@ function generateWrongOptions(correctAnswer, inventory) {
 
 /**
  * Elimina placeholders "DETERMINE..." y versiones previas de #40–#49,
- * e inserta las 10 preguntas con la imagen correcta (incluyendo #43 y #48 fijas).
+ * e inserta las 10 preguntas con la imagen correcta (incluye overrides fijos).
  */
 function ensureTheoreticalSignalQuestions(inventory) {
   if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
@@ -267,6 +276,12 @@ function ensureTheoreticalSignalQuestions(inventory) {
       if (found) {
         imageSrc = (found.url && found.url.startsWith('http')) ? found.url : normalizePath(found.archivo);
       }
+    }
+
+    // Override global de imagen (por si aplica)
+    const key = NORM(item.correct);
+    if (FIXED_SIGNAL_IMAGE_MAP.has(key)) {
+      imageSrc = normalizePath(FIXED_SIGNAL_IMAGE_MAP.get(key));
     }
 
     const wrongs = generateWrongOptions(item.correct, inventory);
@@ -359,8 +374,14 @@ async function loadInventorySignals() {
 
   // Construir banco de "Señales" (quiz3) desde inventario
   const builtSignals = inventory.map(r => {
-    const imagen = r.url && r.url.startsWith('http') ? r.url : normalizePath(r.archivo);
     const correcta = r.nombre_visible;
+    // imagen por inventario
+    let imagen = r.url && r.url.startsWith('http') ? r.url : normalizePath(r.archivo);
+    // override global (si aplica)
+    const key = NORM(correcta);
+    if (FIXED_SIGNAL_IMAGE_MAP.has(key)) {
+      imagen = normalizePath(FIXED_SIGNAL_IMAGE_MAP.get(key));
+    }
     const err = generateWrongOptions(correcta, inventory);
     return normalizeQuestion({
       id: stableId(`signal-${correcta}-${imagen}`),
@@ -382,7 +403,7 @@ async function loadInventorySignals() {
     if (!inputSignals.value || Number(inputSignals.value) > maxSignals) inputSignals.value = maxSignals;
   }
 
-  // **Restaurar/inyectar** las 10 preguntas con imagen en el QUIZ TEÓRICO (incluye #43 y #48 con imagen fija)
+  // Restaurar/inyectar las 10 preguntas con imagen en el QUIZ TEÓRICO (con overrides)
   ensureTheoreticalSignalQuestions(inventory);
 
   LOADED.inventory = true;
@@ -422,7 +443,7 @@ async function boot() {
     removeExplanationBoxes();
     await loadBaseQuestions();
     await loadExtraQuestions();
-    await loadInventorySignals(); // <- aquí se restauran/inyectan las 10 preguntas con imagen (quiz1)
+    await loadInventorySignals(); // <- aquí se restauran/inyectan #40–#49 y se aplica override global
     cleanQuiz2LegalTagsAndSyncCorrect();
   } catch (err) {
     console.error('[boot] Error inicial:', err);
