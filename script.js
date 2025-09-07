@@ -1,10 +1,8 @@
-// script.js — Mejora de preguntas del teórico (#40–#49) con formato “Quiz 3”.
-// - Mantiene la lógica previa (quiz2 usa todas las preguntas, señales normalizadas, etc.).
-// - Inserta 10 preguntas nuevas en quiz1 con imagen buscada en inventario.csv.
-// - Respeta tus textos como respuesta correcta, pero usa nombres/códigos oficiales
-//   para buscar imágenes y generar distractores.
+// script.js — Reemplazo de placeholders "DETERMINE QUE INDICA CADA SEÑAL"
+// en el QUIZ TEÓRICO por preguntas con imagen (estilo Quiz 3) y 4 opciones.
+// Además mantiene: Código Nacional usa todas las preguntas, señales desde inventario, etc.
 
-/* ==================== Estado ==================== */
+/* ============== Estado global ============== */
 let questions = {};
 let currentQuiz = [];
 let currentIndex = 0;
@@ -13,7 +11,7 @@ let quizType = '';
 let wrongAnswers = [];
 let maxSignals = 0;
 
-/* ==================== Utilidades ==================== */
+/* ============== Utilidades ============== */
 const normalizePath = (p) => (p || '').replace(/\\/g, '/').replace(/^\.?\//, '');
 const norm = (s) =>
   (s || '')
@@ -29,45 +27,29 @@ function shuffle(a) {
   }
 }
 
-/* Distractores desde inventario (por nombre_visible) */
-function generateWrongOptionsFromInventory(correct, inventory) {
+/* ============== Distractores ============== */
+function generateWrongOptionsFromInventory(correct, inventory, need = 3) {
   const pool = inventory.map(it => it.nombre_visible).filter(Boolean);
   shuffle(pool);
   const set = new Set();
   for (const name of pool) {
-    if (set.size >= 3) break;
+    if (set.size >= need) break;
     if (name && name !== correct) set.add(name);
   }
-  return Array.from(set);
+  // Si el inventario no alcanza, rellena con señuelos genéricos no repetidos
+  const fallbacks = [
+    'Cruce escolar', 'Zona escolar', 'Curva peligrosa', 'Vía cerrada',
+    'Obras en la vía', 'Prohibido girar a la izquierda', 'Siga de frente',
+    'Doble calzada', 'Reductor de velocidad'
+  ];
+  for (const fb of fallbacks) {
+    if (set.size >= need) break;
+    if (fb !== correct) set.add(fb);
+  }
+  return Array.from(set).slice(0, need);
 }
 
-/* ==================== Nombres oficiales (subset) ==================== */
-/* Fuentes: Manual de Señalización Vial (MinTransporte) + listados didácticos SR/SP.
-   SR-02 CEDA EL PASO, SR-08 PROHIBIDO GIRAR A LA DERECHA, SR-10 PROHIBIDO GIRAR EN U,
-   SR-28 PROHIBIDO PARQUEAR, SR-28A NO PARQUEAR NI DETENERSE, SR-29 PROHIBIDO PITAR,
-   SR-30 VELOCIDAD MÁXIMA. */
-const OFFICIAL = {
-  'SR-02': { name: 'CEDA EL PASO', aliases: ['ceda el paso', 'ceda'] },
-  'SR-08': { name: 'PROHIBIDO GIRAR A LA DERECHA', aliases: ['no girar a la derecha', 'prohibido giro derecha'] },
-  'SR-10': { name: 'PROHIBIDO GIRAR EN U', aliases: ['no u', 'no girar en u', 'prohibido girar en u', 'no retorno'] },
-  'SR-28': { name: 'PROHIBIDO PARQUEAR', aliases: ['prohibido parquear', 'no estacionar'] },
-  'SR-28A': { name: 'NO PARQUEAR NI DETENERSE', aliases: ['prohibido parquear y detenerse', 'no parquear ni detenerse', 'prohibido parar y estacionar'] },
-  'SR-29': { name: 'PROHIBIDO PITAR', aliases: ['prohibido pitar', 'prohibido usar la bocina', 'prohibido bocina'] },
-  'SR-30': { name: 'VELOCIDAD MÁXIMA', aliases: ['velocidad maxima', 'limite de velocidad'] }
-};
-
-/* Índice alias → código */
-const ALIAS_TO_CODE = (() => {
-  const map = new Map();
-  Object.entries(OFFICIAL).forEach(([code, obj]) => {
-    map.set(norm(code), code);
-    map.set(norm(obj.name), code);
-    (obj.aliases || []).forEach(a => map.set(norm(a), code));
-  });
-  return map;
-})();
-
-/* Intentar encontrar un registro del inventario por nombre (robusto) */
+/* ============== Búsqueda en inventario ============== */
 function findInventoryByNameLike(label, inventory) {
   const target = norm(label);
   let best = null, bestScore = 0;
@@ -76,107 +58,86 @@ function findInventoryByNameLike(label, inventory) {
     const cand = norm(it.nombre_visible);
     if (!cand) continue;
 
-    // Match exacto
     if (cand === target) return it;
 
-    // Ponderación por coincidencias parciales
     let score = 0;
     if (cand.includes(target)) score += 3;
-
     const words = target.split(' ').filter(w => w.length > 2);
     words.forEach(w => { if (cand.includes(w)) score += 1; });
+
+    // bonus por coincidencia de palabra "clave"
+    const keys = ['prohibido','ceda','velocidad','bocina','pitar','parquear','detenerse','bicicleta','fum','derecha','u','pesado','camion'];
+    keys.forEach(k => { if (cand.includes(k) && target.includes(k)) score += 1; });
 
     if (score > bestScore) { bestScore = score; best = it; }
   }
   return best;
 }
 
-/* ==================== NUEVO: Construcción de preguntas #40–#49 ==================== */
-/* Entradas del usuario (texto correcto = debe ser la opción correcta mostrada) */
-const THEORETICAL_SIGNALS_INPUT = [
-  { id: 40, correctLabel: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta', 'prohibido el paso de bicicletas', 'bicicletas'] },
-  { id: 41, correctLabel: 'Prohibido girar en U', synonyms: ['no u', 'no retorno', 'prohibido girar en u'], official: 'SR-10' },
-  { id: 42, correctLabel: 'Prohibido girar a la derecha', synonyms: ['no girar a la derecha', 'prohibido giro derecha'], official: 'SR-08' },
-  { id: 43, correctLabel: 'Vehículos pesados a la derecha', synonyms: ['camión derecha', 'vehiculo pesado derecha', 'camion carril derecho', 'prohibido adelantar'] },
-  { id: 44, correctLabel: 'Ceda el paso', synonyms: ['ceda el paso', 'ceda'], official: 'SR-02' },
-  { id: 45, correctLabel: 'Velocidad Máxima', synonyms: ['velocidad maxima', 'límite de velocidad', 'sr-30', 'velocidad 90'], official: 'SR-30' },
-  { id: 46, correctLabel: 'prohibido usar la bocina', synonyms: ['prohibido pitar', 'prohibido bocina', 'sr-29'], official: 'SR-29' },
-  { id: 47, correctLabel: 'Prohibido parquear', synonyms: ['no estacionar', 'sr-28'], official: 'SR-28' },
-  { id: 48, correctLabel: 'Prohibido parquear y prohibido parar o detenerse', synonyms: ['no parquear ni detenerse', 'prohibido parar y estacionar', 'sr-28a'], official: 'SR-28A' },
-  { id: 49, correctLabel: 'Prohibido fumar', synonyms: ['no fumar', 'prohibido fumar'] }
+/* ============== Mapeo #40–#49 solicitado ============== */
+const THEORETICAL_REPLACEMENTS = [
+  { num: 40, correct: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta','prohibido el paso de bicicletas','bicicletas'] },
+  { num: 41, correct: 'Prohibido girar en U', synonyms: ['no u','no retorno','prohibido girar en u'] },
+  { num: 42, correct: 'Prohibido girar a la derecha', synonyms: ['no girar a la derecha','prohibido giro derecha'] },
+  { num: 43, correct: 'Vehículos pesados a la derecha', synonyms: ['camion derecha','vehiculo pesado derecha','pesados derecha','camion carril derecho'] },
+  { num: 44, correct: 'Ceda el paso', synonyms: ['ceda el paso','ceda'] },
+  { num: 45, correct: 'Velocidad Máxima', synonyms: ['velocidad maxima','límite de velocidad','velocidad 90','sr 30'] },
+  { num: 46, correct: 'prohibido usar la bocina', synonyms: ['prohibido pitar','prohibido bocina','no pitar','sr 29'] },
+  { num: 47, correct: 'Prohibido parquear', synonyms: ['no estacionar','prohibido estacionar','sr 28'] },
+  { num: 48, correct: 'Prohibido parquear y prohibido parar o detenerse', synonyms: ['no parquear ni detenerse','prohibido parar y estacionar','sr 28a'] },
+  { num: 49, correct: 'Prohibido fumar', synonyms: ['no fumar','prohibido fumar'] }
 ];
 
-/* A partir del inventario, crear objetos tipo pregunta con imagen y 4 opciones */
-function buildSignalLikeQuestion(entry, inventory) {
-  // 1) Imagen desde inventario (por sinónimos y/o por oficial)
-  let imgRecord = null;
+/* Construye una pregunta estilo “Señales” a partir del inventario */
+function buildSignalQuestionFromInventory(item, inventory) {
+  // Imagen: busca primero por correct, luego por sinónimos
+  let imgRecord =
+    findInventoryByNameLike(item.correct, inventory) || null;
 
-  // Búsqueda por oficial si lo conocemos
-  if (entry.official && OFFICIAL[entry.official]) {
-    const officialName = `${entry.official} ${OFFICIAL[entry.official].name}`;
-    imgRecord = findInventoryByNameLike(officialName, inventory) ||
-                findInventoryByNameLike(OFFICIAL[entry.official].name, inventory);
-  }
-
-  // Búsqueda por sinónimos y por la propia etiqueta correcta
   if (!imgRecord) {
-    for (const key of [entry.correctLabel, ...(entry.synonyms || [])]) {
-      imgRecord = findInventoryByNameLike(key, inventory);
+    for (const s of item.synonyms || []) {
+      imgRecord = findInventoryByNameLike(s, inventory);
       if (imgRecord) break;
     }
   }
 
-  // 2) Ruta de imagen
-  let imageSrc = null;
+  let imageSrc = undefined;
   if (imgRecord) {
     imageSrc = (imgRecord.url && imgRecord.url.startsWith('http'))
       ? imgRecord.url
       : normalizePath(imgRecord.archivo);
   }
 
-  // 3) Opciones: correcta = EXACTAMENTE el texto entregado por el usuario.
-  //    Distractores = 3 nombres del inventario diferentes.
-  let options = [entry.correctLabel];
-  const wrongs = generateWrongOptionsFromInventory(entry.correctLabel, inventory);
-  options.push(...wrongs);
+  // Opciones
+  const wrongs = generateWrongOptionsFromInventory(item.correct, inventory, 3);
+  const options = Array.from(new Set([item.correct, ...wrongs])); // evita repetidos
 
-  // Evitar duplicados y barajar después en showQuestion()
-  options = Array.from(new Set(options));
-
-  // 4) Enunciado + fallback de descripción cuando no hay imagen
-  let questionText = '¿Cuál es el nombre de esta señal?';
-  if (!imageSrc) {
-    // Construir descripción a partir del oficial si lo tenemos
-    if (entry.official && OFFICIAL[entry.official]) {
-      const of = OFFICIAL[entry.official];
-      questionText = `Identifica la señal (sin imagen disponible). Descripción: ${of.name}.`;
-    } else {
-      questionText = `Identifica la señal (sin imagen disponible).`;
-    }
-  }
+  // Enunciado con referencia al número original (útil para seguimiento)
+  const questionText = `(#${item.num}) ¿Cuál es el nombre de esta señal?`;
 
   return {
     question: questionText,
-    image: imageSrc || undefined,
+    image: imageSrc, // si no se encuentra, quedará undefined y no se muestra <img>
     options,
-    correct: entry.correctLabel
+    correct: item.correct
   };
 }
 
-/* Inserta las 10 preguntas en quiz1 y elimina los placeholders defectuosos */
-function injectTheoreticalSignalQuestions(inventory) {
+/* Elimina placeholders y añade las nuevas preguntas al quiz1 */
+function replaceDeterminePlaceholders(inventory) {
+  // Asegura arreglo
   if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
 
-  // 1) Eliminar placeholders del estilo “DETERMINE QUE INDICA CADA SEÑAL”
-  questions.quiz1 = questions.quiz1.filter(q => !/determine que indica cada se(ñ|n)al/i.test(q?.question || ''));
+  // 1) Filtra TODO lo que empiece con "DETERMINE QUE INDICA CADA SEÑAL"
+  const re = /^\s*determine que indica cada se(ñ|n)al/i;
+  questions.quiz1 = questions.quiz1.filter(q => !(q && typeof q.question === 'string' && re.test(q.question)));
 
-  // 2) Construir e insertar nuevas preguntas
-  const newOnes = THEORETICAL_SIGNALS_INPUT.map(e => buildSignalLikeQuestion(e, inventory));
-
+  // 2) Construye las 10 preguntas y añádelas
+  const newOnes = THEORETICAL_REPLACEMENTS.map(entry => buildSignalQuestionFromInventory(entry, inventory));
   questions.quiz1.push(...newOnes);
 }
 
-/* ==================== Carga de bancos ==================== */
+/* ============== Carga de bancos ============== */
 async function loadQuestions() {
   // 1) Banco base
   const base = await fetch('questions.json', { cache: 'no-store' }).then(r => r.json());
@@ -188,18 +149,17 @@ async function loadQuestions() {
     if (extraRes.ok) {
       const extra = await extraRes.json();
       if (Array.isArray(extra?.quiz2)) {
-        // Fusiona evitando duplicado por enunciado exacto
         const map = new Map();
         (questions.quiz2 || []).forEach(q => map.set(q.question?.trim(), q));
         extra.quiz2.forEach(q => { if (q?.question && !map.has(q.question.trim())) map.set(q.question.trim(), q); });
         questions.quiz2 = Array.from(map.values());
       }
     }
-  } catch (e) {
-    console.warn('questions_extra.json no disponible (se continúa con banco base).');
+  } catch (_) {
+    // Ignora si no existe
   }
 
-  // 3) Inventario de señales (para imágenes y distractores)
+  // 3) Inventario de señales
   const csv = await fetch('inventario.csv', { cache: 'no-store' }).then(r => r.text());
   const rows = csv.trim().split('\n').map(r => r.split(','));
   const headers = rows[0].map(h => h.trim());
@@ -207,12 +167,11 @@ async function loadQuestions() {
     const o = {}; headers.forEach((h, i) => (o[h] = (row[i] || '').trim())); return o;
   }).filter(o => o?.nombre_visible);
 
-  // 4) Construir “quiz de Señales” a partir del inventario (se mantiene)
+  // 4) Crear banco "Señales" completo desde inventario (se mantiene)
   questions.signals = inventory.map(it => {
     const img = it.url && it.url.startsWith('http') ? it.url : normalizePath(it.archivo);
-    // Mantén el nombre original del inventario (ya que puede tener SR-xx o alias)
     const correct = it.nombre_visible;
-    const wrongs = generateWrongOptionsFromInventory(correct, inventory);
+    const wrongs = generateWrongOptionsFromInventory(correct, inventory, 3);
     return {
       question: '¿Cuál es el nombre de esta señal?',
       image: img,
@@ -221,10 +180,10 @@ async function loadQuestions() {
     };
   });
 
-  // 5) NUEVO: inyectar preguntas del teórico #40–#49 con formato de señales
-  injectTheoreticalSignalQuestions(inventory);
+  // 5) **Reemplazar** los placeholders del teórico por preguntas con imagen (40–49)
+  replaceDeterminePlaceholders(inventory);
 
-  // 6) UI dependiente de datos
+  // 6) Datos dependientes de UI
   maxSignals = questions.signals.length;
   const maxSpan = document.getElementById('max-signals');
   if (maxSpan) maxSpan.textContent = maxSignals;
@@ -238,7 +197,7 @@ async function loadQuestions() {
   }
 }
 
-/* ==================== Flujo de juego (igual que antes) ==================== */
+/* ============== Flujo del juego ============== */
 function startQuiz(type, num = null) {
   quizType = type;
 
@@ -246,7 +205,7 @@ function startQuiz(type, num = null) {
     currentQuiz = [...(questions.quiz1 || [])];
     shuffle(currentQuiz);
   } else if (type === 'quiz2') {
-    const pool = [...(questions.quiz2 || [])]; shuffle(pool); currentQuiz = pool; // todas
+    const pool = [...(questions.quiz2 || [])]; shuffle(pool); currentQuiz = pool; // TODAS
   } else if (type === 'signals') {
     const pool = [...(questions.signals || [])]; shuffle(pool);
     const total = pool.length;
@@ -257,29 +216,38 @@ function startQuiz(type, num = null) {
     currentQuiz = [];
   }
 
-  currentIndex = 0; score = 0; wrongAnswers = [];
+  currentIndex = 0;
+  score = 0;
+  wrongAnswers = [];
+
   document.getElementById('start-screen').style.display = 'none';
-  document.getElementById('quiz3-options').style.display = 'none';
+  const cfg = document.getElementById('quiz3-options');
+  if (cfg) cfg.style.display = 'none';
   document.getElementById('quiz-screen').style.display = 'block';
-  showQuestion(); updateScore();
+
+  showQuestion();
+  updateScore();
 }
 
 function showQuestion() {
   const q = currentQuiz[currentIndex];
-  if (!q) return endQuiz();
+  if (!q) { endQuiz(); return; }
 
   document.getElementById('question').textContent = q.question || '';
-  const imgEl = document.getElementById('question-image');
 
+  const imgEl = document.getElementById('question-image');
   if (q.image) {
-    imgEl.src = q.image; imgEl.alt = 'Imagen relacionada con la pregunta'; imgEl.style.display = 'block';
+    imgEl.src = q.image;
+    imgEl.alt = 'Imagen de la señal';
+    imgEl.style.display = 'block';
   } else {
     imgEl.style.display = 'none';
   }
 
   const optionsDiv = document.getElementById('options');
   optionsDiv.innerHTML = '';
-  const opts = [...(q.options || [])]; shuffle(opts);
+  const opts = [...(q.options || [])];
+  shuffle(opts);
 
   opts.forEach(opt => {
     const btn = document.createElement('button');
@@ -307,31 +275,45 @@ function selectAnswer(selected, correct) {
   updateScore();
 }
 
-function nextQuestion() { currentIndex++; (currentIndex < currentQuiz.length) ? showQuestion() : endQuiz(); }
-function updateProgress() { const p = (currentIndex / (currentQuiz.length || 1)) * 100; document.getElementById('progress').style.width = `${p}%`; }
-function updateScore() { document.getElementById('score').textContent = `Puntaje: ${score} / ${currentQuiz.length || 0}`; }
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex < currentQuiz.length) showQuestion();
+  else endQuiz();
+}
+
+function updateProgress() {
+  const progress = (currentIndex / (currentQuiz.length || 1)) * 100;
+  document.getElementById('progress').style.width = `${progress}%`;
+}
+
+function updateScore() {
+  document.getElementById('score').textContent = `Puntaje: ${score} / ${currentQuiz.length || 0}`;
+}
 
 function endQuiz() {
   document.getElementById('quiz-screen').style.display = 'none';
   document.getElementById('end-screen').style.display = 'block';
-  document.getElementById('final-score').textContent = `Tu puntaje final: ${score} / ${currentQuiz.length || 0}`;
+  document.getElementById('final-score').textContent =
+    `Tu puntaje final: ${score} / ${currentQuiz.length || 0}`;
 
-  if (wrongAnswers.length) {
-    let s = 'Resumen de preguntas erradas:\n';
-    wrongAnswers.forEach((w,i)=>{ s += `${i+1}. ${w.question}\n   Correcta: ${w.correct}\n`; });
-    alert(s);
+  if (wrongAnswers.length > 0) {
+    let summary = "Resumen de preguntas erradas:\n";
+    wrongAnswers.forEach((item, i) => {
+      summary += `${i + 1}. Pregunta: ${item.question}\n   Respuesta correcta: ${item.correct}\n`;
+    });
+    alert(summary);
   } else {
-    alert('¡Felicidades! No tuviste errores.');
+    alert("¡Felicidades! No tuviste errores.");
   }
   wrongAnswers = [];
 }
 
-/* ==================== Listeners y carga ==================== */
+/* ============== Listeners ============== */
 document.getElementById('quiz1-btn').onclick = () => startQuiz('quiz1');
 document.getElementById('quiz2-btn').onclick = () => startQuiz('quiz2');
 document.getElementById('quiz3-btn').onclick = () => {
   const box = document.getElementById('quiz3-options');
-  box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
+  if (box) box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
 };
 document.getElementById('start-quiz3').onclick = () => {
   const num = parseInt(document.getElementById('num-questions-3').value, 10);
@@ -341,20 +323,9 @@ document.getElementById('next-btn').onclick = nextQuestion;
 document.getElementById('restart-btn').onclick = () => {
   document.getElementById('end-screen').style.display = 'none';
   document.getElementById('start-screen').style.display = 'block';
-  document.getElementById('quiz3-options').style.display = 'none';
+  const box = document.getElementById('quiz3-options');
+  if (box) box.style.display = 'none';
 };
-document.addEventListener('keydown', (e) => {
-  const inQuiz = document.getElementById('quiz-screen').style.display === 'block';
-  if (!inQuiz) return;
-  if (/^[1-9]$/.test(e.key)) {
-    const idx = parseInt(e.key, 10) - 1;
-    const btn = document.querySelector(`#options button:nth-of-type(${idx + 1})`);
-    if (btn && !btn.disabled) btn.click();
-  }
-  if (e.key === 'Enter') {
-    const next = document.getElementById('next-btn');
-    if (!next.disabled) next.click();
-  }
-});
 
+/* ============== Inicio ============== */
 loadQuestions();
