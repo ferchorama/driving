@@ -1,10 +1,6 @@
-// script.js — Reemplazo de placeholders "DETERMINE QUE INDICA CADA SEÑAL"
-// en el QUIZ TEÓRICO por preguntas con imagen (estilo Quiz 3) y 4 opciones.
-// Fix puntuales:
-//   #40 -> "Reglamentarias/Prohibida Bicicletas.png"
-//   #41 -> "Reglamentarias/Prohibido Girar En U.png"
-//   #49 -> "Reglamentarias/Prohibido fumar.webp"
-// Además mantiene: Código Nacional usa todas las preguntas, señales desde inventario, etc.
+// script.js — Integración de nuevas preguntas (quiz1) + enriquecimiento de respuestas (quiz2)
+// Mantiene fixes anteriores: reemplazo de “DETERMINE…”, preguntas de señales #40–#49
+// con imágenes forzadas (#40, #41, #49), banco de señales desde inventario.csv, etc.
 
 /* ============== Estado global ============== */
 let questions = {};
@@ -31,7 +27,7 @@ function shuffle(a) {
   }
 }
 
-/* ============== Distractores ============== */
+/* ============== Generación de distractores (señales) ============== */
 function generateWrongOptionsFromInventory(correct, inventory, need = 3) {
   const pool = inventory.map(it => it.nombre_visible).filter(Boolean);
   shuffle(pool);
@@ -40,7 +36,7 @@ function generateWrongOptionsFromInventory(correct, inventory, need = 3) {
     if (set.size >= need) break;
     if (name && name !== correct) set.add(name);
   }
-  // Si el inventario no alcanza, rellena con señuelos genéricos no repetidos
+  // Fallbacks si el inventario no alcanza
   const fallbacks = [
     'Cruce escolar', 'Zona escolar', 'Curva peligrosa', 'Vía cerrada',
     'Obras en la vía', 'Prohibido girar a la izquierda', 'Siga de frente',
@@ -53,7 +49,7 @@ function generateWrongOptionsFromInventory(correct, inventory, need = 3) {
   return Array.from(set).slice(0, need);
 }
 
-/* ============== Búsqueda en inventario ============== */
+/* ============== Búsqueda robusta en inventario ============== */
 function findInventoryByNameLike(label, inventory) {
   const target = norm(label);
   let best = null, bestScore = 0;
@@ -69,7 +65,6 @@ function findInventoryByNameLike(label, inventory) {
     const words = target.split(' ').filter(w => w.length > 2);
     words.forEach(w => { if (cand.includes(w)) score += 1; });
 
-    // bonus por coincidencia de palabra "clave"
     const keys = ['prohibido','ceda','velocidad','bocina','pitar','parquear','detenerse','bicicleta','fum','derecha','u','pesado','camion'];
     keys.forEach(k => { if (cand.includes(k) && target.includes(k)) score += 1; });
 
@@ -78,8 +73,8 @@ function findInventoryByNameLike(label, inventory) {
   return best;
 }
 
-/* ============== Mapeo #40–#49 solicitado ============== */
-/* Nota: fixedImage fuerza usar esa ruta exacta ignorando el inventario. */
+/* ============== Señales del teórico #40–#49 ============== */
+/* Overrides de imagen exacta cuando el usuario lo indicó */
 const THEORETICAL_REPLACEMENTS = [
   { num: 40, correct: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta','prohibido el paso de bicicletas','bicicletas'], fixedImage: 'Reglamentarias/Prohibida Bicicletas.png' },
   { num: 41, correct: 'Prohibido girar en U', synonyms: ['no u','no retorno','prohibido girar en u'], fixedImage: 'Reglamentarias/Prohibido Girar En U.png' },
@@ -93,14 +88,12 @@ const THEORETICAL_REPLACEMENTS = [
   { num: 49, correct: 'Prohibido fumar', synonyms: ['no fumar','prohibido fumar'], fixedImage: 'Reglamentarias/Prohibido fumar.webp' }
 ];
 
-/* Construye una pregunta estilo “Señales” a partir del inventario */
 function buildSignalQuestionFromInventory(item, inventory) {
-  // 1) Imagen: si hay override (fixedImage), úsalo SIEMPRE
+  // Imagen (prioriza fixedImage si existe)
   let imageSrc;
   if (item.fixedImage) {
     imageSrc = normalizePath(item.fixedImage);
   } else {
-    // buscar primero por correct, luego por sinónimos
     let imgRecord = findInventoryByNameLike(item.correct, inventory) || null;
     if (!imgRecord) {
       for (const s of item.synonyms || []) {
@@ -109,38 +102,134 @@ function buildSignalQuestionFromInventory(item, inventory) {
       }
     }
     if (imgRecord) {
-      imageSrc = (imgRecord.url && imgRecord.url.startsWith('http'))
-        ? imgRecord.url
-        : normalizePath(imgRecord.archivo);
+      imageSrc = (imgRecord.url && imgRecord.url.startsWith('http')) ? imgRecord.url : normalizePath(imgRecord.archivo);
     }
   }
 
-  // 2) Opciones
   const wrongs = generateWrongOptionsFromInventory(item.correct, inventory, 3);
-  const options = Array.from(new Set([item.correct, ...wrongs])); // evita repetidos
-
-  // 3) Enunciado con referencia al número original
+  const options = Array.from(new Set([item.correct, ...wrongs]));
   const questionText = `(#${item.num}) ¿Cuál es el nombre de esta señal?`;
 
-  return {
-    question: questionText,
-    image: imageSrc, // si no hay, queda undefined y <img> no se muestra
-    options,
-    correct: item.correct
-  };
+  return { question: questionText, image: imageSrc, options, correct: item.correct };
 }
 
-/* Elimina placeholders y añade las nuevas preguntas al quiz1 */
 function replaceDeterminePlaceholders(inventory) {
   if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
-
-  // 1) Filtra TODO lo que empiece con "DETERMINE QUE INDICA CADA SEÑAL"
   const re = /^\s*determine que indica cada se(ñ|n)al/i;
   questions.quiz1 = questions.quiz1.filter(q => !(q && typeof q.question === 'string' && re.test(q.question)));
-
-  // 2) Construye las 10 preguntas y añádelas
   const newOnes = THEORETICAL_REPLACEMENTS.map(entry => buildSignalQuestionFromInventory(entry, inventory));
   questions.quiz1.push(...newOnes);
+}
+
+/* ============== NUEVAS preguntas teóricas (aprobadas) ============== */
+// Se inyectan en quiz1 al cargar; Q6 correcta = 5000 km.
+const NEW_THEORETICAL_QS = [
+  {
+    question: '¿Cuáles son los cuatro tiempos de un motor?',
+    options: [
+      'Admisión – Compresión – Combustión (explosión) – Escape',
+      'Admisión – Explosión – Lubricación – Escape',
+      'Arranque – Compresión – Ignición – Purga',
+      'Admisión – Encendido – Expansión – Refrigeración'
+    ],
+    correct: 'Admisión – Compresión – Combustión (explosión) – Escape'
+  },
+  {
+    question: '¿Cuál es el vencimiento de la licencia de conducción de servicio público para menores de 60 años?',
+    options: ['3 años', '1 año', '5 años', '10 años'],
+    correct: '3 años'
+  },
+  {
+    question: '¿Cuál es el vencimiento de la licencia de conducción de servicio particular para menores de 60 años?',
+    options: ['10 años', '5 años', '3 años', '1 año'],
+    correct: '10 años'
+  },
+  {
+    question: '¿Al cuánto tiempo se realiza la primera revisión técnico-mecánica de un vehículo particular nuevo?',
+    options: ['A los 5 años desde la matrícula', 'A los 2 años desde la matrícula', 'Al primer año desde la matrícula', 'A los 6 meses'],
+    correct: 'A los 5 años desde la matrícula'
+  },
+  {
+    question: '¿Qué significan las siglas PESV?',
+    options: [
+      'Plan Estratégico de Seguridad Vial',
+      'Programa Escolar de Seguridad Vehicular',
+      'Plan Estatal de Seguridad Vehicular',
+      'Programa Estandarizado de Seguridad Vial'
+    ],
+    correct: 'Plan Estratégico de Seguridad Vial'
+  },
+  {
+    question: '¿A los cuántos kilómetros debe realizarse el cambio de aceite del vehículo?',
+    options: ['5000 km', '3000 km', '10000 km', '15000 km'],
+    correct: '5000 km'
+  }
+];
+
+function injectNewTheoreticalIntoQuiz1() {
+  if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
+  const fingerprints = new Set(questions.quiz1.map(q => (q?.question || '').trim().toLowerCase()));
+  NEW_THEORETICAL_QS.forEach(q => {
+    const key = (q.question || '').trim().toLowerCase();
+    if (!fingerprints.has(key)) {
+      questions.quiz1.push(q);
+      fingerprints.add(key);
+    }
+  });
+}
+
+/* ============== Enriquecimiento de respuestas (quiz2) con 2.pdf ============== */
+/* Agrega un sufijo breve a la respuesta correcta con referencia legal */
+function enrichQuiz2WithPDFContext() {
+  if (!Array.isArray(questions.quiz2)) return;
+
+  const rules = [
+    {
+      test: (q) => /revisi(ó|o)n\s+T[ée]cnico|revisi(ó|o)n de gases|t[ée]cnico-?mec[aá]nica/i.test(q.question || ''),
+      suffix: ' — (Arts. 51–54 Ley 769/2002)'
+    },
+    {
+      test: (q) => /licencia|vigencia.*licencia|renovaci(ó|o)n.*licencia/i.test(q.question || ''),
+      suffix: ' — (Art. 22 Ley 769/2002)'
+    },
+    {
+      test: (q) => /centro de diagn[oó]stico automotor|cda/i.test(q.question || '') ||
+                    /diagn[oó]stico automotor/i.test(q.correct || ''),
+      suffix: ' — (Art. 53 Ley 769/2002)'
+    },
+    {
+      test: (q) => /centro de ense(ñ|n)anza.*conductores|instructores/i.test(q.question || ''),
+      suffix: ' — (Arts. 18–20 Ley 769/2002)'
+    },
+    {
+      test: (q) => /¿qu[eé]\s+es|que\s+es|definici[óo]n/i.test(q.question || ''),
+      suffix: ' — (Título I — Definiciones, Ley 769/2002)'
+    }
+  ];
+
+  questions.quiz2.forEach(q => {
+    const rule = rules.find(r => r.test(q));
+    if (!rule) return;
+    // Evitar duplicar sufijos si ya se aplicó
+    if ((q.correct || '').includes('Ley 769/2002')) return;
+
+    const newCorrect = `${q.correct}${rule.suffix}`;
+    q.correct = newCorrect;
+
+    // Reemplaza la opción correspondiente para mantener coincidencia exacta
+    if (Array.isArray(q.options)) {
+      const idx = q.options.findIndex(o => o === q.correct || (typeof o === 'string' && o.replace(/\s+—.*$/, '') === newCorrect.replace(/\s+—.*$/, '')));
+      const idxExact = q.options.findIndex(o => o === newCorrect);
+      if (idxExact === -1) {
+        const iOld = q.options.findIndex(o => o === newCorrect.replace(/\s+—.*$/, ''));
+        if (iOld >= 0) q.options[iOld] = newCorrect;
+        else {
+          // Si no se encuentra, garantizamos que esté incluida la correcta enriquecida
+          q.options = [newCorrect, ...(q.options || []).filter(o => o !== q.correct)];
+        }
+      }
+    }
+  });
 }
 
 /* ============== Carga de bancos ============== */
@@ -149,7 +238,7 @@ async function loadQuestions() {
   const base = await fetch('questions.json', { cache: 'no-store' }).then(r => r.json());
   questions = base;
 
-  // 2) Banco extra (Código Nacional) opcional
+  // 2) Banco extra (Código Nacional) opcional; se fusiona sin duplicados
   try {
     const extraRes = await fetch('questions_extra.json', { cache: 'no-store' });
     if (extraRes.ok) {
@@ -162,10 +251,10 @@ async function loadQuestions() {
       }
     }
   } catch (_) {
-    // Ignora si no existe
+    // Ignorar si no existe
   }
 
-  // 3) Inventario de señales
+  // 3) Inventario de señales (CSV)
   const csv = await fetch('inventario.csv', { cache: 'no-store' }).then(r => r.text());
   const rows = csv.trim().split('\n').map(r => r.split(','));
   const headers = rows[0].map(h => h.trim());
@@ -173,7 +262,7 @@ async function loadQuestions() {
     const o = {}; headers.forEach((h, i) => (o[h] = (row[i] || '').trim())); return o;
   }).filter(o => o?.nombre_visible);
 
-  // 4) Crear banco "Señales" completo desde inventario (se mantiene)
+  // 4) Construye banco "Señales" desde inventario
   questions.signals = inventory.map(it => {
     const img = it.url && it.url.startsWith('http') ? it.url : normalizePath(it.archivo);
     const correct = it.nombre_visible;
@@ -186,10 +275,16 @@ async function loadQuestions() {
     };
   });
 
-  // 5) **Reemplazar** los placeholders del teórico por preguntas con imagen (40–49)
+  // 5) Reemplaza placeholders del teórico por preguntas con imagen (40–49)
   replaceDeterminePlaceholders(inventory);
 
-  // 6) Datos dependientes de UI
+  // 6) Inyecta las 6 preguntas aprobadas en el teórico
+  injectNewTheoreticalIntoQuiz1();
+
+  // 7) Enriquecer respuestas del Código Nacional con contexto de 2.pdf
+  enrichQuiz2WithPDFContext();
+
+  // 8) Datos dependientes de UI
   maxSignals = questions.signals.length;
   const maxSpan = document.getElementById('max-signals');
   if (maxSpan) maxSpan.textContent = maxSignals;
@@ -211,7 +306,9 @@ function startQuiz(type, num = null) {
     currentQuiz = [...(questions.quiz1 || [])];
     shuffle(currentQuiz);
   } else if (type === 'quiz2') {
-    const pool = [...(questions.quiz2 || [])]; shuffle(pool); currentQuiz = pool; // TODAS
+    const pool = [...(questions.quiz2 || [])]; shuffle(pool);
+    // Siempre TODAS (así lo definiste previamente)
+    currentQuiz = pool;
   } else if (type === 'signals') {
     const pool = [...(questions.signals || [])]; shuffle(pool);
     const total = pool.length;
@@ -222,17 +319,11 @@ function startQuiz(type, num = null) {
     currentQuiz = [];
   }
 
-  currentIndex = 0;
-  score = 0;
-  wrongAnswers = [];
-
+  currentIndex = 0; score = 0; wrongAnswers = [];
   document.getElementById('start-screen').style.display = 'none';
-  const cfg = document.getElementById('quiz3-options');
-  if (cfg) cfg.style.display = 'none';
+  const cfg3 = document.getElementById('quiz3-options'); if (cfg3) cfg3.style.display = 'none';
   document.getElementById('quiz-screen').style.display = 'block';
-
-  showQuestion();
-  updateScore();
+  showQuestion(); updateScore();
 }
 
 function showQuestion() {
@@ -243,17 +334,14 @@ function showQuestion() {
 
   const imgEl = document.getElementById('question-image');
   if (q.image) {
-    imgEl.src = q.image;
-    imgEl.alt = 'Imagen de la señal';
-    imgEl.style.display = 'block';
+    imgEl.src = q.image; imgEl.alt = 'Imagen de la señal'; imgEl.style.display = 'block';
   } else {
     imgEl.style.display = 'none';
   }
 
   const optionsDiv = document.getElementById('options');
   optionsDiv.innerHTML = '';
-  const opts = [...(q.options || [])];
-  shuffle(opts);
+  const opts = [...(q.options || [])]; shuffle(opts);
 
   opts.forEach(opt => {
     const btn = document.createElement('button');
@@ -281,35 +369,21 @@ function selectAnswer(selected, correct) {
   updateScore();
 }
 
-function nextQuestion() {
-  currentIndex++;
-  if (currentIndex < currentQuiz.length) showQuestion();
-  else endQuiz();
-}
-
-function updateProgress() {
-  const progress = (currentIndex / (currentQuiz.length || 1)) * 100;
-  document.getElementById('progress').style.width = `${progress}%`;
-}
-
-function updateScore() {
-  document.getElementById('score').textContent = `Puntaje: ${score} / ${currentQuiz.length || 0}`;
-}
+function nextQuestion() { currentIndex++; (currentIndex < currentQuiz.length) ? showQuestion() : endQuiz(); }
+function updateProgress() { const p = (currentIndex / (currentQuiz.length || 1)) * 100; document.getElementById('progress').style.width = `${p}%`; }
+function updateScore() { document.getElementById('score').textContent = `Puntaje: ${score} / ${currentQuiz.length || 0}`; }
 
 function endQuiz() {
   document.getElementById('quiz-screen').style.display = 'none';
   document.getElementById('end-screen').style.display = 'block';
-  document.getElementById('final-score').textContent =
-    `Tu puntaje final: ${score} / ${currentQuiz.length || 0}`;
+  document.getElementById('final-score').textContent = `Tu puntaje final: ${score} / ${currentQuiz.length || 0}`;
 
   if (wrongAnswers.length > 0) {
-    let summary = "Resumen de preguntas erradas:\n";
-    wrongAnswers.forEach((item, i) => {
-      summary += `${i + 1}. Pregunta: ${item.question}\n   Respuesta correcta: ${item.correct}\n`;
-    });
-    alert(summary);
+    let s = 'Resumen de preguntas erradas:\n';
+    wrongAnswers.forEach((w,i)=>{ s += `${i+1}. ${w.question}\n   Correcta: ${w.correct}\n`; });
+    alert(s);
   } else {
-    alert("¡Felicidades! No tuviste errores.");
+    alert('¡Felicidades! No tuviste errores.');
   }
   wrongAnswers = [];
 }
@@ -329,8 +403,7 @@ document.getElementById('next-btn').onclick = nextQuestion;
 document.getElementById('restart-btn').onclick = () => {
   document.getElementById('end-screen').style.display = 'none';
   document.getElementById('start-screen').style.display = 'block';
-  const box = document.getElementById('quiz3-options');
-  if (box) box.style.display = 'none';
+  const box = document.getElementById('quiz3-options'); if (box) box.style.display = 'none';
 };
 
 /* ============== Inicio ============== */
