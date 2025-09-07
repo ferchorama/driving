@@ -1,5 +1,11 @@
-// script.js — Restauración robusta de las 10 preguntas con imagen en el QUIZ TEÓRICO (quiz1).
-// Mantiene todas las optimizaciones previas: carga modular, manejo de errores, parser CSV, limpieza de sufijos legales,
+// script.js — Restauración robusta de las 10 preguntas con imagen en el QUIZ TEÓRICO (quiz1)
+// + Fix explícito para:
+//   #40 -> "Reglamentarias/Prohibida Bicicletas.png"
+//   #41 -> "Reglamentarias/Prohibido Girar En U.png"
+//   #43 -> "Reglamentarias/Vehiculos Pesados Derecha.png"  <- NUEVO
+//   #48 -> "Reglamentarias/No Parquear Ni Detenerse.png"
+//   #49 -> "Reglamentarias/Prohibido fumar.webp"
+// Mantiene optimizaciones: carga modular, manejo de errores, parser CSV, limpieza de sufijos legales,
 // eliminación de recuadros explicativos, lazy-load de definiciones para quiz2, etc.
 
 /* ===========================
@@ -172,17 +178,17 @@ function removeExplanationBoxes() {
 /* ===========================
    TEÓRICO: 10 PREGUNTAS CON IMAGEN (#40–#49)
    =========================== */
-// Definiciones canónicas con overrides de imagen donde ya conocemos el archivo exacto.
+// Se agregan fixedImage para #40, #41, #43, #48 y #49 (este commit añade #43)
 const THEORETICAL_ITEMS_40_49 = [
   { num: 40, correct: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta', 'prohibido el paso de bicicletas', 'bicicletas'], fixedImage: 'Reglamentarias/Prohibida Bicicletas.png' },
   { num: 41, correct: 'Prohibido girar en U', synonyms: ['no u', 'no retorno', 'prohibido girar en u'], fixedImage: 'Reglamentarias/Prohibido Girar En U.png' },
   { num: 42, correct: 'Prohibido girar a la derecha', synonyms: ['no girar a la derecha', 'prohibido giro derecha'] },
-  { num: 43, correct: 'Vehículos pesados a la derecha', synonyms: ['vehiculos pesados a la derecha', 'camiones a la derecha', 'camion carril derecho'] },
+  { num: 43, correct: 'Vehículos pesados a la derecha', synonyms: ['vehiculos pesados a la derecha', 'camiones a la derecha', 'camion carril derecho'], fixedImage: 'Reglamentarias/Vehiculos Pesados Derecha.png' },
   { num: 44, correct: 'Ceda el paso', synonyms: ['ceda el paso', 'ceda'] },
   { num: 45, correct: 'Velocidad Máxima', synonyms: ['velocidad maxima', 'límite de velocidad'] },
   { num: 46, correct: 'prohibido usar la bocina', synonyms: ['prohibido pitar', 'prohibido bocina', 'no pitar'] },
   { num: 47, correct: 'Prohibido parquear', synonyms: ['prohibido estacionar', 'no estacionar'] },
-  { num: 48, correct: 'Prohibido parquear y prohibido parar o detenerse', synonyms: ['no parquear ni detenerse', 'prohibido parar y estacionar'] },
+  { num: 48, correct: 'Prohibido parquear y prohibido parar o detenerse', synonyms: ['no parquear ni detenerse', 'prohibido parar y estacionar'], fixedImage: 'Reglamentarias/No Parquear Ni Detenerse.png' },
   { num: 49, correct: 'Prohibido fumar', synonyms: ['no fumar', 'prohibido fumar'], fixedImage: 'Reglamentarias/Prohibido fumar.webp' }
 ];
 
@@ -203,7 +209,6 @@ function findInventoryByNameLike(label, inventory) {
     let s = 0;
     if (cand === target) s += 5;
     if (cand.includes(target)) s += 3;
-    // aporte por palabras clave
     for (const w of target.split(' ')) { if (w && cand.includes(w)) s += 1; }
     if (s > bestScore) { bestScore = s; best = it; }
   }
@@ -229,10 +234,8 @@ function generateWrongOptions(correctAnswer, inventory) {
 }
 
 /**
- * Elimina cualquier rastro previo de:
- *  - Placeholders tipo "DETERMINE QUE INDICA CADA SEÑAL"
- *  - Versiones antiguas de las preguntas #40–#49 (por número o por id)
- * Inserta las 10 preguntas con imagen garantizada (#40–#49).
+ * Elimina placeholders "DETERMINE..." y versiones previas de #40–#49,
+ * e inserta las 10 preguntas con la imagen correcta (incluyendo #43 y #48 fijas).
  */
 function ensureTheoreticalSignalQuestions(inventory) {
   if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
@@ -252,7 +255,7 @@ function ensureTheoreticalSignalQuestions(inventory) {
   // 3) Construir e insertar las 10 preguntas con imagen
   const built = [];
   for (const item of THEORETICAL_ITEMS_40_49) {
-    // Determinar imagen
+    // Determinar imagen (usa fixedImage si viene definida)
     let imageSrc = null;
     if (item.fixedImage) {
       imageSrc = normalizePath(item.fixedImage);
@@ -266,7 +269,6 @@ function ensureTheoreticalSignalQuestions(inventory) {
       }
     }
 
-    // Si no se encuentra imagen en inventario, se deja sin imagen (raro), pero NO bloquea la creación
     const wrongs = generateWrongOptions(item.correct, inventory);
     const q = {
       id: stableId(`teorico-${item.num}-${item.correct}`),
@@ -380,7 +382,7 @@ async function loadInventorySignals() {
     if (!inputSignals.value || Number(inputSignals.value) > maxSignals) inputSignals.value = maxSignals;
   }
 
-  // **PUNTO CLAVE**: Restaurar/inyectar las 10 preguntas con imagen en el QUIZ TEÓRICO
+  // **Restaurar/inyectar** las 10 preguntas con imagen en el QUIZ TEÓRICO (incluye #43 y #48 con imagen fija)
   ensureTheoreticalSignalQuestions(inventory);
 
   LOADED.inventory = true;
@@ -443,7 +445,6 @@ function startQuiz(type, num = null) {
   };
 
   if (type === 'quiz1') {
-    // Aseguramos que ya se haya corrido ensureTheoreticalSignalQuestions con inventory
     const pool = [...(questions.quiz1 || [])]; shuffle(pool);
     currentQuiz = pool;
     renderStart();
