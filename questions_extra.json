@@ -3,332 +3,102 @@
     {
       "question": "Conducir sin portar la licencia al momento del control es:",
       "options": [
-        "Una infracción que genera multa; puede conllevar inmovilización si no se demuestra la licencia.",
-        "Una conducta permitida si el conductor conoce el número de su licencia.",
-        "Solo una amonestación verbal sin multa ni registro.",
-        "Válido siempre que el vehículo cuente con SOAT vigente."
+        "Una infracción que genera multa y puede conllevar inmovilización si no se acredita la licencia en el sitio o en término breve; la autoridad debe garantizar identificación plena del conductor.",
+        "Una conducta permitida si el conductor conoce el número de su licencia, pues basta con memorizarlo.",
+        "Solo una amonestación verbal sin multa ni registro, ya que la licencia no es obligatoria para circular.",
+        "Válido siempre que el vehículo cuente con SOAT y revisión técnico-mecánica vigentes."
       ],
-      "correct": "Una infracción que genera multa; puede conllevar inmovilización si no se demuestra la licencia."
+      "correct": "Una infracción que genera multa y puede conllevar inmovilización si no se acredita la licencia en el sitio o en término breve; la autoridad debe garantizar identificación plena del conductor."
     },
     {
       "question": "Conducir con licencia vencida corresponde a:",
       "options": [
-        "Una infracción sancionable con multa y posible inmovilización del vehículo.",
-        "Un permiso temporal de 30 días sin sanción.",
-        "Una falta leve sin multa, solo comparendo pedagógico.",
-        "Una situación válida si el conductor presenta cédula."
+        "Una infracción sancionable con multa y posible inmovilización del vehículo; la licencia acredita idoneidad y su vigencia es requisito para circular.",
+        "Un permiso temporal de 30 días sin sanción mientras se renueva, por lo que no procede comparendo.",
+        "Una falta leve sin multa, solo amerita comparendo pedagógico sin consecuencias.",
+        "Una situación válida si el conductor presenta cédula o pasaporte para su plena identificación."
       ],
-      "correct": "Una infracción sancionable con multa y posible inmovilización del vehículo."
+      "correct": "Una infracción sancionable con multa y posible inmovilización del vehículo; la licencia acredita idoneidad y su vigencia es requisito para circular."
     },
     {
       "question": "No portar el SOAT vigente al día del control es:",
       "options": [
-        "Causal de comparendo con multa y posible inmovilización.",
-        "Infracción leve que puede pagarse luego sin consecuencias.",
-        "No es infracción si el vehículo no ha salido a vías nacionales.",
-        "Permitido si el conductor tiene revisión técnico-mecánica al día."
+        "Causal de comparendo con multa y posible inmovilización; el SOAT garantiza cobertura básica a víctimas de siniestros y su ausencia aumenta el riesgo social.",
+        "Infracción leve que puede pagarse luego sin consecuencias, por lo que no procede inmovilización.",
+        "No es infracción si el vehículo no ha salido a vías nacionales, solo aplica fuera del municipio.",
+        "Permitido si el conductor tiene revisión técnico-mecánica al día, ya que esta suple el SOAT."
       ],
-      "correct": "Causal de comparendo con multa y posible inmovilización."
+      "correct": "Causal de comparendo con multa y posible inmovilización; el SOAT garantiza cobertura básica a víctimas de siniestros y su ausencia aumenta el riesgo social."
     },
     {
       "question": "Circular con la revisión técnico-mecánica vencida:",
       "options": [
-        "Genera multa y puede ocasionar inmovilización por condiciones de seguridad.",
-        "No es sancionable si el vehículo es nuevo.",
-        "Solo implica advertencia escrita sin multa.",
-        "Es válido si el vehículo no supera 60 km/h."
+        "Genera multa y puede ocasionar inmovilización por condiciones de seguridad; este control previene fallas mecánicas y emisiones por fuera de norma.",
+        "No es sancionable si el vehículo es nuevo, incluso si ya superó el tiempo para la primera revisión.",
+        "Solo implica advertencia escrita sin multa ni registro, pues prima la movilidad.",
+        "Es válido si el vehículo no supera 60 km/h y se usa en zonas urbanas de baja velocidad."
       ],
-      "correct": "Genera multa y puede ocasionar inmovilización por condiciones de seguridad."
-    },
-    {
-      "question": "Exceso de velocidad en zona urbana:",
-      "options": [
-        "Constituye infracción con multa y medidas adicionales según el caso.",
-        "Es aceptable si el flujo vehicular es bajo.",
-        "Solo aplica en vías nacionales, no en ciudad.",
-        "Es válido si el conductor activa luces de emergencia."
-      ],
-      "correct": "Constituye infracción con multa y medidas adicionales según el caso."
+      "correct": "Genera multa y puede ocasionar inmovilización por condiciones de seguridad; este control previene fallas mecánicas y emisiones por fuera de norma."
     },
     {
       "question": "Pasarse un semáforo en rojo:",
       "options": [
-        "Es una infracción grave sancionada con multa.",
-        "No es sancionable si no hubo accidente.",
-        "Es válido de noche cuando no hay tránsito.",
-        "Solo amerita llamado de atención."
+        "Es una infracción grave sancionada con multa; compromete la seguridad de peatones y otros actores viales y puede generar siniestros de intersección.",
+        "No es sancionable si no hubo accidente, siempre que el paso haya sido con precaución.",
+        "Es válido de noche cuando no hay tránsito ni peatones, por lo que la sanción es discrecional.",
+        "Solo amerita llamado de atención si el vehículo de atrás presionaba con bocina."
       ],
-      "correct": "Es una infracción grave sancionada con multa."
+      "correct": "Es una infracción grave sancionada con multa; compromete la seguridad de peatones y otros actores viales y puede generar siniestros de intersección."
     },
     {
       "question": "Usar el celular mientras se conduce (sin manos libres):",
       "options": [
-        "Conlleva multa; aumenta el riesgo de siniestro.",
-        "No es infracción si el vehículo está en movimiento lento.",
-        "Es permitido para leer mensajes cortos.",
-        "Solo aplica a conductores de servicio público."
+        "Conlleva multa y aumenta el riesgo de siniestro por distracción visual, manual y cognitiva; la recomendación es detenerse en sitio seguro o usar sistemas manos libres permitidos.",
+        "No es infracción si el vehículo está en movimiento lento o en trancones, porque el riesgo es menor.",
+        "Es permitido para leer mensajes cortos siempre que se mantenga la distancia con el vehículo de adelante.",
+        "Solo aplica a conductores de servicio público, no a particulares."
       ],
-      "correct": "Conlleva multa; aumenta el riesgo de siniestro."
+      "correct": "Conlleva multa y aumenta el riesgo de siniestro por distracción visual, manual y cognitiva; la recomendación es detenerse en sitio seguro o usar sistemas manos libres permitidos."
     },
     {
       "question": "No usar cinturón de seguridad:",
       "options": [
-        "Es infracción con multa; todos los ocupantes deben usarlo.",
-        "Solo el conductor está obligado; pasajeros no.",
-        "No aplica en vías urbanas.",
-        "Es una recomendación sin sanción."
+        "Es infracción con multa; todos los ocupantes deben usarlo y reduce significativamente la probabilidad de lesiones graves en un choque.",
+        "Solo el conductor está obligado; pasajeros pueden decidir de manera voluntaria.",
+        "No aplica en vías urbanas por debajo de 50 km/h, ya que el riesgo es menor.",
+        "Es una recomendación de seguridad sin sanción para trayectos cortos."
       ],
-      "correct": "Es infracción con multa; todos los ocupantes deben usarlo."
+      "correct": "Es infracción con multa; todos los ocupantes deben usarlo y reduce significativamente la probabilidad de lesiones graves en un choque."
     },
     {
-      "question": "Transportar niños sin el sistema de retención infantil adecuado:",
+      "question": "Estacionar en lugar prohibido (andenes, entradas, zonas restringidas):",
       "options": [
-        "Es infracción con multa por seguridad de los menores.",
-        "Permitido si el trayecto es corto.",
-        "Amonestación sin sanción económica.",
-        "Solo aplica a vías rurales."
+        "Es infracción con multa y posible inmovilización o retiro; afecta visibilidad, circulación y seguridad de peatones y ciclistas.",
+        "Permitido en horario nocturno si se usan luces estacionarias.",
+        "Sin sanción si las luces de parqueo están encendidas y no hay señal vertical explícita.",
+        "Amonestación verbal si no obstruye completamente el carril."
       ],
-      "correct": "Es infracción con multa por seguridad de los menores."
+      "correct": "Es infracción con multa y posible inmovilización o retiro; afecta visibilidad, circulación y seguridad de peatones y ciclistas."
     },
     {
-      "question": "Estacionar en lugar prohibido (ej. andenes, entradas, zonas restringidas):",
+      "question": "Exceso de velocidad en zona urbana:",
       "options": [
-        "Es infracción con multa y posible inmovilización o retiro del vehículo.",
-        "Permitido en horario nocturno.",
-        "Sin sanción si las luces de parqueo están encendidas.",
-        "Amonestación verbal si no obstruye completamente."
+        "Constituye infracción con multa; el límite protege a usuarios vulnerables y puede complementarse con medidas como detección electrónica y suspensión según reincidencia.",
+        "Es aceptable si el flujo vehicular es bajo y hay buena visibilidad.",
+        "Solo aplica en vías nacionales; en ciudad se regula por cultura ciudadana.",
+        "Es válido si el conductor activa luces de emergencia para advertir."
       ],
-      "correct": "Es infracción con multa y posible inmovilización o retiro del vehículo."
+      "correct": "Constituye infracción con multa; el límite protege a usuarios vulnerables y puede complementarse con medidas como detección electrónica y suspensión según reincidencia."
     },
     {
-      "question": "Invadir el paso de peatones o no cederles la vía:",
+      "question": "Invadir el paso de peatones o no ceder la vía al peatón:",
       "options": [
-        "Conlleva multa; se debe priorizar al peatón.",
-        "No es sancionable si el semáforo está en verde.",
-        "Válido cuando se tiene prisa.",
-        "Solo aplica a conductores de buses."
+        "Conlleva multa; el peatón tiene prioridad en pasos demarcados y en maniobras de giro, reforzando la seguridad vial.",
+        "No es sancionable si el semáforo vehicular está en verde para el conductor.",
+        "Válido cuando se tiene prisa y no hay presencia de autoridades.",
+        "Solo aplica a conductores de buses y taxis."
       ],
-      "correct": "Conlleva multa; se debe priorizar al peatón."
-    },
-    {
-      "question": "Conducir en estado de embriaguez o bajo efectos de sustancias:",
-      "options": [
-        "Infracción gravísima con multa y sanciones adicionales (suspensión y medidas según grado).",
-        "Permitido si se trata de trayecto corto.",
-        "No aplica si el conductor no causa siniestro.",
-        "Solo genera amonestación en primera ocasión."
-      ],
-      "correct": "Infracción gravísima con multa y sanciones adicionales (suspensión y medidas según grado)."
-    },
-    {
-      "question": "Adelantar en línea continua o en curva con baja visibilidad:",
-      "options": [
-        "Es infracción sancionable con multa por maniobra peligrosa.",
-        "Válido si el vehículo de adelante va muy lento.",
-        "No es sancionable en motocicletas.",
-        "Permitido si se usa direccional."
-      ],
-      "correct": "Es infracción sancionable con multa por maniobra peligrosa."
-    },
-    {
-      "question": "No acatar las señales o instrucciones de un agente de tránsito:",
-      "options": [
-        "Conlleva multa; la autoridad prevalece sobre la señalización.",
-        "No es sancionable si el conductor conoce la ruta.",
-        "Solo aplica en controles en carretera.",
-        "Es válido discutir en el sitio y desobedecer."
-      ],
-      "correct": "Conlleva multa; la autoridad prevalece sobre la señalización."
-    },
-    {
-      "question": "Bloquear la intersección (ingresar sin poder despejarla):",
-      "options": [
-        "Es infracción con multa por obstaculizar la circulación.",
-        "Válido si el semáforo cambió a rojo inesperadamente.",
-        "No aplica en horas pico.",
-        "Solo para vías de alto flujo."
-      ],
-      "correct": "Es infracción con multa por obstaculizar la circulación."
-    },
-    {
-      "question": "Circular por carril exclusivo (ej. TransMi/carril preferencial) sin autorización:",
-      "options": [
-        "Infracción sancionable con multa.",
-        "Permitido para adelantar vehículos lentos.",
-        "No sancionable en horario nocturno.",
-        "Solo aplica a taxis."
-      ],
-      "correct": "Infracción sancionable con multa."
-    },
-    {
-      "question": "Conducir motocicleta sin casco o con casco mal abrochado:",
-      "options": [
-        "Conlleva multa; además se exige el uso correcto del casco.",
-        "No es sancionable para parrilleros.",
-        "Permitido en trayectos menores a 3 km.",
-        "Solo se exige en vías nacionales."
-      ],
-      "correct": "Conlleva multa; además se exige el uso correcto del casco."
-    },
-    {
-      "question": "Llevar más pasajeros de los permitidos por la tarjeta de propiedad:",
-      "options": [
-        "Genera multa por exceder la capacidad del vehículo.",
-        "Es válido si todos usan cinturón.",
-        "No sancionable si el trayecto es urbano.",
-        "Permitido en emergencias médicas sin condiciones."
-      ],
-      "correct": "Genera multa por exceder la capacidad del vehículo."
-    },
-    {
-      "question": "Transitar con luces apagadas en la noche o en condiciones de baja visibilidad:",
-      "options": [
-        "Infracción con multa por condiciones inseguras.",
-        "Permitido si la vía está iluminada.",
-        "Solo amonestación si el vehículo es claro.",
-        "No aplica a motociclistas."
-      ],
-      "correct": "Infracción con multa por condiciones inseguras."
-    },
-    {
-      "question": "Arrojar basura desde el vehículo a la vía pública:",
-      "options": [
-        "Conlleva multa por comportamiento contrario a la seguridad y convivencia vial.",
-        "No es infracción si es biodegradable.",
-        "Solo aplica a conductores de carga.",
-        "Amonestación sin multa."
-      ],
-      "correct": "Conlleva multa por comportamiento contrario a la seguridad y convivencia vial."
-    },
-    {
-      "question": "No respetar el pico y placa (cuando aplique):",
-      "options": [
-        "Es infracción sancionable con multa.",
-        "Permitido si el trayecto es corto.",
-        "No sancionable si el conductor es turista.",
-        "Solo aplica a vehículos de servicio público."
-      ],
-      "correct": "Es infracción sancionable con multa."
-    },
-    {
-      "question": "Huir del lugar de un accidente en el que se ve involucrado:",
-      "options": [
-        "Es una conducta sancionable, además de posibles consecuencias penales según el caso.",
-        "Válido si no hubo lesionados.",
-        "No sancionable si el daño es menor.",
-        "Solo aplica a choques con heridos."
-      ],
-      "correct": "Es una conducta sancionable, además de posibles consecuencias penales según el caso."
-    },
-    {
-      "question": "No llevar botiquín, extintor o elementos exigidos (según norma aplicable):",
-      "options": [
-        "Puede generar comparendo con multa y requerimiento de corrección.",
-        "No es infracción si el vehículo es particular.",
-        "Solo aplica a motocicletas.",
-        "Es irrelevante en ciudad."
-      ],
-      "correct": "Puede generar comparendo con multa y requerimiento de corrección."
-    },
-    {
-      "question": "Conducir con placas ocultas, alteradas o sin placas:",
-      "options": [
-        "Es infracción con multa y puede generar inmovilización.",
-        "No es sancionable si el vehículo es nuevo.",
-        "Permitido si porta factura de compra.",
-        "Solo amerita llamado de atención."
-      ],
-      "correct": "Es infracción con multa y puede generar inmovilización."
-    },
-    {
-      "question": "No detenerse completamente en un pare (señal reglamentaria):",
-      "options": [
-        "Infracción sancionable con multa.",
-        "No sancionable si no hay otros vehículos.",
-        "Permitido si se reduce la velocidad a menos de 10 km/h.",
-        "Solo aplica en carreteras."
-      ],
-      "correct": "Infracción sancionable con multa."
-    },
-    {
-      "question": "Conducir sin portar la tarjeta de propiedad del vehículo:",
-      "options": [
-        "Infracción con multa; puede generarse inmovilización si no se acredita.",
-        "No es infracción si se muestra la SOAT.",
-        "Permitido si el conductor es el dueño.",
-        "Solo amonestación escrita."
-      ],
-      "correct": "Infracción con multa; puede generarse inmovilización si no se acredita."
-    },
-    {
-      "question": "Detenerse o estacionar en zona para personas con discapacidad sin autorización:",
-      "options": [
-        "Infracción con multa y posibles medidas adicionales.",
-        "Permitido hasta por 10 minutos.",
-        "No sancionable si se encienden luces de emergencia.",
-        "Solo aplica a centros comerciales."
-      ],
-      "correct": "Infracción con multa y posibles medidas adicionales."
-    },
-    {
-      "question": "Transitar por andenes o zonas peatonales con vehículo:",
-      "options": [
-        "Infracción con multa por invadir espacio de peatones.",
-        "Permitido para adelantar tráfico.",
-        "No sancionable para motocicletas.",
-        "Solo amerita llamado de atención."
-      ],
-      "correct": "Infracción con multa por invadir espacio de peatones."
-    },
-    {
-      "question": "No portar o no usar chaleco reflectivo (cuando sea exigible):",
-      "options": [
-        "Puede generar multa por incumplir medidas de seguridad.",
-        "No aplica en ciudad.",
-        "Solo sanciona a parrilleros.",
-        "No es infracción si es de día."
-      ],
-      "correct": "Puede generar multa por incumplir medidas de seguridad."
-    },
-    {
-      "question": "Obstruir una ciclorruta o bloquear el paso de ciclistas:",
-      "options": [
-        "Conlleva multa; se debe respetar la infraestructura ciclista.",
-        "Permitido en maniobras de carga y descarga sin restricción.",
-        "Solo amonestación si no hay ciclistas a la vista.",
-        "No aplica para vehículos de servicio."
-      ],
-      "correct": "Conlleva multa; se debe respetar la infraestructura ciclista."
-    },
-    {
-      "question": "Conducir realizando zigzags o maniobras peligrosas:",
-      "options": [
-        "Es infracción con multa por poner en riesgo a otros actores viales.",
-        "Permitido si el conductor tiene experiencia.",
-        "Solo sanciona a motociclistas.",
-        "No aplica en vías con poco tráfico."
-      ],
-      "correct": "Es infracción con multa por poner en riesgo a otros actores viales."
-    },
-    {
-      "question": "Rebasar a un vehículo detenido en paso peatonal o escolar:",
-      "options": [
-        "Infracción con multa debido al riesgo a peatones o escolares.",
-        "Permitido si el carril contrario está libre.",
-        "No sancionable en horas valle.",
-        "Solo aplica a buses escolares."
-      ],
-      "correct": "Infracción con multa debido al riesgo a peatones o escolares."
-    },
-    {
-      "question": "No portar el seguro contractual/extracontractual exigido en servicio público (cuando aplique):",
-      "options": [
-        "Sujeto a comparendo con multa y posibles medidas administrativas.",
-        "No es infracción si se tiene SOAT.",
-        "Permitido mientras se tramita la póliza.",
-        "Solo amonestación escrita."
-      ],
-      "correct": "Sujeto a comparendo con multa y posibles medidas administrativas."
+      "correct": "Conlleva multa; el peatón tiene prioridad en pasos demarcados y en maniobras de giro, reforzando la seguridad vial."
     }
   ]
 }
