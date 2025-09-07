@@ -1,11 +1,9 @@
-// script.js — versión optimizada (lógica y robustez) SIN cambios de interfaz
-// - Carga modular con caché y lazy-load de definiciones (ART. 2°) al abrir quiz de Código
-// - Manejo de errores: retry, timeout, validación suave de datos, logs descriptivos
-// - Parser CSV robusto (comillas, comas), desduplicación y limpieza de sufijos legales
-// - Mantiene toda la funcionalidad y la misma UI
+// script.js — Restauración robusta de las 10 preguntas con imagen en el QUIZ TEÓRICO (quiz1).
+// Mantiene todas las optimizaciones previas: carga modular, manejo de errores, parser CSV, limpieza de sufijos legales,
+// eliminación de recuadros explicativos, lazy-load de definiciones para quiz2, etc.
 
 /* ===========================
-   ESTADO GLOBAL Y CONSTANTES
+   RUTAS Y ESTADO GLOBAL
    =========================== */
 const PATHS = {
   base: 'questions.json',
@@ -30,7 +28,9 @@ const LOADED = {
   article2: false
 };
 
-// Utilidad simple para IDs estables de pregunta (enunciado+imagen)
+/* ===========================
+   UTILIDADES
+   =========================== */
 function stableId(str) {
   const s = String(str || '');
   let hash = 5381;
@@ -38,10 +38,6 @@ function stableId(str) {
   return 'q_' + (hash >>> 0).toString(16);
 }
 
-/* ===========================
-   UTILIDADES BÁSICAS
-   =========================== */
-// Timeout de fetch
 function withTimeout(promise, ms, label = 'operación') {
   let timer;
   const timeout = new Promise((_, rej) => {
@@ -76,6 +72,7 @@ async function fetchJson(url, opts) {
 }
 
 const normalizePath = (p) => (p || '').replace(/\\/g, '/').replace(/^\.?\//, '');
+
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -98,7 +95,6 @@ function sampleDistinct(arr, k, excludeIndex = -1) {
    PARSER CSV ROBUSTO
    =========================== */
 function parseCSV(text) {
-  // Soporta campos entre comillas con comas internas y dobles comillas escapadas
   const rows = [];
   let i = 0, field = '', row = [], inQuotes = false;
   const pushField = () => { row.push(field); field = ''; };
@@ -106,33 +102,26 @@ function parseCSV(text) {
 
   while (i < text.length) {
     const ch = text[i];
-
     if (inQuotes) {
       if (ch === '"') {
-        if (text[i + 1] === '"') { field += '"'; i += 2; continue; } // doble comilla -> literal
+        if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
         inQuotes = false; i++; continue;
-      } else {
-        field += ch; i++; continue;
-      }
+      } else { field += ch; i++; continue; }
     } else {
       if (ch === '"') { inQuotes = true; i++; continue; }
       if (ch === ',') { pushField(); i++; continue; }
       if (ch === '\n') { pushField(); pushRow(); i++; continue; }
-      if (ch === '\r') { // CRLF
-        if (text[i + 1] === '\n') i++;
-        pushField(); pushRow(); i++; continue;
-      }
+      if (ch === '\r') { if (text[i + 1] === '\n') i++; pushField(); pushRow(); i++; continue; }
       field += ch; i++; continue;
     }
   }
-  // último campo/fila
   pushField();
   if (row.length > 1 || (row.length === 1 && row[0].trim() !== '')) pushRow();
   return rows;
 }
 
 /* ===========================
-   LIMPIEZA DE SUFIJOS LEGALES
+   LIMPIEZAS Y UI
    =========================== */
 function stripLegalTags(text) {
   if (typeof text !== 'string') return text;
@@ -149,7 +138,6 @@ function cleanQuiz2LegalTagsAndSyncCorrect() {
     if (!q || !Array.isArray(q.options)) return;
     q.options = q.options.map(stripLegalTags);
     const cleanedCorrect = stripLegalTags(q.correct);
-    // Alineación tolerante
     let idx = q.options.findIndex(o => o === cleanedCorrect);
     if (idx === -1) {
       const target = collapse(cleanedCorrect.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
@@ -157,17 +145,11 @@ function cleanQuiz2LegalTagsAndSyncCorrect() {
         collapse(String(o).normalize('NFD').replace(/[\u0300-\u036f]/g, '')) === target
       );
     }
-    if (idx === -1) {
-      // forzar consistencia si no está incluida
-      q.options = [cleanedCorrect, ...q.options.filter(o => o !== cleanedCorrect)];
-    }
+    if (idx === -1) q.options = [cleanedCorrect, ...q.options.filter(o => o !== cleanedCorrect)];
     q.correct = cleanedCorrect;
   });
 }
 
-/* ===========================
-   UI: LIMPIEZA DE RECUADROS
-   =========================== */
 function removeExplanationBoxes() {
   const exp = document.getElementById('explanation');
   if (exp && exp.parentNode) exp.parentNode.removeChild(exp);
@@ -188,23 +170,48 @@ function removeExplanationBoxes() {
 }
 
 /* ===========================
-   SEÑALES Y REEMPLAZOS TEÓRICO
+   TEÓRICO: 10 PREGUNTAS CON IMAGEN (#40–#49)
    =========================== */
-const THEORETICAL_REPLACEMENTS = [
-  { num: 40, correct: 'Prohibido circular en bicicleta', img: 'Reglamentarias/Prohibida Bicicletas.png' },
-  { num: 41, correct: 'Prohibido girar en U', img: 'Reglamentarias/Prohibido Girar En U.png' },
-  { num: 42, correct: 'Prohibido girar a la derecha' },
-  { num: 43, correct: 'Vehículos pesados a la derecha' },
-  { num: 44, correct: 'Ceda el paso' },
-  { num: 45, correct: 'Velocidad Máxima' },
-  { num: 46, correct: 'prohibido usar la bocina' },
-  { num: 47, correct: 'Prohibido parquear' },
-  { num: 48, correct: 'Prohibido parquear y prohibido parar o detenerse' },
-  { num: 49, correct: 'Prohibido fumar', img: 'Reglamentarias/Prohibido fumar.webp' }
+// Definiciones canónicas con overrides de imagen donde ya conocemos el archivo exacto.
+const THEORETICAL_ITEMS_40_49 = [
+  { num: 40, correct: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta', 'prohibido el paso de bicicletas', 'bicicletas'], fixedImage: 'Reglamentarias/Prohibida Bicicletas.png' },
+  { num: 41, correct: 'Prohibido girar en U', synonyms: ['no u', 'no retorno', 'prohibido girar en u'], fixedImage: 'Reglamentarias/Prohibido Girar En U.png' },
+  { num: 42, correct: 'Prohibido girar a la derecha', synonyms: ['no girar a la derecha', 'prohibido giro derecha'] },
+  { num: 43, correct: 'Vehículos pesados a la derecha', synonyms: ['vehiculos pesados a la derecha', 'camiones a la derecha', 'camion carril derecho'] },
+  { num: 44, correct: 'Ceda el paso', synonyms: ['ceda el paso', 'ceda'] },
+  { num: 45, correct: 'Velocidad Máxima', synonyms: ['velocidad maxima', 'límite de velocidad'] },
+  { num: 46, correct: 'prohibido usar la bocina', synonyms: ['prohibido pitar', 'prohibido bocina', 'no pitar'] },
+  { num: 47, correct: 'Prohibido parquear', synonyms: ['prohibido estacionar', 'no estacionar'] },
+  { num: 48, correct: 'Prohibido parquear y prohibido parar o detenerse', synonyms: ['no parquear ni detenerse', 'prohibido parar y estacionar'] },
+  { num: 49, correct: 'Prohibido fumar', synonyms: ['no fumar', 'prohibido fumar'], fixedImage: 'Reglamentarias/Prohibido fumar.webp' }
 ];
 
-function generateWrongOptions(correctAnswer, pool) {
-  const names = pool.map(p => p.nombre_visible).filter(Boolean);
+const NORM = s =>
+  (s || '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+function findInventoryByNameLike(label, inventory) {
+  if (!Array.isArray(inventory) || !inventory.length) return null;
+  const target = NORM(label);
+  let best = null, bestScore = -1;
+  for (const it of inventory) {
+    const cand = NORM(it.nombre_visible);
+    if (!cand) continue;
+    let s = 0;
+    if (cand === target) s += 5;
+    if (cand.includes(target)) s += 3;
+    // aporte por palabras clave
+    for (const w of target.split(' ')) { if (w && cand.includes(w)) s += 1; }
+    if (s > bestScore) { bestScore = s; best = it; }
+  }
+  return best;
+}
+
+function generateWrongOptions(correctAnswer, inventory) {
+  const names = inventory.map(p => p.nombre_visible).filter(Boolean);
   const unique = Array.from(new Set(names)).filter(n => n !== correctAnswer);
   shuffle(unique);
   const pick = unique.slice(0, 3);
@@ -221,58 +228,74 @@ function generateWrongOptions(correctAnswer, pool) {
   return pick;
 }
 
-function replaceDeterminePlaceholders(inventory) {
+/**
+ * Elimina cualquier rastro previo de:
+ *  - Placeholders tipo "DETERMINE QUE INDICA CADA SEÑAL"
+ *  - Versiones antiguas de las preguntas #40–#49 (por número o por id)
+ * Inserta las 10 preguntas con imagen garantizada (#40–#49).
+ */
+function ensureTheoreticalSignalQuestions(inventory) {
   if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
+
+  // 1) Eliminar placeholders
   const isDetermine = q => typeof q?.question === 'string' &&
     /^\s*determine que indica cada se(ñ|n)al/i.test(q.question);
-
-  // Limpia placeholders del banco
   questions.quiz1 = questions.quiz1.filter(q => !isDetermine(q));
 
-  // Inserta 40–49 con imagen
-  for (const r of THEORETICAL_REPLACEMENTS) {
-    let image = r.img || null;
-    if (!image) {
-      const target = (r.correct || '').toLowerCase();
-      let best = null, score = 0;
-      for (const it of inventory) {
-        const cand = (it.nombre_visible || '').toLowerCase();
-        let s = 0;
-        if (cand === target) s += 3;
-        if (cand.includes(target)) s += 2;
-        if (s > score) { score = s; best = it; }
+  // 2) Eliminar versiones previas de (#40–#49)
+  const numberRegexes = THEORETICAL_ITEMS_40_49.map(it => new RegExp(`\\(#${it.num}\\)`));
+  questions.quiz1 = questions.quiz1.filter(q => {
+    const text = String(q?.question || '');
+    return !numberRegexes.some(re => re.test(text));
+  });
+
+  // 3) Construir e insertar las 10 preguntas con imagen
+  const built = [];
+  for (const item of THEORETICAL_ITEMS_40_49) {
+    // Determinar imagen
+    let imageSrc = null;
+    if (item.fixedImage) {
+      imageSrc = normalizePath(item.fixedImage);
+    } else {
+      let found = findInventoryByNameLike(item.correct, inventory);
+      if (!found && Array.isArray(item.synonyms)) {
+        for (const s of item.synonyms) { found = findInventoryByNameLike(s, inventory); if (found) break; }
       }
-      if (best) image = best.url && best.url.startsWith('http') ? best.url : normalizePath(best.archivo);
+      if (found) {
+        imageSrc = (found.url && found.url.startsWith('http')) ? found.url : normalizePath(found.archivo);
+      }
     }
-    const wrongs = generateWrongOptions(r.correct, inventory);
+
+    // Si no se encuentra imagen en inventario, se deja sin imagen (raro), pero NO bloquea la creación
+    const wrongs = generateWrongOptions(item.correct, inventory);
     const q = {
-      id: stableId(`teorico-${r.num}-${r.correct}`),
-      question: `(#${r.num}) ¿Cuál es el nombre de esta señal?`,
-      image,
-      options: [r.correct, ...wrongs],
-      correct: r.correct
+      id: stableId(`teorico-${item.num}-${item.correct}`),
+      question: `(#${item.num}) ¿Cuál es el nombre de esta señal?`,
+      image: imageSrc || undefined,
+      options: [item.correct, ...wrongs],
+      correct: item.correct
     };
-    questions.quiz1.push(q);
+    built.push(q);
   }
+
+  // Insertar manteniendo resto del banco teórico
+  questions.quiz1 = [...questions.quiz1, ...built];
 }
 
 /* ===========================
-   VALIDACIÓN SUAVE DE BANCOS
+   NORMALIZACIÓN Y MERGE
    =========================== */
 function normalizeQuestion(q) {
   if (!q) return null;
   const nq = { ...q };
   nq.id = q.id || stableId(`${q.question}|${q.image || ''}`);
   if (!Array.isArray(nq.options)) nq.options = [];
-  // Elimina falsy, normaliza a strings y desduplica preservando orden
   const seen = new Set();
   nq.options = nq.options
     .map(o => (o == null ? '' : String(o).trim()))
     .filter(o => o.length > 0 && (seen.has(o) ? false : (seen.add(o), true)));
-  // Si la correcta no está, intente agregar al inicio
   const corr = (q.correct == null ? '' : String(q.correct).trim());
   if (!nq.options.includes(corr) && corr) nq.options.unshift(corr);
-  // Asegurar mínimo 2 opciones
   if (nq.options.length < 2) return null;
   nq.correct = corr || nq.options[0];
   return nq;
@@ -289,12 +312,11 @@ function mergeUniqueQuestions(dstArr, srcArr) {
 }
 
 /* ===========================
-   CARGA MODULAR DE BANCOS
+   CARGA MODULAR
    =========================== */
 async function loadBaseQuestions() {
   if (LOADED.base) return;
   const base = await fetchJson(PATHS.base, { retries: 1 });
-  // Normaliza y asigna
   questions.quiz1 = mergeUniqueQuestions([], Array.isArray(base.quiz1) ? base.quiz1 : []);
   questions.quiz2 = mergeUniqueQuestions([], Array.isArray(base.quiz2) ? base.quiz2 : []);
   LOADED.base = true;
@@ -304,12 +326,8 @@ async function loadExtraQuestions() {
   if (LOADED.extra) return;
   try {
     const extra = await fetchJson(PATHS.extra, { retries: 1 });
-    if (Array.isArray(extra.quiz1)) {
-      questions.quiz1 = mergeUniqueQuestions(questions.quiz1, extra.quiz1);
-    }
-    if (Array.isArray(extra.quiz2)) {
-      questions.quiz2 = mergeUniqueQuestions(questions.quiz2, extra.quiz2);
-    }
+    if (Array.isArray(extra.quiz1)) questions.quiz1 = mergeUniqueQuestions(questions.quiz1, extra.quiz1);
+    if (Array.isArray(extra.quiz2)) questions.quiz2 = mergeUniqueQuestions(questions.quiz2, extra.quiz2);
   } catch (err) {
     console.warn('[loadExtraQuestions] opcional no disponible:', err?.message || err);
   }
@@ -319,31 +337,26 @@ async function loadExtraQuestions() {
 async function loadInventorySignals() {
   if (LOADED.inventory) return;
   const txt = await fetchText(PATHS.inventoryCSV, { retries: 1 });
-  const rows = parseCSV(txt.replace(/^\uFEFF/, '')); // quita BOM si existe
-  if (!rows.length) {
-    console.warn('[loadInventorySignals] CSV vacío');
-    LOADED.inventory = true;
-    return;
-  }
+  const rows = parseCSV(txt.replace(/^\uFEFF/, ''));
+  if (!rows.length) { console.warn('[loadInventorySignals] CSV vacío'); LOADED.inventory = true; return; }
   const headers = rows[0].map(h => (h || '').trim());
   const idxNombre = headers.findIndex(h => /nombre_visible/i.test(h));
   const idxArchivo = headers.findIndex(h => /archivo/i.test(h));
   const idxUrl = headers.findIndex(h => /^url$/i.test(h));
-
   if (idxNombre === -1 || (idxArchivo === -1 && idxUrl === -1)) {
     console.warn('[loadInventorySignals] CSV sin columnas requeridas (nombre_visible, archivo/url)');
-    LOADED.inventory = true;
-    return;
+    LOADED.inventory = true; return;
   }
 
+  // Inventario para señales (usado también como pool de distractores)
   const inventory = rows.slice(1).map(r => ({
     nombre_visible: (r[idxNombre] || '').trim(),
     archivo: (r[idxArchivo] || '').trim(),
     url: (r[idxUrl] || '').trim()
   })).filter(o => o.nombre_visible);
 
-  // Construye banco de señales
-  const built = inventory.map(r => {
+  // Construir banco de "Señales" (quiz3) desde inventario
+  const builtSignals = inventory.map(r => {
     const imagen = r.url && r.url.startsWith('http') ? r.url : normalizePath(r.archivo);
     const correcta = r.nombre_visible;
     const err = generateWrongOptions(correcta, inventory);
@@ -355,24 +368,20 @@ async function loadInventorySignals() {
       correct: correcta
     });
   }).filter(Boolean);
+  questions.signals = mergeUniqueQuestions([], builtSignals);
 
-  questions.signals = mergeUniqueQuestions([], built);
-
-  // Actualiza UI dependiente
+  // Actualizar máximos y controles UI dependientes
   maxSignals = questions.signals.length;
   const maxSpan = document.getElementById('max-signals');
   if (maxSpan) maxSpan.textContent = maxSignals;
-
   const inputSignals = document.getElementById('num-questions-3');
   if (inputSignals) {
     inputSignals.max = maxSignals;
-    if (!inputSignals.value || Number(inputSignals.value) > maxSignals) {
-      inputSignals.value = maxSignals;
-    }
+    if (!inputSignals.value || Number(inputSignals.value) > maxSignals) inputSignals.value = maxSignals;
   }
 
-  // Reemplazar placeholders del teórico por 40–49 con imagen
-  replaceDeterminePlaceholders(inventory);
+  // **PUNTO CLAVE**: Restaurar/inyectar las 10 preguntas con imagen en el QUIZ TEÓRICO
+  ensureTheoreticalSignalQuestions(inventory);
 
   LOADED.inventory = true;
 }
@@ -382,12 +391,7 @@ async function loadArticle2Definitions() {
   try {
     const defs = await fetchJson(PATHS.article2, { retries: 1 });
     const list = Array.isArray(defs?.article2_definitions) ? defs.article2_definitions : [];
-    if (!list.length) {
-      console.warn('[loadArticle2Definitions] sin definiciones en JSON');
-      LOADED.article2 = true;
-      return;
-    }
-    // Generar preguntas a partir de definiciones
+    if (!list.length) { console.warn('[loadArticle2Definitions] sin definiciones'); LOADED.article2 = true; return; }
     const newQs = [];
     for (let i = 0; i < list.length; i++) {
       const entry = list[i];
@@ -409,14 +413,14 @@ async function loadArticle2Definitions() {
 }
 
 /* ===========================
-   CARGA INICIAL (mínima)
+   BOOTSTRAP
    =========================== */
 async function boot() {
   try {
     removeExplanationBoxes();
-    await loadBaseQuestions();   // banco principal
-    await loadExtraQuestions();  // banco extra (opcional)
-    await loadInventorySignals(); // señales (para max-signals y quiz3)
+    await loadBaseQuestions();
+    await loadExtraQuestions();
+    await loadInventorySignals(); // <- aquí se restauran/inyectan las 10 preguntas con imagen (quiz1)
     cleanQuiz2LegalTagsAndSyncCorrect();
   } catch (err) {
     console.error('[boot] Error inicial:', err);
@@ -430,24 +434,22 @@ async function boot() {
 function startQuiz(type, num = null) {
   quizType = type;
 
-  // Lazy-load de definiciones SOLO si se entra al quiz2
   const ensureQuiz2 = async () => {
     await loadArticle2Definitions();
-    // refresca limpieza (por si vinieron sufijos de otra fuente)
     cleanQuiz2LegalTagsAndSyncCorrect();
     const pool = [...(questions.quiz2 || [])]; shuffle(pool);
-    currentQuiz = pool; // SIEMPRE TODAS
+    currentQuiz = pool; // todas
     renderStart();
   };
 
   if (type === 'quiz1') {
-    currentQuiz = [...(questions.quiz1 || [])]; shuffle(currentQuiz);
+    // Aseguramos que ya se haya corrido ensureTheoreticalSignalQuestions con inventory
+    const pool = [...(questions.quiz1 || [])]; shuffle(pool);
+    currentQuiz = pool;
     renderStart();
   } else if (type === 'quiz2') {
-    ensureQuiz2().then(() => {
-      showQuestion(); updateScore();
-    });
-    return; // renderStart lo hace ensureQuiz2
+    ensureQuiz2().then(() => { showQuestion(); updateScore(); });
+    return;
   } else if (type === 'signals') {
     const pool = [...(questions.signals || [])]; shuffle(pool);
     const total = pool.length;
@@ -542,7 +544,7 @@ function endQuiz() {
 }
 
 /* ===========================
-   EVENT LISTENERS
+   EVENTOS
    =========================== */
 document.getElementById('quiz1-btn').onclick = () => startQuiz('quiz1');
 document.getElementById('quiz2-btn').onclick = () => startQuiz('quiz2');
