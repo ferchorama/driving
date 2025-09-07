@@ -1,5 +1,8 @@
 // script.js — Reemplazo de placeholders "DETERMINE QUE INDICA CADA SEÑAL"
 // en el QUIZ TEÓRICO por preguntas con imagen (estilo Quiz 3) y 4 opciones.
+// Fix puntuales:
+//   #41 -> "Reglamentarias/Prohibido Girar En U.png"
+//   #49 -> "Reglamentarias/Prohibido fumar.webp"
 // Además mantiene: Código Nacional usa todas las preguntas, señales desde inventario, etc.
 
 /* ============== Estado global ============== */
@@ -75,9 +78,10 @@ function findInventoryByNameLike(label, inventory) {
 }
 
 /* ============== Mapeo #40–#49 solicitado ============== */
+/* Nota: fixedImage fuerza usar esa ruta exacta ignorando el inventario. */
 const THEORETICAL_REPLACEMENTS = [
   { num: 40, correct: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta','prohibido el paso de bicicletas','bicicletas'] },
-  { num: 41, correct: 'Prohibido girar en U', synonyms: ['no u','no retorno','prohibido girar en u'] },
+  { num: 41, correct: 'Prohibido girar en U', synonyms: ['no u','no retorno','prohibido girar en u'], fixedImage: 'Reglamentarias/Prohibido Girar En U.png' },
   { num: 42, correct: 'Prohibido girar a la derecha', synonyms: ['no girar a la derecha','prohibido giro derecha'] },
   { num: 43, correct: 'Vehículos pesados a la derecha', synonyms: ['camion derecha','vehiculo pesado derecha','pesados derecha','camion carril derecho'] },
   { num: 44, correct: 'Ceda el paso', synonyms: ['ceda el paso','ceda'] },
@@ -85,39 +89,41 @@ const THEORETICAL_REPLACEMENTS = [
   { num: 46, correct: 'prohibido usar la bocina', synonyms: ['prohibido pitar','prohibido bocina','no pitar','sr 29'] },
   { num: 47, correct: 'Prohibido parquear', synonyms: ['no estacionar','prohibido estacionar','sr 28'] },
   { num: 48, correct: 'Prohibido parquear y prohibido parar o detenerse', synonyms: ['no parquear ni detenerse','prohibido parar y estacionar','sr 28a'] },
-  { num: 49, correct: 'Prohibido fumar', synonyms: ['no fumar','prohibido fumar'] }
+  { num: 49, correct: 'Prohibido fumar', synonyms: ['no fumar','prohibido fumar'], fixedImage: 'Reglamentarias/Prohibido fumar.webp' }
 ];
 
 /* Construye una pregunta estilo “Señales” a partir del inventario */
 function buildSignalQuestionFromInventory(item, inventory) {
-  // Imagen: busca primero por correct, luego por sinónimos
-  let imgRecord =
-    findInventoryByNameLike(item.correct, inventory) || null;
-
-  if (!imgRecord) {
-    for (const s of item.synonyms || []) {
-      imgRecord = findInventoryByNameLike(s, inventory);
-      if (imgRecord) break;
+  // 1) Imagen: si hay override (fixedImage), úsalo SIEMPRE
+  let imageSrc;
+  if (item.fixedImage) {
+    imageSrc = normalizePath(item.fixedImage);
+  } else {
+    // buscar primero por correct, luego por sinónimos
+    let imgRecord = findInventoryByNameLike(item.correct, inventory) || null;
+    if (!imgRecord) {
+      for (const s of item.synonyms || []) {
+        imgRecord = findInventoryByNameLike(s, inventory);
+        if (imgRecord) break;
+      }
+    }
+    if (imgRecord) {
+      imageSrc = (imgRecord.url && imgRecord.url.startsWith('http'))
+        ? imgRecord.url
+        : normalizePath(imgRecord.archivo);
     }
   }
 
-  let imageSrc = undefined;
-  if (imgRecord) {
-    imageSrc = (imgRecord.url && imgRecord.url.startsWith('http'))
-      ? imgRecord.url
-      : normalizePath(imgRecord.archivo);
-  }
-
-  // Opciones
+  // 2) Opciones
   const wrongs = generateWrongOptionsFromInventory(item.correct, inventory, 3);
   const options = Array.from(new Set([item.correct, ...wrongs])); // evita repetidos
 
-  // Enunciado con referencia al número original (útil para seguimiento)
+  // 3) Enunciado con referencia al número original
   const questionText = `(#${item.num}) ¿Cuál es el nombre de esta señal?`;
 
   return {
     question: questionText,
-    image: imageSrc, // si no se encuentra, quedará undefined y no se muestra <img>
+    image: imageSrc, // si no hay, queda undefined y <img> no se muestra
     options,
     correct: item.correct
   };
@@ -125,7 +131,6 @@ function buildSignalQuestionFromInventory(item, inventory) {
 
 /* Elimina placeholders y añade las nuevas preguntas al quiz1 */
 function replaceDeterminePlaceholders(inventory) {
-  // Asegura arreglo
   if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
 
   // 1) Filtra TODO lo que empiece con "DETERMINE QUE INDICA CADA SEÑAL"
