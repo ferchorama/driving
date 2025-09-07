@@ -1,6 +1,7 @@
 // script.js — Reemplazo de placeholders "DETERMINE QUE INDICA CADA SEÑAL"
 // en el QUIZ TEÓRICO por preguntas con imagen (estilo Quiz 3) y 4 opciones.
 // Fix puntuales:
+//   #40 -> "Reglamentarias/Prohibida Bicicletas.png"
 //   #41 -> "Reglamentarias/Prohibido Girar En U.png"
 //   #49 -> "Reglamentarias/Prohibido fumar.webp"
 // Además mantiene: Código Nacional usa todas las preguntas, señales desde inventario, etc.
@@ -80,7 +81,7 @@ function findInventoryByNameLike(label, inventory) {
 /* ============== Mapeo #40–#49 solicitado ============== */
 /* Nota: fixedImage fuerza usar esa ruta exacta ignorando el inventario. */
 const THEORETICAL_REPLACEMENTS = [
-  { num: 40, correct: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta','prohibido el paso de bicicletas','bicicletas'] },
+  { num: 40, correct: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta','prohibido el paso de bicicletas','bicicletas'], fixedImage: 'Reglamentarias/Prohibida Bicicletas.png' },
   { num: 41, correct: 'Prohibido girar en U', synonyms: ['no u','no retorno','prohibido girar en u'], fixedImage: 'Reglamentarias/Prohibido Girar En U.png' },
   { num: 42, correct: 'Prohibido girar a la derecha', synonyms: ['no girar a la derecha','prohibido giro derecha'] },
   { num: 43, correct: 'Vehículos pesados a la derecha', synonyms: ['camion derecha','vehiculo pesado derecha','pesados derecha','camion carril derecho'] },
