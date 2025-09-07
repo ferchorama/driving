@@ -1,6 +1,6 @@
-// script.js — Limpia sufijos legales en opciones del quiz2 (para no revelar la correcta)
-// y muestra contexto/explicación (derivado de 2.pdf - Ley 769/2002) DESPUÉS de responder.
-// Mantiene: carga desde JSON, reemplazo de “DETERMINE…”, banco de señales, fixes de imágenes (#40/#41/#49).
+// script.js — Sin panel explicativo: se removió cualquier texto mostrado bajo las respuestas del quiz2.
+// Se mantiene: carga desde JSON, limpieza de sufijos legales (para no revelar la correcta),
+// reemplazo de “DETERMINE…”, banco de señales desde inventario.csv y overrides de imágenes #40/#41/#49.
 
 /* ============== Estado global ============== */
 let questions = {};
@@ -170,60 +170,6 @@ function cleanQuiz2LegalTagsAndSyncCorrect() {
   });
 }
 
-/* ============== Explicaciones post-respuesta (derivadas de 2.pdf) ============== */
-/* Textos breves, no revelan antes de tiempo; se muestran tras seleccionar una opción. */
-const EXPLANATIONS = [
-  {
-    re: /licencia|vigencia.*licencia|renovaci[oó]n.*licencia/i,
-    text: 'La licencia acredita idoneidad del conductor y debe estar vigente. El Código (Ley 769/2002) establece su expedición, vigencia y controles en el régimen de tránsito.'
-  },
-  {
-    re: /\bsoat\b|seguro obligatorio/i,
-    text: 'El SOAT vigente es obligatorio para circular y garantiza atención básica a víctimas de siniestros. Su ausencia da lugar a comparendo e inmovilización.'
-  },
-  {
-    re: /t[ée]cnico-?mec[aá]nic|revisi[oó]n.*(t[ée]cnico|gases)|revisi[oó]n t[ée]cnica|cda|diagn[oó]stico automotor/i,
-    text: 'La revisión técnico–mecánica verifica sistemas de seguridad (frenos, dirección, suspensión, llantas, luces) y emisiones. Se realiza en CDA autorizados y debe estar vigente.'
-  },
-  {
-    re: /comparendo/i,
-    text: 'El comparendo es la citación formal para que el presunto infractor comparezca ante la autoridad de tránsito por una conducta contraria a las normas.'
-  },
-  {
-    re: /sem[aá]foro|luz roja|cruce/i,
-    text: 'Respetar el semáforo evita colisiones en intersecciones y protege a peatones y ciclistas. Pasarse en rojo constituye una infracción sancionable.'
-  },
-  {
-    re: /celular|tel[eé]fono|distra[c|k]ci[oó]n/i,
-    text: 'Usar el celular sin manos libres genera distracción visual, manual y cognitiva, aumentando el riesgo de siniestro. Detente en lugar seguro o usa sistemas permitidos.'
-  },
-  {
-    re: /cintur[oó]n|retenci[oó]n/i,
-    text: 'El cinturón de seguridad es obligatorio para todos los ocupantes y reduce de forma significativa la gravedad de las lesiones en un choque.'
-  },
-  {
-    re: /estacionar|parquear|anden(es)?|zona prohibida|entrada/i,
-    text: 'Estacionar en lugar prohibido afecta la seguridad y la movilidad (visibilidad, pasos peatonales, rampas). Es sancionable y puede conllevar inmovilización o retiro.'
-  },
-  {
-    re: /velocidad|exceso|m[aá]xima/i,
-    text: 'Los límites de velocidad protegen a usuarios vulnerables. El exceso de velocidad es una de las principales causas de siniestros y acarrea sanción.'
-  },
-  {
-    re: /peat[óo]n|paso peatonal|cruce peatonal/i,
-    text: 'El peatón tiene prioridad en pasos demarcados y durante maniobras de giro del vehículo. No ceder el paso es infracción y pone en riesgo a usuarios vulnerables.'
-  }
-];
-
-function getExplanationForQuestion(q) {
-  const blob = `${q?.question || ''} || ${(q?.options || []).join(' || ')}`;
-  for (const rule of EXPLANATIONS) {
-    if (rule.re.test(blob)) return rule.text;
-  }
-  // Genérica si no hay match
-  return 'Cumplir las normas de tránsito protege la vida y la movilidad segura de todos los actores viales.';
-}
-
 /* ============== Carga de bancos ============== */
 async function loadQuestions() {
   // 1) Banco base
@@ -329,24 +275,6 @@ function startQuiz(type, num = null) {
   showQuestion(); updateScore();
 }
 
-function ensureExplanationBox() {
-  let box = document.getElementById('explanation');
-  if (!box) {
-    box = document.createElement('div');
-    box.id = 'explanation';
-    box.style.marginTop = '12px';
-    box.style.padding = '10px';
-    box.style.border = '1px solid #333';
-    box.style.borderRadius = '8px';
-    box.style.background = '#121212';
-    box.style.color = '#ddd';
-    box.style.fontSize = '0.95rem';
-    const quizScreen = document.getElementById('quiz-screen');
-    quizScreen.appendChild(box);
-  }
-  return box;
-}
-
 function showQuestion() {
   const q = currentQuiz[currentIndex];
   if (!q) { endQuiz(); return; }
@@ -371,11 +299,7 @@ function showQuestion() {
     optionsDiv.appendChild(btn);
   });
 
-  // Ocultar/limpiar explicación al cargar pregunta
-  const box = ensureExplanationBox();
-  box.style.display = 'none';
-  box.textContent = '';
-
+  // No hay panel ni texto explicativo debajo de las opciones
   document.getElementById('next-btn').disabled = true;
   updateProgress();
 }
@@ -390,13 +314,6 @@ function selectAnswer(selected, correct) {
 
   if (selected === correct) score++;
   else wrongAnswers.push({ question: currentQuiz[currentIndex]?.question || '', correct });
-
-  // Mostrar explicación basada en la pregunta (DESPUÉS de responder)
-  if (quizType === 'quiz2') {
-    const box = ensureExplanationBox();
-    box.textContent = getExplanationForQuestion(currentQuiz[currentIndex]);
-    box.style.display = 'block';
-  }
 
   document.getElementById('next-btn').disabled = false;
   updateScore();
