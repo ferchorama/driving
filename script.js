@@ -1,6 +1,6 @@
-// script.js — Integración de nuevas preguntas desde JSON (quiz1/quiz2),
-// reemplazo de “DETERMINE…”, banco de señales desde inventario.csv,
-// y enriquecimiento de respuestas del Código Nacional con 2.pdf (Ley 769/2002).
+// script.js — Limpia sufijos legales en opciones del quiz2 (para no revelar la correcta)
+// y muestra contexto/explicación (derivado de 2.pdf - Ley 769/2002) DESPUÉS de responder.
+// Mantiene: carga desde JSON, reemplazo de “DETERMINE…”, banco de señales, fixes de imágenes (#40/#41/#49).
 
 /* ============== Estado global ============== */
 let questions = {};
@@ -73,8 +73,7 @@ function findInventoryByNameLike(label, inventory) {
   return best;
 }
 
-/* ============== Señales del teórico #40–#49 ============== */
-/* Overrides de imagen exacta cuando el usuario lo indicó */
+/* ============== Señales del teórico #40–#49 (con overrides de imagen) ============== */
 const THEORETICAL_REPLACEMENTS = [
   { num: 40, correct: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta','prohibido el paso de bicicletas','bicicletas'], fixedImage: 'Reglamentarias/Prohibida Bicicletas.png' },
   { num: 41, correct: 'Prohibido girar en U', synonyms: ['no u','no retorno','prohibido girar en u'], fixedImage: 'Reglamentarias/Prohibido Girar En U.png' },
@@ -89,7 +88,6 @@ const THEORETICAL_REPLACEMENTS = [
 ];
 
 function buildSignalQuestionFromInventory(item, inventory) {
-  // Imagen (prioriza fixedImage si existe)
   let imageSrc;
   if (item.fixedImage) {
     imageSrc = normalizePath(item.fixedImage);
@@ -116,62 +114,114 @@ function buildSignalQuestionFromInventory(item, inventory) {
 function replaceDeterminePlaceholders(inventory) {
   if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
   const re = /^\s*determine que indica cada se(ñ|n)al/i;
-  // Eliminamos todos los placeholders DETERMINE...
+  // Eliminar placeholders
   questions.quiz1 = questions.quiz1.filter(q => !(q && typeof q.question === 'string' && re.test(q.question)));
-  // Agregamos las 40–49 como preguntas con imagen
+  // Insertar #40–#49 como preguntas con imagen
   const newOnes = THEORETICAL_REPLACEMENTS.map(entry => buildSignalQuestionFromInventory(entry, inventory));
   questions.quiz1.push(...newOnes);
 }
 
-/* ============== Enriquecimiento de respuestas (quiz2) con 2.pdf ============== */
-/* Agrega un sufijo breve a la respuesta correcta con referencia legal */
-function enrichQuiz2WithPDFContext() {
+/* ============== Limpieza de sufijos legales en quiz2 (no revelar la correcta) ============== */
+// Remueve sufijos tipo: " — (Art. 22 Ley 769/2002)", " — (Título I — Definiciones, Ley 769/2002)", etc.
+function stripLegalTags(text) {
+  if (typeof text !== 'string') return text;
+  let t = text;
+
+  // Quitar bloques entre paréntesis luego de "—" que mencionen Ley XXXX/AAAA o Título ...
+  t = t.replace(/\s*—\s*\((?:(?:(?:art|arts?)\.[^)]*)?ley\s*\d{3,4}\/\d{4}[^)]*|t[íi]tulo[^)]*)\)\s*$/i, '');
+
+  // Quitar patrones sin paréntesis: "— Art. XX Ley XXXX/AAAA" o "— Título I ..."
+  t = t.replace(/\s*—\s*(?:(?:art|arts?)\.[^—]*ley\s*\d{3,4}\/\d{4}|t[íi]tulo\s+[ivx]+[^—]*)\s*$/i, '');
+
+  // Quitar menciones residuales a "Ley 768/2002" o "Ley 769/2002" al final
+  t = t.replace(/\s*—\s*ley\s*76[89]\/2002\s*$/i, '');
+
+  return t.trim();
+}
+
+function cleanQuiz2LegalTagsAndSyncCorrect() {
   if (!Array.isArray(questions.quiz2)) return;
 
-  const rules = [
-    {
-      test: (q) => /revisi(ó|o)n\s+T[ée]cnico|revisi(ó|o)n de gases|t[ée]cnico-?mec[aá]nica/i.test(q.question || ''),
-      suffix: ' — (Arts. 51–54 Ley 769/2002)'
-    },
-    {
-      test: (q) => /licencia|vigencia.*licencia|renovaci(ó|o)n.*licencia/i.test(q.question || ''),
-      suffix: ' — (Art. 22 Ley 769/2002)'
-    },
-    {
-      test: (q) => /centro de diagn[oó]stico automotor|cda/i.test(q.question || '') ||
-                    /diagn[oó]stico automotor/i.test(q.correct || ''),
-      suffix: ' — (Art. 53 Ley 769/2002)'
-    },
-    {
-      test: (q) => /centro de ense(ñ|n)anza.*conductores|instructores/i.test(q.question || ''),
-      suffix: ' — (Arts. 18–20 Ley 769/2002)'
-    },
-    {
-      test: (q) => /¿qu[eé]\s+es|que\s+es|definici[óo]n/i.test(q.question || ''),
-      suffix: ' — (Título I — Definiciones, Ley 769/2002)'
-    }
-  ];
+  const collapse = (s) => (s || '').toLowerCase().replace(/\s+/g, ' ').trim();
 
   questions.quiz2.forEach(q => {
-    const rule = rules.find(r => r.test(q));
-    if (!rule) return;
-    // Evitar duplicados
-    if ((q.correct || '').includes('Ley 769/2002')) return;
+    if (!q || !Array.isArray(q.options)) return;
 
-    const newCorrect = `${q.correct}${rule.suffix}`;
-    // sustituimos en correct y en options la versión vieja por la enriquecida
-    const prev = q.correct;
-    q.correct = newCorrect;
+    // Limpiar opciones
+    const cleanedOptions = q.options.map(stripLegalTags);
+    q.options = cleanedOptions;
 
-    if (Array.isArray(q.options)) {
-      const iOld = q.options.findIndex(o => o === prev);
-      const iExact = q.options.findIndex(o => o === newCorrect);
-      if (iExact === -1) {
-        if (iOld >= 0) q.options[iOld] = newCorrect;
-        else q.options = [newCorrect, ...(q.options || []).filter(o => o !== prev)];
-      }
+    // Alinear "correct" con versión limpia
+    const cleanedCorrect = stripLegalTags(q.correct);
+    // Intentar igualar exactamente
+    let idx = q.options.findIndex(o => o === cleanedCorrect);
+    if (idx === -1) {
+      // Intento por colapso de espacios/acentos básicos
+      const target = collapse(cleanedCorrect.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+      idx = q.options.findIndex(o =>
+        collapse(String(o).normalize('NFD').replace(/[\u0300-\u036f]/g, '')) === target
+      );
     }
+    // Si no se encuentra, forzar que la correcta esté incluida
+    if (idx === -1) {
+      q.options = [cleanedCorrect, ...q.options.filter(o => o !== cleanedCorrect)];
+    }
+    q.correct = cleanedCorrect;
   });
+}
+
+/* ============== Explicaciones post-respuesta (derivadas de 2.pdf) ============== */
+/* Textos breves, no revelan antes de tiempo; se muestran tras seleccionar una opción. */
+const EXPLANATIONS = [
+  {
+    re: /licencia|vigencia.*licencia|renovaci[oó]n.*licencia/i,
+    text: 'La licencia acredita idoneidad del conductor y debe estar vigente. El Código (Ley 769/2002) establece su expedición, vigencia y controles en el régimen de tránsito.'
+  },
+  {
+    re: /\bsoat\b|seguro obligatorio/i,
+    text: 'El SOAT vigente es obligatorio para circular y garantiza atención básica a víctimas de siniestros. Su ausencia da lugar a comparendo e inmovilización.'
+  },
+  {
+    re: /t[ée]cnico-?mec[aá]nic|revisi[oó]n.*(t[ée]cnico|gases)|revisi[oó]n t[ée]cnica|cda|diagn[oó]stico automotor/i,
+    text: 'La revisión técnico–mecánica verifica sistemas de seguridad (frenos, dirección, suspensión, llantas, luces) y emisiones. Se realiza en CDA autorizados y debe estar vigente.'
+  },
+  {
+    re: /comparendo/i,
+    text: 'El comparendo es la citación formal para que el presunto infractor comparezca ante la autoridad de tránsito por una conducta contraria a las normas.'
+  },
+  {
+    re: /sem[aá]foro|luz roja|cruce/i,
+    text: 'Respetar el semáforo evita colisiones en intersecciones y protege a peatones y ciclistas. Pasarse en rojo constituye una infracción sancionable.'
+  },
+  {
+    re: /celular|tel[eé]fono|distra[c|k]ci[oó]n/i,
+    text: 'Usar el celular sin manos libres genera distracción visual, manual y cognitiva, aumentando el riesgo de siniestro. Detente en lugar seguro o usa sistemas permitidos.'
+  },
+  {
+    re: /cintur[oó]n|retenci[oó]n/i,
+    text: 'El cinturón de seguridad es obligatorio para todos los ocupantes y reduce de forma significativa la gravedad de las lesiones en un choque.'
+  },
+  {
+    re: /estacionar|parquear|anden(es)?|zona prohibida|entrada/i,
+    text: 'Estacionar en lugar prohibido afecta la seguridad y la movilidad (visibilidad, pasos peatonales, rampas). Es sancionable y puede conllevar inmovilización o retiro.'
+  },
+  {
+    re: /velocidad|exceso|m[aá]xima/i,
+    text: 'Los límites de velocidad protegen a usuarios vulnerables. El exceso de velocidad es una de las principales causas de siniestros y acarrea sanción.'
+  },
+  {
+    re: /peat[óo]n|paso peatonal|cruce peatonal/i,
+    text: 'El peatón tiene prioridad en pasos demarcados y durante maniobras de giro del vehículo. No ceder el paso es infracción y pone en riesgo a usuarios vulnerables.'
+  }
+];
+
+function getExplanationForQuestion(q) {
+  const blob = `${q?.question || ''} || ${(q?.options || []).join(' || ')}`;
+  for (const rule of EXPLANATIONS) {
+    if (rule.re.test(blob)) return rule.text;
+  }
+  // Genérica si no hay match
+  return 'Cumplir las normas de tránsito protege la vida y la movilidad segura de todos los actores viales.';
 }
 
 /* ============== Carga de bancos ============== */
@@ -234,8 +284,8 @@ async function loadQuestions() {
   // 5) Reemplaza placeholders del teórico por preguntas con imagen (40–49)
   replaceDeterminePlaceholders(inventory);
 
-  // 6) Enriquecer respuestas del Código Nacional con contexto de 2.pdf (referencias legales)
-  enrichQuiz2WithPDFContext();
+  // 6) LIMPIAR sufijos legales en quiz2 (para no revelar la correcta)
+  cleanQuiz2LegalTagsAndSyncCorrect();
 
   // 7) Datos dependientes de UI
   maxSignals = questions.signals.length;
@@ -279,6 +329,24 @@ function startQuiz(type, num = null) {
   showQuestion(); updateScore();
 }
 
+function ensureExplanationBox() {
+  let box = document.getElementById('explanation');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'explanation';
+    box.style.marginTop = '12px';
+    box.style.padding = '10px';
+    box.style.border = '1px solid #333';
+    box.style.borderRadius = '8px';
+    box.style.background = '#121212';
+    box.style.color = '#ddd';
+    box.style.fontSize = '0.95rem';
+    const quizScreen = document.getElementById('quiz-screen');
+    quizScreen.appendChild(box);
+  }
+  return box;
+}
+
 function showQuestion() {
   const q = currentQuiz[currentIndex];
   if (!q) { endQuiz(); return; }
@@ -303,6 +371,11 @@ function showQuestion() {
     optionsDiv.appendChild(btn);
   });
 
+  // Ocultar/limpiar explicación al cargar pregunta
+  const box = ensureExplanationBox();
+  box.style.display = 'none';
+  box.textContent = '';
+
   document.getElementById('next-btn').disabled = true;
   updateProgress();
 }
@@ -317,6 +390,13 @@ function selectAnswer(selected, correct) {
 
   if (selected === correct) score++;
   else wrongAnswers.push({ question: currentQuiz[currentIndex]?.question || '', correct });
+
+  // Mostrar explicación basada en la pregunta (DESPUÉS de responder)
+  if (quizType === 'quiz2') {
+    const box = ensureExplanationBox();
+    box.textContent = getExplanationForQuestion(currentQuiz[currentIndex]);
+    box.style.display = 'block';
+  }
 
   document.getElementById('next-btn').disabled = false;
   updateScore();
