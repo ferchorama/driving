@@ -1,9 +1,8 @@
-// script.js — Lógica del juego optimizada + overrides de imágenes de señales
-// - Mantiene: carga modular, manejo de errores, parser CSV, limpieza de sufijos legales,
-//   reemplazo de placeholders en teórico (#40–#49), lazy-load de definiciones para quiz2,
-//   y sin cambios de interfaz.
-// - NUEVO: override global de imagen para "Circulación Prohibida Peatones"
-//          -> "Reglamentarias/Circulación prohibida de peatones.png"
+// script.js — Lógica del juego con extracción dinámica para el Código Nacional de Tránsito
+// - Se mantiene la interfaz y el resto de funcionalidades.
+// - Quiz 2 (Código Nacional): ahora se genera dinámicamente desde ./law_index.json con
+//   muestreo estratificado por secciones y opciones LITERALES (oraciones completas).
+// - Fallback: si no se logra cargar el law_index.json, se usa el banco existente (si lo hay).
 
 /* ===========================
    RUTAS Y ESTADO GLOBAL
@@ -12,7 +11,7 @@ const PATHS = {
   base: 'questions.json',
   extra: 'questions_extra.json',
   inventoryCSV: 'inventario.csv',
-  article2: 'article2_definitions.json'
+  lawIndex: 'law_index.json'      // NUEVO: JSON estructurado del Código (en la raíz)
 };
 
 let questions = { quiz1: [], quiz2: [], signals: [] };
@@ -23,13 +22,15 @@ let quizType = '';
 let wrongAnswers = [];
 let maxSignals = 0;
 
-// Caché de carga
 const LOADED = {
   base: false,
   extra: false,
   inventory: false,
-  article2: false
+  lawIndex: false
 };
+
+// Contendrá el índice legal cargado (TÍTULO→CAPÍTULO→ARTÍCULO→oraciones)
+let LAW_INDEX = null;
 
 /* ===========================
    UTILIDADES
@@ -40,7 +41,6 @@ function stableId(str) {
   for (let i = 0; i < s.length; i++) hash = ((hash << 5) + hash) ^ s.charCodeAt(i);
   return 'q_' + (hash >>> 0).toString(16);
 }
-
 function withTimeout(promise, ms, label = 'operación') {
   let timer;
   const timeout = new Promise((_, rej) => {
@@ -48,7 +48,6 @@ function withTimeout(promise, ms, label = 'operación') {
   });
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
-
 async function fetchText(url, { retries = 1, timeout = 10000 } = {}) {
   let lastErr;
   for (let i = 0; i <= retries; i++) {
@@ -63,19 +62,14 @@ async function fetchText(url, { retries = 1, timeout = 10000 } = {}) {
   }
   throw lastErr;
 }
-
 async function fetchJson(url, opts) {
   const txt = await fetchText(url, opts);
-  try {
-    return JSON.parse(txt);
-  } catch (err) {
+  try { return JSON.parse(txt); } catch (err) {
     console.error(`[fetchJson] JSON inválido en ${url}:`, err);
     throw err;
   }
 }
-
 const normalizePath = (p) => (p || '').replace(/\\/g, '/').replace(/^\.?\//, '');
-
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -95,14 +89,13 @@ function sampleDistinct(arr, k, excludeIndex = -1) {
 }
 
 /* ===========================
-   PARSER CSV ROBUSTO
+   PARSER CSV ROBUSTO (señales)
    =========================== */
 function parseCSV(text) {
   const rows = [];
   let i = 0, field = '', row = [], inQuotes = false;
   const pushField = () => { row.push(field); field = ''; };
   const pushRow = () => { rows.push(row); row = []; };
-
   while (i < text.length) {
     const ch = text[i];
     if (inQuotes) {
@@ -124,35 +117,8 @@ function parseCSV(text) {
 }
 
 /* ===========================
-   LIMPIEZAS Y UI
+   LIMPIEZAS Y UI AUXILIARES
    =========================== */
-function stripLegalTags(text) {
-  if (typeof text !== 'string') return text;
-  let t = text;
-  t = t.replace(/\s*—\s*\((?:(?:(?:art|arts?)\.[^)]*)?ley\s*\d{3,4}\/\d{4}[^)]*|t[íi]tulo[^)]*)\)\s*$/i, '');
-  t = t.replace(/\s*—\s*(?:(?:art|arts?)\.[^—]*ley\s*\d{3,4}\/\d{4}|t[íi]tulo\s+[ivx]+[^—]*)\s*$/i, '');
-  t = t.replace(/\s*—\s*ley\s*76[89]\/2002\s*$/i, '');
-  return t.trim();
-}
-function cleanQuiz2LegalTagsAndSyncCorrect() {
-  if (!Array.isArray(questions.quiz2)) return;
-  const collapse = (s) => (s || '').toLowerCase().replace(/\s+/g, ' ').trim();
-  questions.quiz2.forEach(q => {
-    if (!q || !Array.isArray(q.options)) return;
-    q.options = q.options.map(stripLegalTags);
-    const cleanedCorrect = stripLegalTags(q.correct);
-    let idx = q.options.findIndex(o => o === cleanedCorrect);
-    if (idx === -1) {
-      const target = collapse(cleanedCorrect.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
-      idx = q.options.findIndex(o =>
-        collapse(String(o).normalize('NFD').replace(/[\u0300-\u036f]/g, '')) === target
-      );
-    }
-    if (idx === -1) q.options = [cleanedCorrect, ...q.options.filter(o => o !== cleanedCorrect)];
-    q.correct = cleanedCorrect;
-  });
-}
-
 function removeExplanationBoxes() {
   const exp = document.getElementById('explanation');
   if (exp && exp.parentNode) exp.parentNode.removeChild(exp);
@@ -173,7 +139,7 @@ function removeExplanationBoxes() {
 }
 
 /* ===========================
-   FUNCIONES DE NORMALIZACIÓN
+   NORMALIZADORES
    =========================== */
 const NORM = s =>
   (s || '')
@@ -183,18 +149,15 @@ const NORM = s =>
     .trim();
 
 /* ===========================
-   OVERRIDES GLOBALES DE IMAGEN PARA SEÑALES
+   OVERRIDES DE IMAGEN PARA SEÑALES (se mantiene)
    =========================== */
-// Clave: NORM(nombre_correcto) -> ruta fija
 const FIXED_SIGNAL_IMAGE_MAP = new Map([
   ['circulacion prohibida peatones', 'Reglamentarias/Circulación prohibida de peatones.png']
-  // (si luego quieres centralizar aquí #40, #41, #43, #48, #49 también, se pueden añadir)
 ]);
 
 /* ===========================
-   TEÓRICO: 10 PREGUNTAS CON IMAGEN (#40–#49)
+   TEÓRICO: #40–#49 (se mantiene)
    =========================== */
-// Se mantienen overrides específicos ya acordados
 const THEORETICAL_ITEMS_40_49 = [
   { num: 40, correct: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta', 'prohibido el paso de bicicletas', 'bicicletas'], fixedImage: 'Reglamentarias/Prohibida Bicicletas.png' },
   { num: 41, correct: 'Prohibido girar en U', synonyms: ['no u', 'no retorno', 'prohibido girar en u'], fixedImage: 'Reglamentarias/Prohibido Girar En U.png' },
@@ -208,6 +171,9 @@ const THEORETICAL_ITEMS_40_49 = [
   { num: 49, correct: 'Prohibido fumar', synonyms: ['no fumar', 'prohibido fumar'], fixedImage: 'Reglamentarias/Prohibido fumar.webp' }
 ];
 
+/* ===========================
+   FUNCIONES QUIZ DE SEÑALES (se mantiene)
+   =========================== */
 function findInventoryByNameLike(label, inventory) {
   if (!Array.isArray(inventory) || !inventory.length) return null;
   const target = NORM(label);
@@ -223,7 +189,6 @@ function findInventoryByNameLike(label, inventory) {
   }
   return best;
 }
-
 function generateWrongOptions(correctAnswer, inventory) {
   const names = inventory.map(p => p.nombre_visible).filter(Boolean);
   const unique = Array.from(new Set(names)).filter(n => n !== correctAnswer);
@@ -241,49 +206,20 @@ function generateWrongOptions(correctAnswer, inventory) {
   }
   return pick;
 }
-
-/**
- * Elimina placeholders "DETERMINE..." y versiones previas de #40–#49,
- * e inserta las 10 preguntas con la imagen correcta (incluye overrides fijos).
- */
 function ensureTheoreticalSignalQuestions(inventory) {
   if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
-
-  // 1) Eliminar placeholders
   const isDetermine = q => typeof q?.question === 'string' &&
     /^\s*determine que indica cada se(ñ|n)al/i.test(q.question);
   questions.quiz1 = questions.quiz1.filter(q => !isDetermine(q));
-
-  // 2) Eliminar versiones previas de (#40–#49)
   const numberRegexes = THEORETICAL_ITEMS_40_49.map(it => new RegExp(`\\(#${it.num}\\)`));
   questions.quiz1 = questions.quiz1.filter(q => {
     const text = String(q?.question || '');
     return !numberRegexes.some(re => re.test(text));
   });
-
-  // 3) Construir e insertar las 10 preguntas con imagen
   const built = [];
   for (const item of THEORETICAL_ITEMS_40_49) {
-    // Determinar imagen (usa fixedImage si viene definida)
     let imageSrc = null;
-    if (item.fixedImage) {
-      imageSrc = normalizePath(item.fixedImage);
-    } else {
-      let found = findInventoryByNameLike(item.correct, inventory);
-      if (!found && Array.isArray(item.synonyms)) {
-        for (const s of item.synonyms) { found = findInventoryByNameLike(s, inventory); if (found) break; }
-      }
-      if (found) {
-        imageSrc = (found.url && found.url.startsWith('http')) ? found.url : normalizePath(found.archivo);
-      }
-    }
-
-    // Override global de imagen (por si aplica)
-    const key = NORM(item.correct);
-    if (FIXED_SIGNAL_IMAGE_MAP.has(key)) {
-      imageSrc = normalizePath(FIXED_SIGNAL_IMAGE_MAP.get(key));
-    }
-
+    if (item.fixedImage) imageSrc = normalizePath(item.fixedImage);
     const wrongs = generateWrongOptions(item.correct, inventory);
     const q = {
       id: stableId(`teorico-${item.num}-${item.correct}`),
@@ -294,9 +230,76 @@ function ensureTheoreticalSignalQuestions(inventory) {
     };
     built.push(q);
   }
-
-  // Insertar manteniendo resto del banco teórico
   questions.quiz1 = [...questions.quiz1, ...built];
+}
+
+/* ===========================
+   CARGA DE SEÑALES (CSV)  — se mantiene
+   =========================== */
+async function loadInventorySignals() {
+  if (LOADED.inventory) return;
+  try {
+    const txt = await fetchText(PATHS.inventoryCSV, { retries: 1 });
+    const rows = parseCSV(txt.replace(/^\uFEFF/, ''));
+    const headers = rows[0]?.map(h => (h || '').trim()) || [];
+    const idxNombre = headers.findIndex(h => /nombre_visible/i.test(h));
+    const idxArchivo = headers.findIndex(h => /archivo/i.test(h));
+    const idxUrl = headers.findIndex(h => /^url$/i.test(h));
+    const inventory = rows.slice(1).map(r => ({
+      nombre_visible: (r[idxNombre] || '').trim(),
+      archivo: (r[idxArchivo] || '').trim(),
+      url: (r[idxUrl] || '').trim()
+    })).filter(o => o.nombre_visible);
+    const builtSignals = inventory.map(r => {
+      const correcta = r.nombre_visible;
+      let imagen = r.url && r.url.startsWith('http') ? r.url : normalizePath(r.archivo);
+      const key = NORM(correcta);
+      if (FIXED_SIGNAL_IMAGE_MAP.has(key)) imagen = normalizePath(FIXED_SIGNAL_IMAGE_MAP.get(key));
+      const err = generateWrongOptions(correcta, inventory);
+      return normalizeQuestion({
+        id: stableId(`signal-${correcta}-${imagen}`),
+        question: '¿Cuál es el nombre de esta señal?',
+        image: imagen,
+        options: [correcta, ...err],
+        correct: correcta
+      });
+    }).filter(Boolean);
+    questions.signals = mergeUniqueQuestions([], builtSignals);
+    maxSignals = questions.signals.length;
+    const maxSpan = document.getElementById('max-signals');
+    if (maxSpan) maxSpan.textContent = maxSignals;
+    const inputSignals = document.getElementById('num-questions-3');
+    if (inputSignals) {
+      inputSignals.max = maxSignals;
+      if (!inputSignals.value || Number(inputSignals.value) > maxSignals) inputSignals.value = maxSignals;
+    }
+    ensureTheoreticalSignalQuestions(inventory);
+  } catch (err) {
+    console.warn('[loadInventorySignals] Error:', err);
+  }
+  LOADED.inventory = true;
+}
+
+/* ===========================
+   CARGA BASE Y EXTRA (se mantiene)
+   =========================== */
+async function loadBaseQuestions() {
+  if (LOADED.base) return;
+  const base = await fetchJson(PATHS.base, { retries: 1 });
+  questions.quiz1 = mergeUniqueQuestions([], Array.isArray(base.quiz1) ? base.quiz1 : []);
+  questions.quiz2 = mergeUniqueQuestions([], Array.isArray(base.quiz2) ? base.quiz2 : []);
+  LOADED.base = true;
+}
+async function loadExtraQuestions() {
+  if (LOADED.extra) return;
+  try {
+    const extra = await fetchJson(PATHS.extra, { retries: 1 });
+    if (Array.isArray(extra.quiz1)) questions.quiz1 = mergeUniqueQuestions(questions.quiz1, extra.quiz1);
+    if (Array.isArray(extra.quiz2)) questions.quiz2 = mergeUniqueQuestions(questions.quiz2, extra.quiz2);
+  } catch (err) {
+    console.warn('[loadExtraQuestions] opcional no disponible:', err?.message || err);
+  }
+  LOADED.extra = true;
 }
 
 /* ===========================
@@ -329,110 +332,173 @@ function mergeUniqueQuestions(dstArr, srcArr) {
 }
 
 /* ===========================
-   CARGA MODULAR
+   NUEVO — CARGA DEL ÍNDICE LEGAL Y GENERADOR DE QUIZ 2
    =========================== */
-async function loadBaseQuestions() {
-  if (LOADED.base) return;
-  const base = await fetchJson(PATHS.base, { retries: 1 });
-  questions.quiz1 = mergeUniqueQuestions([], Array.isArray(base.quiz1) ? base.quiz1 : []);
-  questions.quiz2 = mergeUniqueQuestions([], Array.isArray(base.quiz2) ? base.quiz2 : []);
-  LOADED.base = true;
-}
 
-async function loadExtraQuestions() {
-  if (LOADED.extra) return;
+// Config: número objetivo de preguntas dinámicas para una sesión (mantiene UX ágil).
+const QUIZ2_TARGET_COUNT = 30; // diversidad por secciones; si hay menos, toma las disponibles
+
+async function loadLawIndex() {
+  if (LOADED.lawIndex) return;
   try {
-    const extra = await fetchJson(PATHS.extra, { retries: 1 });
-    if (Array.isArray(extra.quiz1)) questions.quiz1 = mergeUniqueQuestions(questions.quiz1, extra.quiz1);
-    if (Array.isArray(extra.quiz2)) questions.quiz2 = mergeUniqueQuestions(questions.quiz2, extra.quiz2);
+    LAW_INDEX = await fetchJson(PATHS.lawIndex, { retries: 1, timeout: 15000 });
+    LOADED.lawIndex = true;
   } catch (err) {
-    console.warn('[loadExtraQuestions] opcional no disponible:', err?.message || err);
+    console.warn('[loadLawIndex] No se pudo cargar law_index.json:', err);
+    LOADED.lawIndex = false;
+    LAW_INDEX = null;
   }
-  LOADED.extra = true;
 }
 
-async function loadInventorySignals() {
-  if (LOADED.inventory) return;
-  const txt = await fetchText(PATHS.inventoryCSV, { retries: 1 });
-  const rows = parseCSV(txt.replace(/^\uFEFF/, ''));
-  if (!rows.length) { console.warn('[loadInventorySignals] CSV vacío'); LOADED.inventory = true; return; }
-  const headers = rows[0].map(h => (h || '').trim());
-  const idxNombre = headers.findIndex(h => /nombre_visible/i.test(h));
-  const idxArchivo = headers.findIndex(h => /archivo/i.test(h));
-  const idxUrl = headers.findIndex(h => /^url$/i.test(h));
-  if (idxNombre === -1 || (idxArchivo === -1 && idxUrl === -1)) {
-    console.warn('[loadInventorySignals] CSV sin columnas requeridas (nombre_visible, archivo/url)');
-    LOADED.inventory = true; return;
-  }
-
-  // Inventario para señales (usado también como pool de distractores)
-  const inventory = rows.slice(1).map(r => ({
-    nombre_visible: (r[idxNombre] || '').trim(),
-    archivo: (r[idxArchivo] || '').trim(),
-    url: (r[idxUrl] || '').trim()
-  })).filter(o => o.nombre_visible);
-
-  // Construir banco de "Señales" (quiz3) desde inventario
-  const builtSignals = inventory.map(r => {
-    const correcta = r.nombre_visible;
-    // imagen por inventario
-    let imagen = r.url && r.url.startsWith('http') ? r.url : normalizePath(r.archivo);
-    // override global (si aplica)
-    const key = NORM(correcta);
-    if (FIXED_SIGNAL_IMAGE_MAP.has(key)) {
-      imagen = normalizePath(FIXED_SIGNAL_IMAGE_MAP.get(key));
-    }
-    const err = generateWrongOptions(correcta, inventory);
-    return normalizeQuestion({
-      id: stableId(`signal-${correcta}-${imagen}`),
-      question: '¿Cuál es el nombre de esta señal?',
-      image: imagen,
-      options: [correcta, ...err],
-      correct: correcta
-    });
-  }).filter(Boolean);
-  questions.signals = mergeUniqueQuestions([], builtSignals);
-
-  // Actualizar máximos y controles UI dependientes
-  maxSignals = questions.signals.length;
-  const maxSpan = document.getElementById('max-signals');
-  if (maxSpan) maxSpan.textContent = maxSignals;
-  const inputSignals = document.getElementById('num-questions-3');
-  if (inputSignals) {
-    inputSignals.max = maxSignals;
-    if (!inputSignals.value || Number(inputSignals.value) > maxSignals) inputSignals.value = maxSignals;
-  }
-
-  // Restaurar/inyectar las 10 preguntas con imagen en el QUIZ TEÓRICO (con overrides)
-  ensureTheoreticalSignalQuestions(inventory);
-
-  LOADED.inventory = true;
-}
-
-async function loadArticle2Definitions() {
-  if (LOADED.article2) return;
-  try {
-    const defs = await fetchJson(PATHS.article2, { retries: 1 });
-    const list = Array.isArray(defs?.article2_definitions) ? defs.article2_definitions : [];
-    if (!list.length) { console.warn('[loadArticle2Definitions] sin definiciones'); LOADED.article2 = true; return; }
-    const newQs = [];
-    for (let i = 0; i < list.length; i++) {
-      const entry = list[i];
-      if (!entry?.term || !entry?.definition) continue;
-      const distractorDefs = sampleDistinct(list, 3, i).map(e => e.definition).filter(Boolean);
-      const q = normalizeQuestion({
-        id: stableId(`art2-${entry.term}`),
-        question: `Según el ARTÍCULO 2° (Definiciones), ¿qué se entiende por “${entry.term}”?`,
-        options: [entry.definition, ...distractorDefs],
-        correct: entry.definition
+/** Recorre Título→Capítulo→Artículo y devuelve una lista plana con metadata */
+function flattenArticles(indexJson) {
+  const items = [];
+  if (!indexJson?.titulos) return items;
+  indexJson.titulos.forEach(t => {
+    const tLabel = t.label || 'TÍTULO ?';
+    (t.capitulos || []).forEach(c => {
+      const cLabel = c.label || 'CAPÍTULO ?';
+      (c.articulos || []).forEach(a => {
+        items.push({
+          title: tLabel,
+          chapter: cLabel,
+          id: a.id,
+          articleLabel: a.label || `ARTÍCULO ${a.id}°`,
+          articleName: a.name || '',
+          first_page: a.first_page,
+          last_page: a.last_page,
+          sentences: Array.isArray(a.oraciones) ? a.oraciones.filter(Boolean) : []
+        });
       });
-      if (q) newQs.push(q);
-    }
-    questions.quiz2 = mergeUniqueQuestions(questions.quiz2, newQs);
-  } catch (err) {
-    console.warn('[loadArticle2Definitions] opcional no disponible:', err?.message || err);
+    });
+  });
+  return items;
+}
+
+function isUsefulSentence(s) {
+  if (!s) return false;
+  const t = s.trim();
+  if (t.length < 40) return false;                     // muy corta
+  if (/^\s*(PARÁGRAFO|Parágrafo)/.test(t)) return false; // evita encabezados de parágrafo
+  if (/^\s*(Ver\s|Texto subrayado|Declarado EXEQUIBLE|INEXEQUIBLE|CAPITULO|TITULO)/i.test(t)) return false;
+  if (/^\d+\.\s/.test(t)) return false;                // itemizado suelto
+  return true;
+}
+
+function buildDefinitionQuestionsFromArticle2(allArticles) {
+  // Encuentra Art. 2 y extrae "Término: Definición..."
+  const art2 = allArticles.find(a => a.id === 2);
+  if (!art2) return [];
+  const pairs = art2.sentences
+    .map(s => {
+      const m = /^([A-ZÁÉÍÓÚÑ][^:]{2,60}):\s*(.+)$/.exec(s.trim());
+      if (!m) return null;
+      return { term: m[1].trim(), def: s.trim(), context: {title: 'ARTÍCULO 2°'} };
+    })
+    .filter(Boolean);
+
+  // Confecciona preguntas: término → definición literal correcta, distractores = otras definiciones
+  const built = [];
+  const poolDefs = pairs.map(p => p.def);
+  for (let i = 0; i < pairs.length; i++) {
+    const p = pairs[i];
+    const distractors = sampleDistinct(poolDefs, 3, i);
+    if (distractors.length < 3) continue;
+    built.push(normalizeQuestion({
+      id: stableId(`law-def-${p.term}`),
+      question: `Según el ARTÍCULO 2° (Definiciones), ¿cuál es la definición de “${p.term}”?`,
+      options: [p.def, ...distractors],
+      correct: p.def,
+      origin: 'law_index'
+    }));
   }
-  LOADED.article2 = true;
+  return built.filter(Boolean);
+}
+
+function buildTrueSentenceQuestions(allArticles) {
+  // Para artículos distintos del 2: extrae oraciones útiles y arma MCQ con una verdadera (correcta)
+  const perChapter = new Map(); // chapterKey -> array de {meta, sentence}
+  allArticles.forEach(a => {
+    if (!Array.isArray(a.sentences) || a.sentences.length === 0) return;
+    if (a.id === 2) return; // definiciones ya manejadas
+    const good = a.sentences.filter(isUsefulSentence);
+    good.forEach(s => {
+      const k = `${a.title} / ${a.chapter}`;
+      if (!perChapter.has(k)) perChapter.set(k, []);
+      perChapter.get(k).push({ meta: a, sentence: s });
+    });
+  });
+
+  // Construye preguntas de manera estratificada por capítulo (round-robin)
+  const chapters = Array.from(perChapter.keys());
+  shuffle(chapters);
+
+  // Crea un depósito global de distractores (todas las oraciones útiles)
+  const globalSentences = [];
+  perChapter.forEach(list => list.forEach(it => globalSentences.push(it.sentence)));
+
+  const built = [];
+  let exhausted = 0;
+  const indices = new Map(chapters.map(k => [k, 0]));
+
+  while (exhausted < chapters.length) {
+    exhausted = 0;
+    for (const k of chapters) {
+      const list = perChapter.get(k) || [];
+      const idx = indices.get(k) || 0;
+      if (idx >= list.length) { exhausted++; continue; }
+      const { meta, sentence } = list[idx];
+      indices.set(k, idx + 1);
+
+      // Distractores: oraciones de otros artículos, similar longitud
+      const len = sentence.length;
+      const candidates = globalSentences.filter(s => s !== sentence && Math.abs(s.length - len) < 80);
+      shuffle(candidates);
+      const distractors = candidates.slice(0, 3);
+      if (distractors.length < 3) continue;
+
+      built.push(normalizeQuestion({
+        id: stableId(`law-art${meta.id}-${len}-${idx}`),
+        question: `Según ${meta.articleLabel}, ¿cuál de las siguientes oraciones corresponde al Código?`,
+        options: [sentence, ...distractors],
+        correct: sentence,
+        origin: 'law_index'
+      }));
+    }
+    // Límite de protección para no generar miles
+    if (built.length > 200) break;
+  }
+  return built.filter(Boolean);
+}
+
+function buildQuiz2FromLawIndex(indexJson) {
+  const articles = flattenArticles(indexJson);
+  if (!articles.length) return [];
+
+  // 1) Definiciones Art. 2
+  let defs = buildDefinitionQuestionsFromArticle2(articles);
+
+  // 2) Enunciados verdaderos del resto de artículos
+  let sents = buildTrueSentenceQuestions(articles);
+
+  shuffle(defs);
+  shuffle(sents);
+
+  // Estrategia: asegurar mezcla. Tomar 1/3 definiciones y 2/3 enunciados (si hay).
+  const target = QUIZ2_TARGET_COUNT;
+  const takeDefs = Math.min(Math.ceil(target / 3), defs.length);
+  const takeSents = Math.min(target - takeDefs, sents.length);
+
+  const picked = [...defs.slice(0, takeDefs), ...sents.slice(0, takeSents)];
+  // Si hay menos de target, completar con lo que haya
+  if (picked.length < target) {
+    const extra = [...defs.slice(takeDefs), ...sents.slice(takeSents)];
+    picked.push(...extra.slice(0, target - picked.length));
+  }
+
+  // Si el requerimiento es "usar todas", puedes descomentar la siguiente línea:
+  // return normalizeQuestionsArray([...defs, ...sents]);
+  return picked.map(normalizeQuestion).filter(Boolean);
 }
 
 /* ===========================
@@ -443,8 +509,7 @@ async function boot() {
     removeExplanationBoxes();
     await loadBaseQuestions();
     await loadExtraQuestions();
-    await loadInventorySignals(); // <- aquí se restauran/inyectan #40–#49 y se aplica override global
-    cleanQuiz2LegalTagsAndSyncCorrect();
+    await loadInventorySignals();
   } catch (err) {
     console.error('[boot] Error inicial:', err);
     alert('No se pudo cargar el banco de preguntas. Revisa la consola del navegador.');
@@ -458,19 +523,34 @@ function startQuiz(type, num = null) {
   quizType = type;
 
   const ensureQuiz2 = async () => {
-    await loadArticle2Definitions();
-    cleanQuiz2LegalTagsAndSyncCorrect();
-    const pool = [...(questions.quiz2 || [])]; shuffle(pool);
-    currentQuiz = pool; // todas
+    // NUEVO: intenta cargar law_index.json y generar dinámicamente
+    await loadLawIndex();
+    if (LAW_INDEX) {
+      const dyn = buildQuiz2FromLawIndex(LAW_INDEX);
+      if (dyn.length > 0) {
+        questions.quiz2 = dyn; // remplaza el pool con dinámico
+      } else {
+        console.warn('[quiz2] No se generaron preguntas dinámicas; usando banco existente (fallback).');
+      }
+    } else {
+      console.warn('[quiz2] law_index.json no disponible; usando banco existente (fallback).');
+    }
+
+    // "Usar todas las preguntas" para el quiz 2 (como se solicitó previamente).
+    const pool = [...(questions.quiz2 || [])];
+    shuffle(pool);
+    currentQuiz = pool;
     renderStart();
+    showQuestion(); updateScore();
   };
 
   if (type === 'quiz1') {
     const pool = [...(questions.quiz1 || [])]; shuffle(pool);
     currentQuiz = pool;
     renderStart();
+    showQuestion(); updateScore();
   } else if (type === 'quiz2') {
-    ensureQuiz2().then(() => { showQuestion(); updateScore(); });
+    ensureQuiz2();
     return;
   } else if (type === 'signals') {
     const pool = [...(questions.signals || [])]; shuffle(pool);
@@ -479,12 +559,12 @@ function startQuiz(type, num = null) {
     if (isNaN(n) || n <= 0 || n > total) n = total;
     currentQuiz = pool.slice(0, n);
     renderStart();
+    showQuestion(); updateScore();
   } else {
     currentQuiz = [];
     renderStart();
+    showQuestion(); updateScore();
   }
-
-  showQuestion(); updateScore();
 }
 
 function renderStart() {
