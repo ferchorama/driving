@@ -1,0 +1,128 @@
+{
+  "licencia": [
+    "La licencia de conducción es el documento público expedido por la autoridad competente que acredita la capacidad de una persona para conducir vehículos en las vías públicas.",
+    "La licencia de conducción deberá ser portados por su titular cuando esté conduciendo y deberá ser presentada a la autoridad de tránsito cuando ésta lo requiera.",
+    "La autoridad competente podrá suspender o cancelar la licencia de conducción en los casos y con las formalidades previstas en este Código.",
+    "Para conducir vehículos automotores en el territorio nacional se requiere estar en plena capacidad física, mental y motriz y portar la licencia de conducción correspondiente.",
+    "Las licencias de conducción se clasificarán en categorías de acuerdo con las características y destinación del vehículo que autoricen a conducir.",
+    "La licencia de conducción perderá su vigencia cuando haya vencido el término por el cual fue expedida o cuando se presente alguna de las causales de suspensión o cancelación.",
+    "La autoridad de tránsito podrá retener preventivamente la licencia de conducción cuando el conductor incurra en alguna de las infracciones para las cuales se establezca esta medida.",
+    "El conductor está obligado a exhibir la licencia de conducción cuando la autoridad de tránsito lo requiera en ejercicio de sus funciones.",
+    "Ninguna persona podrá obtener licencia de conducción si se encuentra inhabilitada por decisión judicial o administrativa vigente.",
+    "La renovación de la licencia de conducción se sujetará a los requisitos y procedimientos establecidos por la autoridad competente."
+  ],
+  "soat": [
+    "Todo vehículo debe estar amparado por el Seguro Obligatorio de Accidentes de Tránsito SOAT vigente para poder circular por el territorio nacional.",
+    "La falta del Seguro Obligatorio de Accidentes de Tránsito SOAT dará lugar a la imposición de las sanciones previstas y a la inmovilización del vehículo por parte de la autoridad.",
+    "El Seguro Obligatorio de Accidentes de Tránsito SOAT garantiza la atención inmediata de las víctimas en los eventos cubiertos por la ley."
+  ],
+  "rtm": [
+    "Los vehículos automotores deben someterse a la revisión técnico-mecánica y de emisiones contaminantes en los términos establecidos en este Código.",
+    "La revisión técnico-mecánica y de emisiones contaminantes tendrá por objeto verificar el buen funcionamiento de los sistemas de seguridad activa y pasiva del vehículo y el cumplimiento de la normatividad ambiental vigente.",
+    "Los vehículos nuevos de servicio particular deberán realizar la primera revisión técnico-mecánica y de emisiones contaminantes a partir del quinto año contado desde la fecha de matrícula.",
+    "La revisión técnico-mecánica y de emisiones contaminantes deberá realizarse en los Centros de Diagnóstico Automotor debidamente habilitados.",
+    "El propietario del vehículo es responsable de mantenerlo en condiciones mecánicas óptimas y de cumplir con la revisión técnico-mecánica y de emisiones contaminantes en los plazos señalados.",
+    "El incumplimiento de la revisión técnico-mecánica y de emisiones contaminantes generará las sanciones previstas y podrá dar lugar a la inmovilización del vehículo.",
+    "Los resultados de la revisión técnico-mecánica y de emisiones contaminantes deberán registrarse en el sistema que determine la autoridad competente."
+  ],
+  "cda": [
+    "La revisión técnico-mecánica y de emisiones contaminantes deberá realizarse en Centros de Diagnóstico Automotor autorizados por la autoridad competente.",
+    "Los Centros de Diagnóstico Automotor deberán cumplir con los requisitos técnicos, de infraestructura y de personal establecidos para su habilitación.",
+    "Los Centros de Diagnóstico Automotor son responsables de la veracidad de los resultados que expidan dentro del proceso de revisión.",
+    "La autoridad competente ejercerá la inspección, vigilancia y control sobre los Centros de Diagnóstico Automotor."
+  ],
+  "peaton": [
+    "Los peatones deberán transitar por los sitios destinados para ello y están obligados a acatar las señales de tránsito y las instrucciones de las autoridades.",
+    "En los pasos peatonales demarcados los peatones tendrán prelación para cruzar la calzada y los conductores deberán detenerse para permitir su paso.",
+    "El conductor que realice maniobras de giro deberá ceder el paso a los peatones que estén cruzando o vayan a cruzar la vía.",
+    "Los peatones no deberán transitar por la calzada destinada a la circulación de vehículos, salvo en los lugares y circunstancias permitidos por este Código.",
+    "Los peatones deberán tomar las precauciones necesarias al cruzar la vía y utilizarán los pasos peatonales demarcados cuando existan."
+  ],
+  "ciclista": [
+    "Los ciclistas son usuarios de la vía y deberán cumplir las normas de tránsito aplicables, así como acatar las señales y la demarcación vial.",
+    "Los conductores deberán respetar la presencia de los ciclistas y mantener una distancia prudente que garantice su seguridad en las maniobras de adelantamiento.",
+    "Las bicicletas deberán transitar por las ciclorutas, ciclovías o carriles especiales cuando estos existan y estén habilitados.",
+    "Los ciclistas deberán llevar dispositivos reflectivos y luces cuando transiten en horario nocturno o en condiciones de baja visibilidad."
+  ],
+  "semaforo": [
+    "La luz roja del semáforo indica detención obligatoria antes de la línea de pare o del cruce peatonal.",
+    "La luz amarilla del semáforo advierte la proximidad del cambio a rojo y el conductor deberá detenerse si puede hacerlo con seguridad.",
+    "La luz verde del semáforo autoriza el avance, siempre que las condiciones de la vía lo permitan y no exista obstrucción en la intersección.",
+    "Cuando las señales de un agente de tránsito sean contrarias a las indicaciones del semáforo, prevalecerán las órdenes del agente."
+  ],
+  "adelantamiento": [
+    "El adelantamiento deberá efectuarse por la izquierda y el conductor deberá asegurarse de que cuenta con visibilidad y distancia suficientes para realizar la maniobra con seguridad.",
+    "Está prohibido adelantar en curvas, intersecciones, pasos peatonales y en lugares donde la señalización lo prohíba.",
+    "Antes de adelantar el conductor deberá advertir su intención mediante las señales direccionales y verificar que no exista riesgo para los demás usuarios de la vía.",
+    "El conductor que sea adelantado no deberá aumentar la velocidad y facilitará la maniobra cuando ello sea necesario para la seguridad."
+  ],
+  "velocidad": [
+    "Todo conductor deberá respetar los límites de velocidad establecidos y ajustar su velocidad a las condiciones del tránsito, del camino y del clima.",
+    "La autoridad competente podrá establecer límites específicos de velocidad en determinados sectores para garantizar la seguridad vial.",
+    "El exceso de velocidad será sancionado conforme a lo previsto en este Código y podrá dar lugar a medidas adicionales de seguridad.",
+    "En zonas escolares y residenciales los conductores deberán reducir la velocidad y extremar las precauciones por la presencia de peatones."
+  ],
+  "estacionar": [
+    "Está prohibido estacionar en andenes, zonas verdes, entradas vehiculares, pasos peatonales y lugares donde la señalización lo restrinja.",
+    "El estacionamiento en doble fila constituye una infracción que obstaculiza la circulación y afecta la seguridad vial.",
+    "Los conductores deberán estacionar únicamente en los lugares permitidos y de manera que no obstruyan la visibilidad ni el tránsito de los demás usuarios."
+  ],
+  "alcohol": [
+    "Ninguna persona podrá conducir en estado de embriaguez o bajo el efecto de sustancias que disminuyan sus capacidades psicofísicas para la conducción.",
+    "La conducción en estado de embriaguez será sancionada de conformidad con las disposiciones de este Código y podrá implicar la suspensión de la licencia.",
+    "Las autoridades de tránsito podrán realizar pruebas para determinar el estado de embriaguez del conductor conforme a los procedimientos establecidos."
+  ],
+  "casco": [
+    "Los conductores y acompañantes de motocicletas deberán utilizar casco de seguridad correctamente abrochado durante la circulación.",
+    "El casco de seguridad deberá cumplir con las especificaciones técnicas que establezca la autoridad competente y mantenerse en buen estado.",
+    "La no utilización del casco de seguridad dará lugar a la imposición de las sanciones previstas en este Código."
+  ],
+  "motocicleta": [
+    "Los motociclistas deberán transitar por la calzada y respetar las normas y señales de tránsito aplicables.",
+    "En las motocicletas no podrán transportarse pasajeros en número superior al permitido por el fabricante del vehículo.",
+    "Los motociclistas deberán utilizar elementos de protección y mantener las luces encendidas cuando así lo establezca la reglamentación."
+  ],
+  "carga": [
+    "La carga del vehículo deberá estar debidamente asegurada de manera que no comprometa la estabilidad, la visibilidad ni la seguridad de la circulación.",
+    "Está prohibido transportar carga que sobresalga de la carrocería sin la debida señalización y medidas de seguridad.",
+    "El transporte de carga deberá cumplir con las condiciones y restricciones establecidas por la autoridad competente para proteger la seguridad vial."
+  ],
+  "prioridad": [
+    "La prelación de paso será determinada por las señales de tránsito y, en su defecto, por las reglas establecidas en este Código.",
+    "En las glorietas tendrán prelación los vehículos que circulan dentro de la rotonda sobre los que pretenden ingresar.",
+    "En intersecciones no señalizadas, cuando dos vehículos arriben simultáneamente, tendrá prelación el que se aproxima por la derecha."
+  ],
+  "agente": [
+    "Las órdenes impartidas por los agentes de tránsito prevalecerán sobre las señales y dispositivos de control del tránsito.",
+    "Los agentes de tránsito ejercerán funciones de regulación, vigilancia y control del cumplimiento de las normas de tránsito.",
+    "Los conductores y peatones deberán acatar las indicaciones de los agentes de tránsito en el ejercicio de sus funciones."
+  ],
+  "comparendo": [
+    "El comparendo es la orden formal impartida al presunto infractor para que comparezca ante la autoridad de tránsito competente.",
+    "El comparendo deberá contener la identificación del presunto infractor, la descripción de la conducta y las normas presuntamente infringidas.",
+    "La no comparecencia injustificada al comparendo dará lugar a las consecuencias previstas en este Código."
+  ],
+  "senal": [
+    "Las señales de tránsito tienen por objeto regular la circulación y advertir o informar a los usuarios de la vía.",
+    "Los usuarios de la vía están obligados a obedecer las señales de tránsito y las indicaciones de los dispositivos de control.",
+    "En caso de contradicción entre señales, prevalecerán las órdenes de los agentes de tránsito."
+  ],
+  "interseccion": [
+    "En las intersecciones los conductores deberán proceder con precaución y respetar la prelación indicada por las señales o por las reglas del Código.",
+    "No deberá ingresarse a una intersección cuando no exista espacio suficiente para despejarla sin obstruir el tránsito.",
+    "Durante las maniobras de giro en intersecciones, se deberá ceder el paso a los peatones que se encuentren cruzando."
+  ],
+  "paso": [
+    "En los pasos peatonales demarcados los peatones tendrán prioridad para cruzar y los conductores deberán detenerse.",
+    "Los conductores deberán reducir la velocidad al aproximarse a pasos peatonales y ceder el paso cuando corresponda.",
+    "El respeto de los pasos peatonales contribuye a la seguridad de los peatones y a la adecuada movilidad urbana."
+  ],
+  "misc": [
+    "Los usuarios de la vía deberán comportarse de manera que no entorpezcan la circulación ni comprometan la seguridad vial.",
+    "La autoridad de tránsito podrá adoptar medidas preventivas para garantizar la seguridad y la fluidez del tránsito.",
+    "El propietario de un vehículo es responsable de su adecuado mantenimiento y de la observancia de las normas de tránsito.",
+    "La señalización y demarcación vial deberán ubicarse y mantenerse de acuerdo con los parámetros técnicos establecidos por la autoridad.",
+    "El tránsito de vehículos deberá organizarse conforme a las características de la vía y a las condiciones del entorno.",
+    "Las disposiciones de este Código se aplicarán en todo el territorio nacional y a todos los usuarios de las vías públicas."
+  ]
+}

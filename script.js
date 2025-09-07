@@ -1,13 +1,21 @@
-// script.js — Reemplazo de placeholders "DETERMINE QUE INDICA CADA SEÑAL"
-// en el QUIZ TEÓRICO por preguntas con imagen (estilo Quiz 3) y 4 opciones.
-// Fix puntuales:
-//   #40 -> "Reglamentarias/Prohibida Bicicletas.png"
-//   #41 -> "Reglamentarias/Prohibido Girar En U.png"
-//   #49 -> "Reglamentarias/Prohibido fumar.webp"
-// Además mantiene: Código Nacional usa todas las preguntas, señales desde inventario, etc.
+// script.js — Lógica del juego optimizada + overrides de imágenes de señales
+// - Mantiene: carga modular, manejo de errores, parser CSV, limpieza de sufijos legales,
+//   reemplazo de placeholders en teórico (#40–#49), lazy-load de definiciones para quiz2,
+//   y sin cambios de interfaz.
+// - NUEVO: override global de imagen para "Circulación Prohibida Peatones"
+//          -> "Reglamentarias/Circulación prohibida de peatones.png"
 
-/* ============== Estado global ============== */
-let questions = {};
+/* ===========================
+   RUTAS Y ESTADO GLOBAL
+   =========================== */
+const PATHS = {
+  base: 'questions.json',
+  extra: 'questions_extra.json',
+  inventoryCSV: 'inventario.csv',
+  article2: 'article2_definitions.json'
+};
+
+let questions = { quiz1: [], quiz2: [], signals: [] };
 let currentQuiz = [];
 let currentIndex = 0;
 let score = 0;
@@ -15,245 +23,496 @@ let quizType = '';
 let wrongAnswers = [];
 let maxSignals = 0;
 
-/* ============== Utilidades ============== */
+// Caché de carga
+const LOADED = {
+  base: false,
+  extra: false,
+  inventory: false,
+  article2: false
+};
+
+/* ===========================
+   UTILIDADES
+   =========================== */
+function stableId(str) {
+  const s = String(str || '');
+  let hash = 5381;
+  for (let i = 0; i < s.length; i++) hash = ((hash << 5) + hash) ^ s.charCodeAt(i);
+  return 'q_' + (hash >>> 0).toString(16);
+}
+
+function withTimeout(promise, ms, label = 'operación') {
+  let timer;
+  const timeout = new Promise((_, rej) => {
+    timer = setTimeout(() => rej(new Error(`Timeout ${ms}ms en ${label}`)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
+async function fetchText(url, { retries = 1, timeout = 10000 } = {}) {
+  let lastErr;
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const res = await withTimeout(fetch(url, { cache: 'no-store' }), timeout, `fetch ${url}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status} al cargar ${url}`);
+      return await res.text();
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[fetchText] intento ${i + 1} falló para ${url}:`, err);
+    }
+  }
+  throw lastErr;
+}
+
+async function fetchJson(url, opts) {
+  const txt = await fetchText(url, opts);
+  try {
+    return JSON.parse(txt);
+  } catch (err) {
+    console.error(`[fetchJson] JSON inválido en ${url}:`, err);
+    throw err;
+  }
+}
+
 const normalizePath = (p) => (p || '').replace(/\\/g, '/').replace(/^\.?\//, '');
-const norm = (s) =>
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+function sampleDistinct(arr, k, excludeIndex = -1) {
+  const n = arr.length;
+  if (k <= 0 || n === 0) return [];
+  const idxs = new Set();
+  while (idxs.size < Math.min(k, n - (excludeIndex >= 0 ? 1 : 0))) {
+    const r = Math.floor(Math.random() * n);
+    if (r === excludeIndex) continue;
+    idxs.add(r);
+  }
+  return Array.from(idxs).map(i => arr[i]);
+}
+
+/* ===========================
+   PARSER CSV ROBUSTO
+   =========================== */
+function parseCSV(text) {
+  const rows = [];
+  let i = 0, field = '', row = [], inQuotes = false;
+  const pushField = () => { row.push(field); field = ''; };
+  const pushRow = () => { rows.push(row); row = []; };
+
+  while (i < text.length) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
+        inQuotes = false; i++; continue;
+      } else { field += ch; i++; continue; }
+    } else {
+      if (ch === '"') { inQuotes = true; i++; continue; }
+      if (ch === ',') { pushField(); i++; continue; }
+      if (ch === '\n') { pushField(); pushRow(); i++; continue; }
+      if (ch === '\r') { if (text[i + 1] === '\n') i++; pushField(); pushRow(); i++; continue; }
+      field += ch; i++; continue;
+    }
+  }
+  pushField();
+  if (row.length > 1 || (row.length === 1 && row[0].trim() !== '')) pushRow();
+  return rows;
+}
+
+/* ===========================
+   LIMPIEZAS Y UI
+   =========================== */
+function stripLegalTags(text) {
+  if (typeof text !== 'string') return text;
+  let t = text;
+  t = t.replace(/\s*—\s*\((?:(?:(?:art|arts?)\.[^)]*)?ley\s*\d{3,4}\/\d{4}[^)]*|t[íi]tulo[^)]*)\)\s*$/i, '');
+  t = t.replace(/\s*—\s*(?:(?:art|arts?)\.[^—]*ley\s*\d{3,4}\/\d{4}|t[íi]tulo\s+[ivx]+[^—]*)\s*$/i, '');
+  t = t.replace(/\s*—\s*ley\s*76[89]\/2002\s*$/i, '');
+  return t.trim();
+}
+function cleanQuiz2LegalTagsAndSyncCorrect() {
+  if (!Array.isArray(questions.quiz2)) return;
+  const collapse = (s) => (s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  questions.quiz2.forEach(q => {
+    if (!q || !Array.isArray(q.options)) return;
+    q.options = q.options.map(stripLegalTags);
+    const cleanedCorrect = stripLegalTags(q.correct);
+    let idx = q.options.findIndex(o => o === cleanedCorrect);
+    if (idx === -1) {
+      const target = collapse(cleanedCorrect.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+      idx = q.options.findIndex(o =>
+        collapse(String(o).normalize('NFD').replace(/[\u0300-\u036f]/g, '')) === target
+      );
+    }
+    if (idx === -1) q.options = [cleanedCorrect, ...q.options.filter(o => o !== cleanedCorrect)];
+    q.correct = cleanedCorrect;
+  });
+}
+
+function removeExplanationBoxes() {
+  const exp = document.getElementById('explanation');
+  if (exp && exp.parentNode) exp.parentNode.removeChild(exp);
+  const PHRASES = [
+    'Cumplir las normas de tránsito protege la vida y la movilidad segura de todos los actores viales'
+  ];
+  const all = document.querySelectorAll('div, p, section, aside, article');
+  all.forEach(el => {
+    const txt = (el.textContent || '').trim();
+    for (const ph of PHRASES) {
+      if (txt && txt.indexOf(ph) !== -1) {
+        if (el.childElementCount === 0 || /^explan|info|ayuda|nota$/i.test(el.id || '')) el.remove();
+        else el.style.display = 'none';
+        break;
+      }
+    }
+  });
+}
+
+/* ===========================
+   FUNCIONES DE NORMALIZACIÓN
+   =========================== */
+const NORM = s =>
   (s || '')
     .toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 
-function shuffle(a) {
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-}
+/* ===========================
+   OVERRIDES GLOBALES DE IMAGEN PARA SEÑALES
+   =========================== */
+// Clave: NORM(nombre_correcto) -> ruta fija
+const FIXED_SIGNAL_IMAGE_MAP = new Map([
+  ['circulacion prohibida peatones', 'Reglamentarias/Circulación prohibida de peatones.png']
+  // (si luego quieres centralizar aquí #40, #41, #43, #48, #49 también, se pueden añadir)
+]);
 
-/* ============== Distractores ============== */
-function generateWrongOptionsFromInventory(correct, inventory, need = 3) {
-  const pool = inventory.map(it => it.nombre_visible).filter(Boolean);
-  shuffle(pool);
-  const set = new Set();
-  for (const name of pool) {
-    if (set.size >= need) break;
-    if (name && name !== correct) set.add(name);
-  }
-  // Si el inventario no alcanza, rellena con señuelos genéricos no repetidos
-  const fallbacks = [
-    'Cruce escolar', 'Zona escolar', 'Curva peligrosa', 'Vía cerrada',
-    'Obras en la vía', 'Prohibido girar a la izquierda', 'Siga de frente',
-    'Doble calzada', 'Reductor de velocidad'
-  ];
-  for (const fb of fallbacks) {
-    if (set.size >= need) break;
-    if (fb !== correct) set.add(fb);
-  }
-  return Array.from(set).slice(0, need);
-}
+/* ===========================
+   TEÓRICO: 10 PREGUNTAS CON IMAGEN (#40–#49)
+   =========================== */
+// Se mantienen overrides específicos ya acordados
+const THEORETICAL_ITEMS_40_49 = [
+  { num: 40, correct: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta', 'prohibido el paso de bicicletas', 'bicicletas'], fixedImage: 'Reglamentarias/Prohibida Bicicletas.png' },
+  { num: 41, correct: 'Prohibido girar en U', synonyms: ['no u', 'no retorno', 'prohibido girar en u'], fixedImage: 'Reglamentarias/Prohibido Girar En U.png' },
+  { num: 42, correct: 'Prohibido girar a la derecha', synonyms: ['no girar a la derecha', 'prohibido giro derecha'] },
+  { num: 43, correct: 'Vehículos pesados a la derecha', synonyms: ['vehiculos pesados a la derecha', 'camiones a la derecha', 'camion carril derecho'], fixedImage: 'Reglamentarias/Vehiculos Pesados Derecha.png' },
+  { num: 44, correct: 'Ceda el paso', synonyms: ['ceda el paso', 'ceda'] },
+  { num: 45, correct: 'Velocidad Máxima', synonyms: ['velocidad maxima', 'límite de velocidad'] },
+  { num: 46, correct: 'prohibido usar la bocina', synonyms: ['prohibido pitar', 'prohibido bocina', 'no pitar'] },
+  { num: 47, correct: 'Prohibido parquear', synonyms: ['prohibido estacionar', 'no estacionar'] },
+  { num: 48, correct: 'Prohibido parquear y prohibido parar o detenerse', synonyms: ['no parquear ni detenerse', 'prohibido parar y estacionar'], fixedImage: 'Reglamentarias/No Parquear Ni Detenerse.png' },
+  { num: 49, correct: 'Prohibido fumar', synonyms: ['no fumar', 'prohibido fumar'], fixedImage: 'Reglamentarias/Prohibido fumar.webp' }
+];
 
-/* ============== Búsqueda en inventario ============== */
 function findInventoryByNameLike(label, inventory) {
-  const target = norm(label);
-  let best = null, bestScore = 0;
-
+  if (!Array.isArray(inventory) || !inventory.length) return null;
+  const target = NORM(label);
+  let best = null, bestScore = -1;
   for (const it of inventory) {
-    const cand = norm(it.nombre_visible);
+    const cand = NORM(it.nombre_visible);
     if (!cand) continue;
-
-    if (cand === target) return it;
-
-    let score = 0;
-    if (cand.includes(target)) score += 3;
-    const words = target.split(' ').filter(w => w.length > 2);
-    words.forEach(w => { if (cand.includes(w)) score += 1; });
-
-    // bonus por coincidencia de palabra "clave"
-    const keys = ['prohibido','ceda','velocidad','bocina','pitar','parquear','detenerse','bicicleta','fum','derecha','u','pesado','camion'];
-    keys.forEach(k => { if (cand.includes(k) && target.includes(k)) score += 1; });
-
-    if (score > bestScore) { bestScore = score; best = it; }
+    let s = 0;
+    if (cand === target) s += 5;
+    if (cand.includes(target)) s += 3;
+    for (const w of target.split(' ')) { if (w && cand.includes(w)) s += 1; }
+    if (s > bestScore) { bestScore = s; best = it; }
   }
   return best;
 }
 
-/* ============== Mapeo #40–#49 solicitado ============== */
-/* Nota: fixedImage fuerza usar esa ruta exacta ignorando el inventario. */
-const THEORETICAL_REPLACEMENTS = [
-  { num: 40, correct: 'Prohibido circular en bicicleta', synonyms: ['prohibido bicicleta','prohibido el paso de bicicletas','bicicletas'], fixedImage: 'Reglamentarias/Prohibida Bicicletas.png' },
-  { num: 41, correct: 'Prohibido girar en U', synonyms: ['no u','no retorno','prohibido girar en u'], fixedImage: 'Reglamentarias/Prohibido Girar En U.png' },
-  { num: 42, correct: 'Prohibido girar a la derecha', synonyms: ['no girar a la derecha','prohibido giro derecha'] },
-  { num: 43, correct: 'Vehículos pesados a la derecha', synonyms: ['camion derecha','vehiculo pesado derecha','pesados derecha','camion carril derecho'] },
-  { num: 44, correct: 'Ceda el paso', synonyms: ['ceda el paso','ceda'] },
-  { num: 45, correct: 'Velocidad Máxima', synonyms: ['velocidad maxima','límite de velocidad','velocidad 90','sr 30'] },
-  { num: 46, correct: 'prohibido usar la bocina', synonyms: ['prohibido pitar','prohibido bocina','no pitar','sr 29'] },
-  { num: 47, correct: 'Prohibido parquear', synonyms: ['no estacionar','prohibido estacionar','sr 28'] },
-  { num: 48, correct: 'Prohibido parquear y prohibido parar o detenerse', synonyms: ['no parquear ni detenerse','prohibido parar y estacionar','sr 28a'] },
-  { num: 49, correct: 'Prohibido fumar', synonyms: ['no fumar','prohibido fumar'], fixedImage: 'Reglamentarias/Prohibido fumar.webp' }
-];
-
-/* Construye una pregunta estilo “Señales” a partir del inventario */
-function buildSignalQuestionFromInventory(item, inventory) {
-  // 1) Imagen: si hay override (fixedImage), úsalo SIEMPRE
-  let imageSrc;
-  if (item.fixedImage) {
-    imageSrc = normalizePath(item.fixedImage);
-  } else {
-    // buscar primero por correct, luego por sinónimos
-    let imgRecord = findInventoryByNameLike(item.correct, inventory) || null;
-    if (!imgRecord) {
-      for (const s of item.synonyms || []) {
-        imgRecord = findInventoryByNameLike(s, inventory);
-        if (imgRecord) break;
-      }
-    }
-    if (imgRecord) {
-      imageSrc = (imgRecord.url && imgRecord.url.startsWith('http'))
-        ? imgRecord.url
-        : normalizePath(imgRecord.archivo);
-    }
+function generateWrongOptions(correctAnswer, inventory) {
+  const names = inventory.map(p => p.nombre_visible).filter(Boolean);
+  const unique = Array.from(new Set(names)).filter(n => n !== correctAnswer);
+  shuffle(unique);
+  const pick = unique.slice(0, 3);
+  const fallbacks = [
+    'Cruce escolar','Zona escolar','Curva peligrosa','Vía cerrada',
+    'Obras en la vía','Prohibido girar a la izquierda','Siga de frente',
+    'Doble calzada','Reductor de velocidad'
+  ];
+  while (pick.length < 3) {
+    const f = fallbacks[pick.length];
+    if (f && f !== correctAnswer && !pick.includes(f)) pick.push(f);
+    else break;
   }
-
-  // 2) Opciones
-  const wrongs = generateWrongOptionsFromInventory(item.correct, inventory, 3);
-  const options = Array.from(new Set([item.correct, ...wrongs])); // evita repetidos
-
-  // 3) Enunciado con referencia al número original
-  const questionText = `(#${item.num}) ¿Cuál es el nombre de esta señal?`;
-
-  return {
-    question: questionText,
-    image: imageSrc, // si no hay, queda undefined y <img> no se muestra
-    options,
-    correct: item.correct
-  };
+  return pick;
 }
 
-/* Elimina placeholders y añade las nuevas preguntas al quiz1 */
-function replaceDeterminePlaceholders(inventory) {
+/**
+ * Elimina placeholders "DETERMINE..." y versiones previas de #40–#49,
+ * e inserta las 10 preguntas con la imagen correcta (incluye overrides fijos).
+ */
+function ensureTheoreticalSignalQuestions(inventory) {
   if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
 
-  // 1) Filtra TODO lo que empiece con "DETERMINE QUE INDICA CADA SEÑAL"
-  const re = /^\s*determine que indica cada se(ñ|n)al/i;
-  questions.quiz1 = questions.quiz1.filter(q => !(q && typeof q.question === 'string' && re.test(q.question)));
+  // 1) Eliminar placeholders
+  const isDetermine = q => typeof q?.question === 'string' &&
+    /^\s*determine que indica cada se(ñ|n)al/i.test(q.question);
+  questions.quiz1 = questions.quiz1.filter(q => !isDetermine(q));
 
-  // 2) Construye las 10 preguntas y añádelas
-  const newOnes = THEORETICAL_REPLACEMENTS.map(entry => buildSignalQuestionFromInventory(entry, inventory));
-  questions.quiz1.push(...newOnes);
-}
-
-/* ============== Carga de bancos ============== */
-async function loadQuestions() {
-  // 1) Banco base
-  const base = await fetch('questions.json', { cache: 'no-store' }).then(r => r.json());
-  questions = base;
-
-  // 2) Banco extra (Código Nacional) opcional
-  try {
-    const extraRes = await fetch('questions_extra.json', { cache: 'no-store' });
-    if (extraRes.ok) {
-      const extra = await extraRes.json();
-      if (Array.isArray(extra?.quiz2)) {
-        const map = new Map();
-        (questions.quiz2 || []).forEach(q => map.set(q.question?.trim(), q));
-        extra.quiz2.forEach(q => { if (q?.question && !map.has(q.question.trim())) map.set(q.question.trim(), q); });
-        questions.quiz2 = Array.from(map.values());
-      }
-    }
-  } catch (_) {
-    // Ignora si no existe
-  }
-
-  // 3) Inventario de señales
-  const csv = await fetch('inventario.csv', { cache: 'no-store' }).then(r => r.text());
-  const rows = csv.trim().split('\n').map(r => r.split(','));
-  const headers = rows[0].map(h => h.trim());
-  const inventory = rows.slice(1).map(row => {
-    const o = {}; headers.forEach((h, i) => (o[h] = (row[i] || '').trim())); return o;
-  }).filter(o => o?.nombre_visible);
-
-  // 4) Crear banco "Señales" completo desde inventario (se mantiene)
-  questions.signals = inventory.map(it => {
-    const img = it.url && it.url.startsWith('http') ? it.url : normalizePath(it.archivo);
-    const correct = it.nombre_visible;
-    const wrongs = generateWrongOptionsFromInventory(correct, inventory, 3);
-    return {
-      question: '¿Cuál es el nombre de esta señal?',
-      image: img,
-      options: Array.from(new Set([correct, ...wrongs])),
-      correct
-    };
+  // 2) Eliminar versiones previas de (#40–#49)
+  const numberRegexes = THEORETICAL_ITEMS_40_49.map(it => new RegExp(`\\(#${it.num}\\)`));
+  questions.quiz1 = questions.quiz1.filter(q => {
+    const text = String(q?.question || '');
+    return !numberRegexes.some(re => re.test(text));
   });
 
-  // 5) **Reemplazar** los placeholders del teórico por preguntas con imagen (40–49)
-  replaceDeterminePlaceholders(inventory);
+  // 3) Construir e insertar las 10 preguntas con imagen
+  const built = [];
+  for (const item of THEORETICAL_ITEMS_40_49) {
+    // Determinar imagen (usa fixedImage si viene definida)
+    let imageSrc = null;
+    if (item.fixedImage) {
+      imageSrc = normalizePath(item.fixedImage);
+    } else {
+      let found = findInventoryByNameLike(item.correct, inventory);
+      if (!found && Array.isArray(item.synonyms)) {
+        for (const s of item.synonyms) { found = findInventoryByNameLike(s, inventory); if (found) break; }
+      }
+      if (found) {
+        imageSrc = (found.url && found.url.startsWith('http')) ? found.url : normalizePath(found.archivo);
+      }
+    }
 
-  // 6) Datos dependientes de UI
+    // Override global de imagen (por si aplica)
+    const key = NORM(item.correct);
+    if (FIXED_SIGNAL_IMAGE_MAP.has(key)) {
+      imageSrc = normalizePath(FIXED_SIGNAL_IMAGE_MAP.get(key));
+    }
+
+    const wrongs = generateWrongOptions(item.correct, inventory);
+    const q = {
+      id: stableId(`teorico-${item.num}-${item.correct}`),
+      question: `(#${item.num}) ¿Cuál es el nombre de esta señal?`,
+      image: imageSrc || undefined,
+      options: [item.correct, ...wrongs],
+      correct: item.correct
+    };
+    built.push(q);
+  }
+
+  // Insertar manteniendo resto del banco teórico
+  questions.quiz1 = [...questions.quiz1, ...built];
+}
+
+/* ===========================
+   NORMALIZACIÓN Y MERGE
+   =========================== */
+function normalizeQuestion(q) {
+  if (!q) return null;
+  const nq = { ...q };
+  nq.id = q.id || stableId(`${q.question}|${q.image || ''}`);
+  if (!Array.isArray(nq.options)) nq.options = [];
+  const seen = new Set();
+  nq.options = nq.options
+    .map(o => (o == null ? '' : String(o).trim()))
+    .filter(o => o.length > 0 && (seen.has(o) ? false : (seen.add(o), true)));
+  const corr = (q.correct == null ? '' : String(q.correct).trim());
+  if (!nq.options.includes(corr) && corr) nq.options.unshift(corr);
+  if (nq.options.length < 2) return null;
+  nq.correct = corr || nq.options[0];
+  return nq;
+}
+function mergeUniqueQuestions(dstArr, srcArr) {
+  const map = new Map();
+  dstArr.forEach(q => map.set(q.id || stableId(`${q.question}|${q.image || ''}`), q));
+  srcArr.forEach(q => {
+    const n = normalizeQuestion(q);
+    if (!n) return;
+    if (!map.has(n.id)) map.set(n.id, n);
+  });
+  return Array.from(map.values());
+}
+
+/* ===========================
+   CARGA MODULAR
+   =========================== */
+async function loadBaseQuestions() {
+  if (LOADED.base) return;
+  const base = await fetchJson(PATHS.base, { retries: 1 });
+  questions.quiz1 = mergeUniqueQuestions([], Array.isArray(base.quiz1) ? base.quiz1 : []);
+  questions.quiz2 = mergeUniqueQuestions([], Array.isArray(base.quiz2) ? base.quiz2 : []);
+  LOADED.base = true;
+}
+
+async function loadExtraQuestions() {
+  if (LOADED.extra) return;
+  try {
+    const extra = await fetchJson(PATHS.extra, { retries: 1 });
+    if (Array.isArray(extra.quiz1)) questions.quiz1 = mergeUniqueQuestions(questions.quiz1, extra.quiz1);
+    if (Array.isArray(extra.quiz2)) questions.quiz2 = mergeUniqueQuestions(questions.quiz2, extra.quiz2);
+  } catch (err) {
+    console.warn('[loadExtraQuestions] opcional no disponible:', err?.message || err);
+  }
+  LOADED.extra = true;
+}
+
+async function loadInventorySignals() {
+  if (LOADED.inventory) return;
+  const txt = await fetchText(PATHS.inventoryCSV, { retries: 1 });
+  const rows = parseCSV(txt.replace(/^\uFEFF/, ''));
+  if (!rows.length) { console.warn('[loadInventorySignals] CSV vacío'); LOADED.inventory = true; return; }
+  const headers = rows[0].map(h => (h || '').trim());
+  const idxNombre = headers.findIndex(h => /nombre_visible/i.test(h));
+  const idxArchivo = headers.findIndex(h => /archivo/i.test(h));
+  const idxUrl = headers.findIndex(h => /^url$/i.test(h));
+  if (idxNombre === -1 || (idxArchivo === -1 && idxUrl === -1)) {
+    console.warn('[loadInventorySignals] CSV sin columnas requeridas (nombre_visible, archivo/url)');
+    LOADED.inventory = true; return;
+  }
+
+  // Inventario para señales (usado también como pool de distractores)
+  const inventory = rows.slice(1).map(r => ({
+    nombre_visible: (r[idxNombre] || '').trim(),
+    archivo: (r[idxArchivo] || '').trim(),
+    url: (r[idxUrl] || '').trim()
+  })).filter(o => o.nombre_visible);
+
+  // Construir banco de "Señales" (quiz3) desde inventario
+  const builtSignals = inventory.map(r => {
+    const correcta = r.nombre_visible;
+    // imagen por inventario
+    let imagen = r.url && r.url.startsWith('http') ? r.url : normalizePath(r.archivo);
+    // override global (si aplica)
+    const key = NORM(correcta);
+    if (FIXED_SIGNAL_IMAGE_MAP.has(key)) {
+      imagen = normalizePath(FIXED_SIGNAL_IMAGE_MAP.get(key));
+    }
+    const err = generateWrongOptions(correcta, inventory);
+    return normalizeQuestion({
+      id: stableId(`signal-${correcta}-${imagen}`),
+      question: '¿Cuál es el nombre de esta señal?',
+      image: imagen,
+      options: [correcta, ...err],
+      correct: correcta
+    });
+  }).filter(Boolean);
+  questions.signals = mergeUniqueQuestions([], builtSignals);
+
+  // Actualizar máximos y controles UI dependientes
   maxSignals = questions.signals.length;
   const maxSpan = document.getElementById('max-signals');
   if (maxSpan) maxSpan.textContent = maxSignals;
-
   const inputSignals = document.getElementById('num-questions-3');
   if (inputSignals) {
     inputSignals.max = maxSignals;
-    if (!inputSignals.value || Number(inputSignals.value) > maxSignals) {
-      inputSignals.value = maxSignals;
+    if (!inputSignals.value || Number(inputSignals.value) > maxSignals) inputSignals.value = maxSignals;
+  }
+
+  // Restaurar/inyectar las 10 preguntas con imagen en el QUIZ TEÓRICO (con overrides)
+  ensureTheoreticalSignalQuestions(inventory);
+
+  LOADED.inventory = true;
+}
+
+async function loadArticle2Definitions() {
+  if (LOADED.article2) return;
+  try {
+    const defs = await fetchJson(PATHS.article2, { retries: 1 });
+    const list = Array.isArray(defs?.article2_definitions) ? defs.article2_definitions : [];
+    if (!list.length) { console.warn('[loadArticle2Definitions] sin definiciones'); LOADED.article2 = true; return; }
+    const newQs = [];
+    for (let i = 0; i < list.length; i++) {
+      const entry = list[i];
+      if (!entry?.term || !entry?.definition) continue;
+      const distractorDefs = sampleDistinct(list, 3, i).map(e => e.definition).filter(Boolean);
+      const q = normalizeQuestion({
+        id: stableId(`art2-${entry.term}`),
+        question: `Según el ARTÍCULO 2° (Definiciones), ¿qué se entiende por “${entry.term}”?`,
+        options: [entry.definition, ...distractorDefs],
+        correct: entry.definition
+      });
+      if (q) newQs.push(q);
     }
+    questions.quiz2 = mergeUniqueQuestions(questions.quiz2, newQs);
+  } catch (err) {
+    console.warn('[loadArticle2Definitions] opcional no disponible:', err?.message || err);
+  }
+  LOADED.article2 = true;
+}
+
+/* ===========================
+   BOOTSTRAP
+   =========================== */
+async function boot() {
+  try {
+    removeExplanationBoxes();
+    await loadBaseQuestions();
+    await loadExtraQuestions();
+    await loadInventorySignals(); // <- aquí se restauran/inyectan #40–#49 y se aplica override global
+    cleanQuiz2LegalTagsAndSyncCorrect();
+  } catch (err) {
+    console.error('[boot] Error inicial:', err);
+    alert('No se pudo cargar el banco de preguntas. Revisa la consola del navegador.');
   }
 }
 
-/* ============== Flujo del juego ============== */
+/* ===========================
+   FLUJO DE JUEGO (UI)
+   =========================== */
 function startQuiz(type, num = null) {
   quizType = type;
 
+  const ensureQuiz2 = async () => {
+    await loadArticle2Definitions();
+    cleanQuiz2LegalTagsAndSyncCorrect();
+    const pool = [...(questions.quiz2 || [])]; shuffle(pool);
+    currentQuiz = pool; // todas
+    renderStart();
+  };
+
   if (type === 'quiz1') {
-    currentQuiz = [...(questions.quiz1 || [])];
-    shuffle(currentQuiz);
+    const pool = [...(questions.quiz1 || [])]; shuffle(pool);
+    currentQuiz = pool;
+    renderStart();
   } else if (type === 'quiz2') {
-    const pool = [...(questions.quiz2 || [])]; shuffle(pool); currentQuiz = pool; // TODAS
+    ensureQuiz2().then(() => { showQuestion(); updateScore(); });
+    return;
   } else if (type === 'signals') {
     const pool = [...(questions.signals || [])]; shuffle(pool);
     const total = pool.length;
     let n = parseInt(num, 10);
     if (isNaN(n) || n <= 0 || n > total) n = total;
     currentQuiz = pool.slice(0, n);
+    renderStart();
   } else {
     currentQuiz = [];
+    renderStart();
   }
 
-  currentIndex = 0;
-  score = 0;
-  wrongAnswers = [];
+  showQuestion(); updateScore();
+}
 
-  document.getElementById('start-screen').style.display = 'none';
-  const cfg = document.getElementById('quiz3-options');
-  if (cfg) cfg.style.display = 'none';
+function renderStart() {
+  const start = document.getElementById('start-screen');
+  if (start) start.style.display = 'none';
+  const q2opt = document.getElementById('quiz2-options');
+  if (q2opt) q2opt.style.display = 'none';
+  const q3opt = document.getElementById('quiz3-options');
+  if (q3opt) q3opt.style.display = 'none';
   document.getElementById('quiz-screen').style.display = 'block';
-
-  showQuestion();
-  updateScore();
 }
 
 function showQuestion() {
+  removeExplanationBoxes();
+
   const q = currentQuiz[currentIndex];
   if (!q) { endQuiz(); return; }
 
-  document.getElementById('question').textContent = q.question || '';
+  const qEl = document.getElementById('question');
+  qEl.textContent = q.question || '';
 
   const imgEl = document.getElementById('question-image');
-  if (q.image) {
-    imgEl.src = q.image;
-    imgEl.alt = 'Imagen de la señal';
-    imgEl.style.display = 'block';
-  } else {
-    imgEl.style.display = 'none';
-  }
+  if (q.image) { imgEl.src = q.image; imgEl.style.display = 'block'; }
+  else { imgEl.style.display = 'none'; }
 
   const optionsDiv = document.getElementById('options');
   optionsDiv.innerHTML = '';
-  const opts = [...(q.options || [])];
-  shuffle(opts);
+  const opts = [...(q.options || [])]; shuffle(opts);
 
   opts.forEach(opt => {
     const btn = document.createElement('button');
@@ -263,7 +522,8 @@ function showQuestion() {
   });
 
   document.getElementById('next-btn').disabled = true;
-  updateProgress();
+  const progress = (currentIndex / (currentQuiz.length || 1)) * 100;
+  document.getElementById('progress').style.width = `${progress}%`;
 }
 
 function selectAnswer(selected, correct) {
@@ -283,13 +543,7 @@ function selectAnswer(selected, correct) {
 
 function nextQuestion() {
   currentIndex++;
-  if (currentIndex < currentQuiz.length) showQuestion();
-  else endQuiz();
-}
-
-function updateProgress() {
-  const progress = (currentIndex / (currentQuiz.length || 1)) * 100;
-  document.getElementById('progress').style.width = `${progress}%`;
+  (currentIndex < currentQuiz.length) ? showQuestion() : endQuiz();
 }
 
 function updateScore() {
@@ -299,39 +553,48 @@ function updateScore() {
 function endQuiz() {
   document.getElementById('quiz-screen').style.display = 'none';
   document.getElementById('end-screen').style.display = 'block';
-  document.getElementById('final-score').textContent =
-    `Tu puntaje final: ${score} / ${currentQuiz.length || 0}`;
+  document.getElementById('final-score').textContent = `Tu puntaje final: ${score} / ${currentQuiz.length || 0}`;
 
   if (wrongAnswers.length > 0) {
-    let summary = "Resumen de preguntas erradas:\n";
-    wrongAnswers.forEach((item, i) => {
-      summary += `${i + 1}. Pregunta: ${item.question}\n   Respuesta correcta: ${item.correct}\n`;
-    });
-    alert(summary);
+    let s = 'Resumen de preguntas erradas:\n';
+    wrongAnswers.forEach((w,i)=>{ s += `${i+1}. ${w.question}\n   Correcta: ${w.correct}\n`; });
+    alert(s);
   } else {
-    alert("¡Felicidades! No tuviste errores.");
+    alert('¡Felicidades! No tuviste errores.');
   }
   wrongAnswers = [];
 }
 
-/* ============== Listeners ============== */
+/* ===========================
+   EVENTOS
+   =========================== */
 document.getElementById('quiz1-btn').onclick = () => startQuiz('quiz1');
 document.getElementById('quiz2-btn').onclick = () => startQuiz('quiz2');
-document.getElementById('quiz3-btn').onclick = () => {
-  const box = document.getElementById('quiz3-options');
-  if (box) box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
-};
-document.getElementById('start-quiz3').onclick = () => {
-  const num = parseInt(document.getElementById('num-questions-3').value, 10);
-  startQuiz('signals', num);
-};
+
+const quiz3Btn = document.getElementById('quiz3-btn');
+if (quiz3Btn) {
+  quiz3Btn.onclick = () => {
+    const box = document.getElementById('quiz3-options');
+    if (box) box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
+  };
+}
+const startQuiz3 = document.getElementById('start-quiz3');
+if (startQuiz3) {
+  startQuiz3.onclick = () => {
+    const num = parseInt(document.getElementById('num-questions-3').value, 10);
+    startQuiz('signals', num);
+  };
+}
+
 document.getElementById('next-btn').onclick = nextQuestion;
 document.getElementById('restart-btn').onclick = () => {
   document.getElementById('end-screen').style.display = 'none';
   document.getElementById('start-screen').style.display = 'block';
-  const box = document.getElementById('quiz3-options');
-  if (box) box.style.display = 'none';
+  const q3opt = document.getElementById('quiz3-options');
+  if (q3opt) q3opt.style.display = 'none';
 };
 
-/* ============== Inicio ============== */
-loadQuestions();
+/* ===========================
+   INICIO
+   =========================== */
+boot();

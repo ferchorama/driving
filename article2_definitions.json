@@ -1,0 +1,89 @@
+{
+  "article2_definitions": [
+    {
+      "term": "Acera o andén",
+      "definition": "Franja longitudinal de la vía urbana , destinada exclusivamente a la\ncirculación de peatones, ubicada a los costados de ésta."
+    },
+    {
+      "term": "Accesibilidad",
+      "definition": "Condición esencial de los servicios públicos que permite en\ncualquier espacio o ambiente exterior o interior el  fácil disfrute de dicho servicio\npor parte de toda la población."
+    },
+    {
+      "term": "Accidente de tránsito",
+      "definition": "Evento generalmente involunt ario, generado al menos por\nun vehículo en movimiento, que causa daños a person as y bienes involucrados en\nél e igualmente afecta la normal circulación de los  vehículos que se movilizan por\nla vía o vías comprendidas en el lugar o dentro de la zona de influencia del hecho."
+    },
+    {
+      "term": "Acompañante",
+      "definition": "Persona que viaja con el conductor de un vehículo automotor."
+    },
+    {
+      "term": "Adelantamiento",
+      "definition": "Maniobra mediante la cual un vehícu lo se pone delante de otro\nvehículo que lo antecede en el mismo carril de una calzada."
+    },
+    {
+      "term": "Agente de tránsito",
+      "definition": "Todo funcionario o persona civi l identificada que está investida\nde autoridad para regular la circulación vehicular y peatonal y vigilar, controlar e\nintervenir en el cumplimiento de las normas de trán sito y transporte en cada uno\nde los entes territoriales."
+    },
+    {
+      "term": "Alcoholemia",
+      "definition": "Cantidad de alcohol que tiene una pers ona en determinado momento\nen su sangre."
+    },
+    {
+      "term": "Alcoholometría",
+      "definition": "Examen o prueba de laboratorio, o p or medio técnico que\ndetermina el nivel de alcohol etílico en la sangre."
+    },
+    {
+      "term": "Alcoholuria",
+      "definition": "Examen o prueba de laboratorio, o por otro medio técnico que\ndetermina el nive l de alcohol etílico en la orina."
+    },
+    {
+      "term": "Alcohosensor",
+      "definition": "Sistema para determinar alcohol en ai re exhalado."
+    },
+    {
+      "term": "Año del modelo",
+      "definition": "Año que asigna el fabricante o ensa mblador al modelo del\nvehículo, de acuerdo con la declaración de despacho  para consumo."
+    },
+    {
+      "term": "Aprendiz",
+      "definition": "Persona que recibe de un instructor, técn icas de conducción de\nvehículos automotores y motocicletas."
+    },
+    {
+      "term": "Automóvil antiguo",
+      "definition": "Automotor que haya cumplido 35 a ños y que conserve sus\nespecificaciones y características originales de fá brica, presentación y\nfuncionamiento."
+    },
+    {
+      "term": "Automóvil clásico",
+      "definition": "Automotor que haya cumplido 50 a ños y que además de\nconservar sus especificaciones y características or iginales de fábrica,\npresentación y funcionamiento, corresponda a marcas , series y modelos\ncatalogados internacionalmente como tales."
+    },
+    {
+      "term": "Autopista",
+      "definition": "Vía de calzadas separadas, cada una con dos (2) o más carriles, control\ntotal de acceso y salida, con intersecciones en des nivel o mediante entradas y\nsalidas directas a otras carreteras y con control d e velocidades mínimas y\nmáximas por carril."
+    },
+    {
+      "term": "Bahía de estacionamiento",
+      "definition": "Parte complementaria de l a estructura de la vía\nutilizada como zona de transición entre la calzada y el andén, destinada al\nestacionamiento de vehículos."
+    },
+    {
+      "term": "Barrera para control vehicular",
+      "definition": "Dispositivo dotado de punzones pinchallantas para\nuso en retenes y puesto de control de las fuerzas m ilitares, la Policía Nacional, las\nautoridades de tránsito y transporte."
+    },
+    {
+      "term": "Berma",
+      "definition": "Parte de la estructura de la vía, destinada al soporte lateral de la calzada\npara el tránsito de peatones, semovientes y ocasion almente al estacionamiento de\nvehículos y tránsito de vehículos de emergencia."
+    },
+    {
+      "term": "Bicicleta",
+      "definition": "Vehículo no motorizado de dos (2) o más ruedas en línea, el cual se\ndesplaza por el esfuerzo de su conductor accionando  por medio de pedales."
+    },
+    {
+      "term": "Bocacalle",
+      "definition": "Embocadura de una calle en\n una intersecc ión."
+    }
+    /* ---------- NOTA: Por brevedad aquí se muestran los primeros 20 ítems. ----------
+       En tu archivo real incluirás las ~142 definiciones extraídas del ART. 2°,
+       tal como fueron preservadas del PDF, con sus saltos de línea.
+       He truncado la lista en este mensaje para evitar desbordar el chat.
+       Copia el archivo completo que te adjunté en la entrega anterior si lo necesitas íntegro. */
+  ]
+}

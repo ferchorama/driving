@@ -1,4 +1,51 @@
 {
+  "quiz1": [
+    {
+      "question": "¿Cuáles son los cuatro tiempos de un motor?",
+      "options": [
+        "Admisión – Compresión – Combustión (explosión) – Escape",
+        "Admisión – Explosión – Lubricación – Escape",
+        "Arranque – Compresión – Ignición – Purga",
+        "Admisión – Encendido – Expansión – Refrigeración"
+      ],
+      "correct": "Admisión – Compresión – Combustión (explosión) – Escape"
+    },
+    {
+      "question": "¿Cuál es el vencimiento de la licencia de conducción de servicio público para menores de 60 años?",
+      "options": ["3 años", "1 año", "5 años", "10 años"],
+      "correct": "3 años"
+    },
+    {
+      "question": "¿Cuál es el vencimiento de la licencia de conducción de servicio particular para menores de 60 años?",
+      "options": ["10 años", "5 años", "3 años", "1 año"],
+      "correct": "10 años"
+    },
+    {
+      "question": "¿Al cuánto tiempo se realiza la primera revisión técnico-mecánica de un vehículo particular nuevo?",
+      "options": [
+        "A los 5 años desde la matrícula",
+        "A los 2 años desde la matrícula",
+        "Al primer año desde la matrícula",
+        "A los 6 meses"
+      ],
+      "correct": "A los 5 años desde la matrícula"
+    },
+    {
+      "question": "¿Qué significan las siglas PESV?",
+      "options": [
+        "Plan Estratégico de Seguridad Vial",
+        "Programa Escolar de Seguridad Vehicular",
+        "Plan Estatal de Seguridad Vehicular",
+        "Programa Estandarizado de Seguridad Vial"
+      ],
+      "correct": "Plan Estratégico de Seguridad Vial"
+    },
+    {
+      "question": "¿A los cuántos kilómetros debe realizarse el cambio de aceite del vehículo?",
+      "options": ["5000 km", "3000 km", "10000 km", "15000 km"],
+      "correct": "5000 km"
+    }
+  ],
   "quiz2": [
     {
       "question": "Conducir sin portar la licencia al momento del control es:",
