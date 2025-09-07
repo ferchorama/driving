@@ -1,6 +1,6 @@
-// script.js — Integración de nuevas preguntas (quiz1) + enriquecimiento de respuestas (quiz2)
-// Mantiene fixes anteriores: reemplazo de “DETERMINE…”, preguntas de señales #40–#49
-// con imágenes forzadas (#40, #41, #49), banco de señales desde inventario.csv, etc.
+// script.js — Integración de nuevas preguntas desde JSON (quiz1/quiz2),
+// reemplazo de “DETERMINE…”, banco de señales desde inventario.csv,
+// y enriquecimiento de respuestas del Código Nacional con 2.pdf (Ley 769/2002).
 
 /* ============== Estado global ============== */
 let questions = {};
@@ -116,66 +116,11 @@ function buildSignalQuestionFromInventory(item, inventory) {
 function replaceDeterminePlaceholders(inventory) {
   if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
   const re = /^\s*determine que indica cada se(ñ|n)al/i;
+  // Eliminamos todos los placeholders DETERMINE...
   questions.quiz1 = questions.quiz1.filter(q => !(q && typeof q.question === 'string' && re.test(q.question)));
+  // Agregamos las 40–49 como preguntas con imagen
   const newOnes = THEORETICAL_REPLACEMENTS.map(entry => buildSignalQuestionFromInventory(entry, inventory));
   questions.quiz1.push(...newOnes);
-}
-
-/* ============== NUEVAS preguntas teóricas (aprobadas) ============== */
-// Se inyectan en quiz1 al cargar; Q6 correcta = 5000 km.
-const NEW_THEORETICAL_QS = [
-  {
-    question: '¿Cuáles son los cuatro tiempos de un motor?',
-    options: [
-      'Admisión – Compresión – Combustión (explosión) – Escape',
-      'Admisión – Explosión – Lubricación – Escape',
-      'Arranque – Compresión – Ignición – Purga',
-      'Admisión – Encendido – Expansión – Refrigeración'
-    ],
-    correct: 'Admisión – Compresión – Combustión (explosión) – Escape'
-  },
-  {
-    question: '¿Cuál es el vencimiento de la licencia de conducción de servicio público para menores de 60 años?',
-    options: ['3 años', '1 año', '5 años', '10 años'],
-    correct: '3 años'
-  },
-  {
-    question: '¿Cuál es el vencimiento de la licencia de conducción de servicio particular para menores de 60 años?',
-    options: ['10 años', '5 años', '3 años', '1 año'],
-    correct: '10 años'
-  },
-  {
-    question: '¿Al cuánto tiempo se realiza la primera revisión técnico-mecánica de un vehículo particular nuevo?',
-    options: ['A los 5 años desde la matrícula', 'A los 2 años desde la matrícula', 'Al primer año desde la matrícula', 'A los 6 meses'],
-    correct: 'A los 5 años desde la matrícula'
-  },
-  {
-    question: '¿Qué significan las siglas PESV?',
-    options: [
-      'Plan Estratégico de Seguridad Vial',
-      'Programa Escolar de Seguridad Vehicular',
-      'Plan Estatal de Seguridad Vehicular',
-      'Programa Estandarizado de Seguridad Vial'
-    ],
-    correct: 'Plan Estratégico de Seguridad Vial'
-  },
-  {
-    question: '¿A los cuántos kilómetros debe realizarse el cambio de aceite del vehículo?',
-    options: ['5000 km', '3000 km', '10000 km', '15000 km'],
-    correct: '5000 km'
-  }
-];
-
-function injectNewTheoreticalIntoQuiz1() {
-  if (!Array.isArray(questions.quiz1)) questions.quiz1 = [];
-  const fingerprints = new Set(questions.quiz1.map(q => (q?.question || '').trim().toLowerCase()));
-  NEW_THEORETICAL_QS.forEach(q => {
-    const key = (q.question || '').trim().toLowerCase();
-    if (!fingerprints.has(key)) {
-      questions.quiz1.push(q);
-      fingerprints.add(key);
-    }
-  });
 }
 
 /* ============== Enriquecimiento de respuestas (quiz2) con 2.pdf ============== */
@@ -210,23 +155,20 @@ function enrichQuiz2WithPDFContext() {
   questions.quiz2.forEach(q => {
     const rule = rules.find(r => r.test(q));
     if (!rule) return;
-    // Evitar duplicar sufijos si ya se aplicó
+    // Evitar duplicados
     if ((q.correct || '').includes('Ley 769/2002')) return;
 
     const newCorrect = `${q.correct}${rule.suffix}`;
+    // sustituimos en correct y en options la versión vieja por la enriquecida
+    const prev = q.correct;
     q.correct = newCorrect;
 
-    // Reemplaza la opción correspondiente para mantener coincidencia exacta
     if (Array.isArray(q.options)) {
-      const idx = q.options.findIndex(o => o === q.correct || (typeof o === 'string' && o.replace(/\s+—.*$/, '') === newCorrect.replace(/\s+—.*$/, '')));
-      const idxExact = q.options.findIndex(o => o === newCorrect);
-      if (idxExact === -1) {
-        const iOld = q.options.findIndex(o => o === newCorrect.replace(/\s+—.*$/, ''));
+      const iOld = q.options.findIndex(o => o === prev);
+      const iExact = q.options.findIndex(o => o === newCorrect);
+      if (iExact === -1) {
         if (iOld >= 0) q.options[iOld] = newCorrect;
-        else {
-          // Si no se encuentra, garantizamos que esté incluida la correcta enriquecida
-          q.options = [newCorrect, ...(q.options || []).filter(o => o !== q.correct)];
-        }
+        else q.options = [newCorrect, ...(q.options || []).filter(o => o !== prev)];
       }
     }
   });
@@ -238,20 +180,34 @@ async function loadQuestions() {
   const base = await fetch('questions.json', { cache: 'no-store' }).then(r => r.json());
   questions = base;
 
-  // 2) Banco extra (Código Nacional) opcional; se fusiona sin duplicados
+  // 2) Banco extra (desde JSON). Fusionamos quiz1 y quiz2 sin duplicados por texto de pregunta
   try {
     const extraRes = await fetch('questions_extra.json', { cache: 'no-store' });
     if (extraRes.ok) {
       const extra = await extraRes.json();
+
+      if (Array.isArray(extra?.quiz1)) {
+        const map1 = new Map();
+        (questions.quiz1 || []).forEach(q => map1.set((q.question || '').trim(), q));
+        extra.quiz1.forEach(q => {
+          const key = (q?.question || '').trim();
+          if (key && !map1.has(key)) map1.set(key, q);
+        });
+        questions.quiz1 = Array.from(map1.values());
+      }
+
       if (Array.isArray(extra?.quiz2)) {
-        const map = new Map();
-        (questions.quiz2 || []).forEach(q => map.set(q.question?.trim(), q));
-        extra.quiz2.forEach(q => { if (q?.question && !map.has(q.question.trim())) map.set(q.question.trim(), q); });
-        questions.quiz2 = Array.from(map.values());
+        const map2 = new Map();
+        (questions.quiz2 || []).forEach(q => map2.set((q.question || '').trim(), q));
+        extra.quiz2.forEach(q => {
+          const key = (q?.question || '').trim();
+          if (key && !map2.has(key)) map2.set(key, q);
+        });
+        questions.quiz2 = Array.from(map2.values());
       }
     }
-  } catch (_) {
-    // Ignorar si no existe
+  } catch {
+    // Silencio si no existe
   }
 
   // 3) Inventario de señales (CSV)
@@ -278,13 +234,10 @@ async function loadQuestions() {
   // 5) Reemplaza placeholders del teórico por preguntas con imagen (40–49)
   replaceDeterminePlaceholders(inventory);
 
-  // 6) Inyecta las 6 preguntas aprobadas en el teórico
-  injectNewTheoreticalIntoQuiz1();
-
-  // 7) Enriquecer respuestas del Código Nacional con contexto de 2.pdf
+  // 6) Enriquecer respuestas del Código Nacional con contexto de 2.pdf (referencias legales)
   enrichQuiz2WithPDFContext();
 
-  // 8) Datos dependientes de UI
+  // 7) Datos dependientes de UI
   maxSignals = questions.signals.length;
   const maxSpan = document.getElementById('max-signals');
   if (maxSpan) maxSpan.textContent = maxSignals;
@@ -307,7 +260,7 @@ function startQuiz(type, num = null) {
     shuffle(currentQuiz);
   } else if (type === 'quiz2') {
     const pool = [...(questions.quiz2 || [])]; shuffle(pool);
-    // Siempre TODAS (así lo definiste previamente)
+    // Siempre TODAS
     currentQuiz = pool;
   } else if (type === 'signals') {
     const pool = [...(questions.signals || [])]; shuffle(pool);
@@ -369,9 +322,19 @@ function selectAnswer(selected, correct) {
   updateScore();
 }
 
-function nextQuestion() { currentIndex++; (currentIndex < currentQuiz.length) ? showQuestion() : endQuiz(); }
-function updateProgress() { const p = (currentIndex / (currentQuiz.length || 1)) * 100; document.getElementById('progress').style.width = `${p}%`; }
-function updateScore() { document.getElementById('score').textContent = `Puntaje: ${score} / ${currentQuiz.length || 0}`; }
+function nextQuestion() {
+  currentIndex++;
+  (currentIndex < currentQuiz.length) ? showQuestion() : endQuiz();
+}
+
+function updateProgress() {
+  const p = (currentIndex / (currentQuiz.length || 1)) * 100;
+  document.getElementById('progress').style.width = `${p}%`;
+}
+
+function updateScore() {
+  document.getElementById('score').textContent = `Puntaje: ${score} / ${currentQuiz.length || 0}`;
+}
 
 function endQuiz() {
   document.getElementById('quiz-screen').style.display = 'none';
